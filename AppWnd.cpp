@@ -22,7 +22,9 @@
 *******************************************************************************
 */
 
-CAppWnd::CAppWnd() : CDlgFrame(IDR_APPICON, m_AppDlg, true)
+CAppWnd::CAppWnd()
+	: CDlgFrame(IDR_APPICON, m_AppDlg, true)
+	, m_StatusBar(false)
 {
 }
 
