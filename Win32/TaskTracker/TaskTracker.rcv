@@ -18,8 +18,8 @@
 */
 
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION		3,5,0,0
-PRODUCTVERSION	3,5,0,0
+FILEVERSION		3,6,0,0
+PRODUCTVERSION	3,6,0,0
 FILEFLAGSMASK	VS_FFI_FILEFLAGSMASK
 #ifdef _DEBUG
 FILEFLAGS		VS_FF_DEBUG | VS_FF_PRERELEASE
@@ -35,12 +35,12 @@ BEGIN
 		BLOCK "040904E4"
 		BEGIN
 			VALUE "FileDescription",  "Task Tracker\0"
-			VALUE "FileVersion",      "3.5\0"
+			VALUE "FileVersion",      "3.6\0"
 			VALUE "InternalName",     "TaskTrak.exe\0"
-			VALUE "LegalCopyright",   "(C) Chris Oldwood 1995-2002\0"
+			VALUE "LegalCopyright",   "(C) Chris Oldwood 1995-2003\0"
 			VALUE "OriginalFilename", "TaskTrak.exe\0"
 			VALUE "ProductName",      "Task Tracker\0"
-			VALUE "ProductVersion",   "3.5\0"
+			VALUE "ProductVersion",   "3.6\0"
 #ifdef _DEBUG
 			VALUE "Comments",         "Debug Build\0"
 #endif
