@@ -26,7 +26,6 @@
 #define ID_PRUNE_SESSIONS               401
 #define ID_PRUNE_TASKS                  402
 #define ID_HELP_POPUP                   500
-#define ID_HELP_CONTENTS                501
 #define ID_HELP_ABOUT                   502
 #define IDC_CURRENT_TIME                1001
 #define IDC_CURRENT_DATE                1002
