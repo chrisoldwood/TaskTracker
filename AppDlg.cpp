@@ -135,11 +135,14 @@ void CAppDlg::Update()
 	// Update current session, if one.
 	if (App.ClockedIn())
 	{
+		// Get the current session.
+		const CSession* pCurrSession = App.CurrentSession();
+
 		// Create a copy of the current session.
-		CSession m_CurrSession(*App.CurrentSession());
+		CSession m_CurrSession(*pCurrSession);
 		
 		// Set to finish now.
-		m_CurrSession.Finish(m_dtCurrent, App.CurrentSession()->Task());
+		m_CurrSession.Finish(m_dtCurrent, pCurrSession->Task(), pCurrSession->Location());
 		
 		// Update fields.
 		m_txtSessionDate.Text(m_CurrSession.Start().Date().ToString());
