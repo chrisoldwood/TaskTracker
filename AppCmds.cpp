@@ -176,7 +176,7 @@ void CAppCmds::OnFileImport()
 		App.DeleteAllData();
 
 		// Open the file.
-		File.Open(Path, CStream::ReadOnly);
+		File.Open(Path, GENERIC_READ);
 
 		int nLine = 1;
 
@@ -500,7 +500,7 @@ void CAppCmds::OnReportClipboard()
 		CClipboard Clipboard;
 		CTextReport Device(Clipboard);
 
-		Clipboard.Open(CStream::WriteOnly, CF_TEXT);
+		Clipboard.Open(GENERIC_WRITE, CF_TEXT);
 
 		// Do the report.
 		App.ReportData(Device, Dlg.m_eGrouping, Dlg.m_FromDate, Dlg.m_ToDate);

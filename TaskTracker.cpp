@@ -90,7 +90,7 @@ bool CTaskTracker::OnOpen()
 	m_strTitle = "TaskTracker";
 
 	// Create .ini file path.
-	m_IniFile.m_strPath  = CPath::AppDir();
+	m_IniFile.m_strPath  = CPath::ApplicationDir();
 	m_IniFile.m_strPath += INI_FILE_NAME;
 
 	// Load settings.
@@ -397,7 +397,7 @@ bool CTaskTracker::LoadData()
 	CPath AppFilePath;
 
 	// Setup up path.
-	AppFilePath  = CPath::AppDir();
+	AppFilePath  = CPath::ApplicationDir();
 	AppFilePath += DAT_FILE_NAME;
 
 	// Data file exists yet?
@@ -407,7 +407,7 @@ bool CTaskTracker::LoadData()
 	try
 	{
 		// Open file.
-		AppFile.Open(AppFilePath, CStream::ReadOnly);
+		AppFile.Open(AppFilePath, GENERIC_READ);
 
 		char	szMagic[2];
 		uint16	iVersion;
@@ -494,7 +494,7 @@ bool CTaskTracker::SaveData()
 	CPath AppFilePath;
 
 	// Setup up path.
-	AppFilePath  = CPath::AppDir();
+	AppFilePath  = CPath::ApplicationDir();
 	AppFilePath += DAT_FILE_NAME;
 
 	try
