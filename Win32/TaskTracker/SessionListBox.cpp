@@ -58,8 +58,8 @@ CSessionListBox::~CSessionListBox()
 void CSessionListBox::OnCreate(const CRect&)
 {
 	// Set the tab stops.
-	enum { NUM_TABSTOPS = 3 };
-	int aiTabStops[NUM_TABSTOPS] = { 40, 70, 100 };
+	enum { NUM_TABSTOPS = 5 };
+	int aiTabStops[NUM_TABSTOPS] = { 20, 55, 80, 105, 130 };
 
 	SetTabStops(NUM_TABSTOPS, aiTabStops);
 
@@ -98,13 +98,22 @@ void CSessionListBox::Refresh() const
 	// For all sessions within the period.
 	while((pSession = Enum.Next()) != NULL)
 	{
+		// Get length in minutes.
+		int nLength = pSession->Length();
+
+		CString strStartDay  = pSession->Start().Date().ToString(CDate::SD);
 		CString	strStartDate = pSession->Start().Date().ToString(CDate::DD_MM_YY);
 		CString	strStartTime = pSession->Start().Time().ToString(CTime::HH_MM);
 		CString	strEndTime   = pSession->Finish().Time().ToString(CTime::HH_MM);
 		CString strTask      = pSession->Task();
-	
+		CString strLength;
+
+		// Create length string.
+		strLength.Format("%02d:%02d", nLength / 60,  nLength % 60);
+
 		// Convert to a string and add.
-		strSession.Format("%s\t%s\t%s\t%s", strStartDate, strStartTime, strEndTime, strTask);
+		strSession.Format("%s\t%s\t%s\t%s\t%s\t%s", strStartDay, strStartDate,
+							strStartTime, strEndTime, strLength, strTask);
 		int iIdx = Add(strSession);
 		
 		// Add session as item data.
