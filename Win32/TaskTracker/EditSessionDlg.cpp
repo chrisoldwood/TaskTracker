@@ -211,7 +211,7 @@ LRESULT CEditSessionDlg::OnGridDblClick(NMHDR&)
 void CEditSessionDlg::OnDelete()
 {
 	// Get current selection.
-	int iIdx = m_lvSessions.Selected();
+	int iIdx = m_lvSessions.Selection();
 	ASSERT(iIdx != LB_ERR);
 
 	// Get selected session.
