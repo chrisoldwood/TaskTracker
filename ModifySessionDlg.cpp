@@ -28,7 +28,8 @@ CModifySessionDlg::CModifySessionDlg() : CDialog(IDD_MODIFY_SESSION)
 	DEFINE_CTRL_TABLE
 		CTRL(IDC_IN_DATETIME, 	&m_dtpInDateTime)
 		CTRL(IDC_OUT_DATETIME, 	&m_dtpOutDateTime)
-		CTRL(IDC_TASK,		&m_cbTask)
+		CTRL(IDC_TASK,			&m_cbTask)
+		CTRL(IDC_LOCN,			&m_cbLocn)
 	END_CTRL_TABLE
 }
 
@@ -61,6 +62,15 @@ void CModifySessionDlg::OnInitDialog()
 			
 		m_cbTask.CurSel(iItem);
 	}
+
+	// Initialise task.
+	if (m_strLocn != "")
+	{
+		int iItem = m_cbLocn.FindExact(m_strLocn);
+		ASSERT(iItem != CB_ERR);
+			
+		m_cbLocn.CurSel(iItem);
+	}
 }
 
 /******************************************************************************
@@ -88,8 +98,9 @@ bool CModifySessionDlg::OnOk()
 		return false;
 	}
 
-	// Get task.
+	// Get task and location.
 	m_strTask = m_cbTask.Text();
+	m_strLocn = m_cbLocn.Text();
 
 	// Strip seconds.
 	m_dtInDateTime  -= CDateTimeSpan(m_dtInDateTime.Time().Secs());

@@ -30,6 +30,7 @@ CClockOutDlg::CClockOutDlg() : CDialog(IDD_CLOCK_OUT)
 		CTRL(IDC_ON_AT,		&m_rbOnAt)
 		CTRL(IDC_DATETIME, 	&m_dtpDateTime)
 		CTRL(IDC_TASK,		&m_cbTask)
+		CTRL(IDC_LOCN,		&m_cbLocn)
 	END_CTRL_TABLE
 
 	DEFINE_CTRLMSG_TABLE
@@ -71,8 +72,9 @@ void CClockOutDlg::OnInitDialog()
 	m_rbOnAt.Check(false);
 	OnNow();
 
-	// Initialise task.
+	// Initialise task and location.
 	m_strTask = "";
+	m_strLocn = "";
 }
 
 /******************************************************************************
@@ -98,12 +100,13 @@ bool CClockOutDlg::OnOk()
 	// Check clocking out later than clocking in.
 	if (m_dtDateTime < App.CurrentSession()->Start())
 	{
-		AlertMsg("You cannot clock out ealier than you clocked in.");
+		AlertMsg("You cannot clock out earlier than you clocked in.");
 		return false;
 	}
 	
-	// Get task.
+	// Get task and location.
 	m_strTask = m_cbTask.Text();
+	m_strLocn = m_cbLocn.Text();
 
 	// Strip seconds.
 	m_dtDateTime -= CDateTimeSpan(m_dtDateTime.Time().Secs());

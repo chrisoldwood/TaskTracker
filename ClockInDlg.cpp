@@ -30,6 +30,7 @@ CClockInDlg::CClockInDlg() : CDialog(IDD_CLOCK_IN)
 		CTRL(IDC_ON_AT,		&m_rbOnAt)
 		CTRL(IDC_DATETIME, 	&m_dtpDateTime)
 		CTRL(IDC_TASK,		&m_cbTask)
+		CTRL(IDC_LOCN,		&m_cbLocn)
 	END_CTRL_TABLE
 
 	DEFINE_CTRLMSG_TABLE
@@ -62,8 +63,9 @@ void CClockInDlg::OnInitDialog()
 	m_rbOnAt.Check(false);
 	OnNow();
 	
-	// Initialise task.
+	// Initialise task and location.
 	m_strTask = "";
+	m_strLocn = "";
 }
 
 /******************************************************************************
@@ -86,8 +88,9 @@ bool CClockInDlg::OnOk()
 	else
 		m_dtDateTime = m_dtpDateTime.GetDateTime();
 
-	// Get task.
+	// Get task and location.
 	m_strTask = m_cbTask.Text();
+	m_strLocn = m_cbLocn.Text();
 
 	// Strip seconds.
 	m_dtDateTime -= CDateTimeSpan(m_dtDateTime.Time().Secs());
