@@ -1,6 +1,3 @@
-- Assignment operators for session and task lists.
-  (Fix import code to use them).
-
 - Two phase save.
 
 - Location session parameter.
