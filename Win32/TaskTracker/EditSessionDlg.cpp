@@ -98,10 +98,11 @@ void CEditSessionDlg::OnAdd()
 			App.TaskList().Add(Dlg.m_strTask);
 	
 		// Add to list.
-		App.SessionList().Add(pNewSession);
+		int i = App.SessionList().Add(pNewSession);
 		
 		// Refresh session list.
 		m_lbSessions.Refresh();
+		m_lbSessions.CurSel(i);
 
     	// Enable delete and modify buttons.
 		m_bnModify.Enable();
