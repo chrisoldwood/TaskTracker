@@ -119,12 +119,13 @@ void CAppCmds::OnFileExport()
 
 			// Create a comma separated text line
 			// for the session.
-			strLine.Format("%s,%s,%s,%s,%s", 
+			strLine.Format("%s,%s,%s,%s,%s,%s", 
 							pSession->Start().Date().ToString(CDate::DD_MM_YYYY),
 							pSession->Start().Time().ToString(CTime::HH_MM),
 							pSession->Finish().Date().ToString(CDate::DD_MM_YYYY),
 							pSession->Finish().Time().ToString(CTime::HH_MM),
-							pSession->Task());
+							pSession->Task(),
+							pSession->Location());
 
 			File.WriteLine(strLine);
 		}
@@ -169,11 +170,10 @@ void CAppCmds::OnFileImport()
 		CFile File;
 		CSessionList&	rSessions = App.SessionList();
 		CTaskList&		rTasks    = App.TaskList();
+		CLocnList&		rLocns    = App.LocnList();
 
 		// Free the existing data.
-		rSessions.RemoveAll();
-		rTasks.RemoveAll();
-		App.Modified();
+		App.DeleteAllData();
 
 		// Open the file.
 		File.Open(Path, CStream::ReadOnly);
@@ -189,12 +189,13 @@ void CAppCmds::OnFileImport()
 			// Count the number of felds.
 			int nFields = strLine.Count(',') + 1;
 
-			// Expecting 5 fields.
-			if (nFields < 5)
+			// Expecting 5 or 6 fields.
+			if ( (nFields < 5) || (nFields > 6) )
 			{
 				// Notify user.
 				App.m_AppWnd.AlertMsg("Invalid number of fields in line: %d\n"
-										"(Found: %d Expected: 5)", nLine, nFields);
+										"(Found: %d Expected: 5 or 6).",
+										nLine, nFields);
 				break;
 			}
 
@@ -204,14 +205,31 @@ void CAppCmds::OnFileImport()
 			int	nEndDate   = strLine.Find(',', nStartTime + 1);
 			int nEndTime   = strLine.Find(',', nEndDate   + 1);
 			int nTask      = strLine.Find(',', nEndTime   + 1);
+			int nLocn      = strLine.Find(',', nTask      + 1);
 			int nEOS       = strLine.Length();
 
-			// Extract fields.
+			// Extract basic fields.
 			CString strStartDate = strLine.Mid(nStartDate + 1, nStartTime - nStartDate - 1);
 			CString strStartTime = strLine.Mid(nStartTime + 1, nEndDate   - nStartTime - 1);
 			CString strEndDate   = strLine.Mid(nEndDate   + 1, nEndTime   - nEndDate   - 1);
 			CString strEndTime   = strLine.Mid(nEndTime   + 1, nTask      - nEndTime   - 1);
-			CString strTask      = strLine.Mid(nTask      + 1, nEOS       - nTask      - 1);
+			CString strTask;
+			CString strLocn;
+
+			// Old format?
+			if (nFields == 5)
+			{
+				// Final field is the task.
+				strTask = strLine.Mid(nTask + 1, nEOS - nTask - 1);
+				strLocn = "";
+			}
+			// New format?
+			if (nFields == 6)
+			{
+				// Final field is the location.
+				strTask = strLine.Mid(nTask + 1, nLocn - nTask - 1);
+				strLocn = strLine.Mid(nLocn + 1, nEOS  - nLocn - 1);
+			}
 
 			CDate dStartDate, dEndDate;
 			CTime tStartTime, tEndTime;
@@ -251,12 +269,17 @@ void CAppCmds::OnFileImport()
 			// Allocate a new session and initialise.
 			CSession* pSession = new CSession;
 
-			pSession->Start (CDateTime(dStartDate, tStartTime), strTask, "");
-			pSession->Finish(CDateTime(dEndDate,   tEndTime),   strTask, "");
+			pSession->Start (CDateTime(dStartDate, tStartTime), strTask, strLocn);
+			pSession->Finish(CDateTime(dEndDate,   tEndTime),   strTask, strLocn);
 			
-			// Add to the lists.
+			// Add to the collections.
 			rSessions.Add(pSession);
-			rTasks.Add(strTask);
+
+			if (strTask != "")
+				rTasks.Add(strTask);
+
+			if (strLocn != "")
+				rLocns.Add(strLocn);
 
 			nLine++;
 		}
@@ -269,6 +292,10 @@ void CAppCmds::OnFileImport()
 		// Notify user.
 		App.m_AppWnd.AlertMsg(rException.ErrorText());
 	}
+
+	// Update UI.
+	UpdateUI();
+	App.m_AppWnd.m_AppDlg.Update();
 }
 
 /******************************************************************************
@@ -393,6 +420,9 @@ void CAppCmds::OnSessionEdit()
 	CEditSessionDlg	Dlg;
 	
 	Dlg.RunModal(App.m_rMainWnd);
+
+	// Update UI.
+	UpdateUI();
 	App.m_AppWnd.m_AppDlg.Update();
 }
 
@@ -597,6 +627,8 @@ void CAppCmds::OnPruneSessions()
 		// Update dirty flag.
 		App.Modified();
 	
+		// Update UI.
+		UpdateUI();
 		App.m_AppWnd.m_AppDlg.Update();
 	}
 }
@@ -629,6 +661,9 @@ void CAppCmds::OnPruneTasks()
 		
 		// Update dirty flag.
 		App.Modified();
+
+		// Update UI.
+		UpdateUI();
 	}
 }
 
@@ -660,6 +695,9 @@ void CAppCmds::OnPruneLocations()
 		
 		// Update dirty flag.
 		App.Modified();
+
+		// Update UI.
+		UpdateUI();
 	}
 }
 
