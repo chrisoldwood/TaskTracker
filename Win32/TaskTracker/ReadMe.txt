@@ -1,4 +1,4 @@
-TaskTracker v3.5
+TaskTracker v3.6
 ================
 
 1) Installation.
@@ -21,4 +21,4 @@ Web:   http://www.cix.co.uk/~gort
 
 Chris Oldwood 
 
-9th August 2002
+19th June 2003
