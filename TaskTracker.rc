@@ -99,8 +99,6 @@ BEGIN
     END
     POPUP "&Help"
     BEGIN
-        MENUITEM "Contents\tF1",                ID_HELP_CONTENTS
-        MENUITEM SEPARATOR
         MENUITEM "&About TaskTracker",          ID_HELP_ABOUT
     END
 END
@@ -149,7 +147,7 @@ FONT 8, "MS Sans Serif"
 BEGIN
     ICON            IDR_APPICON,IDC_STATIC,15,10,20,20
     CTEXT           "TaskTracker",IDC_STATIC,50,10,55,10
-    CTEXT           "v3.0 Beta",IDC_STATIC,50,20,55,8
+    CTEXT           "v3.1",IDC_STATIC,50,20,55,8
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,10,40,100,1
     CTEXT           "(C) Chris Oldwood 1995-2000",IDC_STATIC,10,50,100,10
     CTEXT           "gort@cix.co.uk",IDC_STATIC,10,59,100,10
@@ -203,21 +201,23 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,65,75,50,15
 END
 
-IDD_EDIT_SESSIONS DIALOG DISCARDABLE  0, 0, 254, 136
+IDD_EDIT_SESSIONS DIALOG DISCARDABLE  0, 0, 282, 181
 STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Edit Sessions"
 FONT 8, "MS Sans Serif"
 BEGIN
-    LTEXT           "Date:",IDC_STATIC,10,10,20,10
-    LTEXT           "In:",IDC_STATIC,50,10,10,10
-    LTEXT           "Out:",IDC_STATIC,80,10,15,10
-    LTEXT           "Task:",IDC_STATIC,110,10,30,10
-    LISTBOX         IDC_SESSIONS,10,20,175,100,LBS_USETABSTOPS | 
+    LTEXT           "Day",IDC_STATIC,10,10,20,10
+    LTEXT           "In",IDC_STATIC,70,10,10,10
+    LTEXT           "Out",IDC_STATIC,95,10,15,10
+    LTEXT           "Task",IDC_STATIC,140,10,30,10
+    LISTBOX         IDC_SESSIONS,10,20,200,150,LBS_USETABSTOPS | 
                     LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "&Add...",IDC_ADD,195,65,50,15
-    PUSHBUTTON      "&Modify...",IDC_MODIFY,195,85,50,15
-    PUSHBUTTON      "&Delete",IDC_DELETE,195,105,50,15
-    DEFPUSHBUTTON   "Close",IDOK,195,20,50,15
+    PUSHBUTTON      "&Add...",IDC_ADD,220,50,50,15
+    PUSHBUTTON      "&Modify...",IDC_MODIFY,220,70,50,15
+    PUSHBUTTON      "&Delete",IDC_DELETE,220,90,50,15
+    DEFPUSHBUTTON   "Close",IDOK,220,20,50,15
+    LTEXT           "Len",IDC_STATIC,120,10,15,10
+    LTEXT           "Date",IDC_STATIC,30,10,20,10
 END
 
 IDD_ADD_SESSION DIALOG DISCARDABLE  0, 0, 137, 107
@@ -549,7 +549,6 @@ END
 STRINGTABLE DISCARDABLE 
 BEGIN
     ID_HELP_POPUP           "Help options"
-    ID_HELP_CONTENTS        "Show the contents page of the help file"
     ID_HELP_ABOUT           "Show TaskTracker version"
 END
 
