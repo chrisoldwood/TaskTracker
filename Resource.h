@@ -25,6 +25,7 @@
 #define ID_PRUNE_POPUP                  400
 #define ID_PRUNE_SESSIONS               401
 #define ID_PRUNE_TASKS                  402
+#define ID_PRUNE_LOCNS                  403
 #define ID_HELP_POPUP                   500
 #define ID_HELP_ABOUT                   502
 #define IDC_CURRENT_TIME                1001
@@ -40,6 +41,7 @@
 #define IDC_TO_DATE                     1011
 #define IDC_TASK                        1012
 #define IDC_TOTAL_TODAY                 1013
+#define IDC_LOCN                        1013
 #define IDC_PREV_TASK                   1014
 #define IDC_TOTAL_WEEK                  1015
 #define IDC_OUT_DATE                    1016
@@ -71,6 +73,7 @@
 #define IDC_DATETIME                    1055
 #define IDC_OUT_DATETIME                1056
 #define IDC_IN_DATETIME                 1057
+#define IDC_LOCNS                       1059
 #define IDD_MAIN                        5000
 #define IDD_ABOUT                       5001
 #define IDD_CLOCK_IN                    5002
@@ -83,6 +86,7 @@
 #define IDD_FILE_REPORT                 5009
 #define IDD_PRINT_REPORT                5010
 #define IDD_PRUNE_TASKS                 5011
+#define IDD_PRUNE_LOCNS                 5012
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -90,9 +94,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        114
-#define _APS_NEXT_COMMAND_VALUE         116
-#define _APS_NEXT_CONTROL_VALUE         1058
+#define _APS_NEXT_RESOURCE_VALUE        115
+#define _APS_NEXT_COMMAND_VALUE         117
+#define _APS_NEXT_CONTROL_VALUE         1060
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif
