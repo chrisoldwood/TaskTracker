@@ -86,6 +86,8 @@ public:
 	const CString& LastTask() const;
 	CSessionList& SessionList();
 	const CSession* CurrentSession() const;
+	CLocnList& LocnList();
+	const CString& LastLocn() const;
 	bool IsModified() const;
 	void Modified();
 
@@ -104,8 +106,8 @@ public:
 	//
 	// Session status.
 	//
-	void ClockIn(const CDateTime& dtIn, const CString& strTask);
-	void ClockOut(const CDateTime& dtOut, const CString& strTask);
+	void ClockIn (const CDateTime& dtIn,  const CString& strTask, const CString& strLocn);
+	void ClockOut(const CDateTime& dtOut, const CString& strTask, const CString& strLocn);
 	ulong TotalForPeriod(const CDateTime& dtStart, const CDateTime& dtEnd) const;
 	ulong TotalForDay(const CDate& rDate) const;
 	ulong TotalForWeek(const CDate& rDate) const;
@@ -118,7 +120,6 @@ public:
 	bool LoadData();
 	bool SaveData();
 	void ReportData(CReport& rDevice, Grouping eGrouping, const CDate& rFromDate, const CDate& rToDate) const;
-	void ReportFileError(FileErr eErr, const CPath& rPath) const;
 
 	//
 	// Misc methods.
@@ -145,9 +146,11 @@ protected:
 	//
 	CSessionList	m_SessionList;
 	CTaskList		m_TaskList;
+	CLocnList		m_LocnList;
 	int16			m_bClockedIn;
 	CSession*		m_pCurrSession;
 	CString			m_strLastTask;
+	CString			m_strLastLocn;
 	char			m_szMins[20];
 	bool			m_bModified;
 	CPrinter		m_Printer;
@@ -177,11 +180,11 @@ protected:
 	void SaveDefaults();
 };
 
-// The title for files.
+// The title for the .dat and .ini files.
 #define FILE_TITLE			"TaskTrak"
 
 // The current file version.
-#define DAT_FILE_VERSION	30
+#define DAT_FILE_VERSION	35
 
 // The data filename.
 #define	DAT_FILE_NAME		FILE_TITLE ".dat"
@@ -241,6 +244,16 @@ inline CSessionList& CTaskTracker::SessionList()
 inline const CSession* CTaskTracker::CurrentSession() const
 {
 	return m_pCurrSession;
+}
+
+inline CLocnList& CTaskTracker::LocnList()
+{
+	return m_LocnList;
+}
+
+inline const CString& CTaskTracker::LastLocn() const
+{
+	return m_strLastLocn;
 }
 
 inline const char* CTaskTracker::MinsToStr(ulong lMins)
