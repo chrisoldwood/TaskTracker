@@ -81,6 +81,7 @@ void CSession::operator <<(CStream& rStream)
 	rStream >> m_dtStart;
 	rStream >> m_dtFinish;
 	rStream >> m_strTask;
+	rStream >> m_strLocn;
 }
 
 /******************************************************************************
@@ -100,4 +101,5 @@ void CSession::operator >>(CStream& rStream) const
 	rStream << m_dtStart;
 	rStream << m_dtFinish;
 	rStream << m_strTask;
+	rStream << m_strLocn;
 }
