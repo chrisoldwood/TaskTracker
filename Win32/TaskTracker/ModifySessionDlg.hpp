@@ -33,6 +33,7 @@ public:
 	CDateTime	m_dtInDateTime;
 	CDateTime	m_dtOutDateTime;
 	CString		m_strTask;
+	CString		m_strLocn;
 
 protected:
 	//
@@ -41,6 +42,7 @@ protected:
 	CDateTimePicker	m_dtpInDateTime;
 	CDateTimePicker	m_dtpOutDateTime;
 	CTaskCombo		m_cbTask;
+	CLocnCombo		m_cbLocn;
 	
 	//
 	// Message processors.

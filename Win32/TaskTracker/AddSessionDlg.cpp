@@ -29,6 +29,7 @@ CAddSessionDlg::CAddSessionDlg() : CDialog(IDD_ADD_SESSION)
 		CTRL(IDC_IN_DATETIME, 	&m_dtpInDateTime)
 		CTRL(IDC_OUT_DATETIME, 	&m_dtpOutDateTime)
 		CTRL(IDC_TASK,			&m_cbTask)
+		CTRL(IDC_LOCN,			&m_cbLocn)
 	END_CTRL_TABLE
 }
 
@@ -55,8 +56,9 @@ void CAddSessionDlg::OnInitDialog()
 	m_dtpOutDateTime.SetDateTime(m_dtOutDateTime);
 	m_dtpOutDateTime.Format(DTP_DATETIME_FORMAT);
 
-	// Initialise task.
+	// Initialise task and location.
 	m_strTask = "";
+	m_strLocn = "";
 }
 
 /******************************************************************************
@@ -84,8 +86,9 @@ bool CAddSessionDlg::OnOk()
 		return false;
 	}
 
-	// Get task.
+	// Get task and location.
 	m_strTask = m_cbTask.Text();
+	m_strLocn = m_cbLocn.Text();
 
 	// Strip seconds.
 	m_dtInDateTime  -= CDateTimeSpan(m_dtInDateTime.Time().Secs());
