@@ -23,8 +23,8 @@ CFG=TaskTracker - Win32 Debug
 
 # Begin Project
 # PROP AllowPerConfigDependencies 0
-# PROP Scc_ProjName ""
-# PROP Scc_LocalPath ""
+# PROP Scc_ProjName ""$/Win32/TaskTracker", RAAAAAAA"
+# PROP Scc_LocalPath "."
 CPP=cl.exe
 MTL=midl.exe
 RSC=rc.exe
@@ -70,8 +70,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /W4 /WX /Gm /GX /ZI /Od /I "..\Wcl" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX"AppHeaders.hpp" /FD /GZ /c
-# SUBTRACT CPP /Fr
+# ADD CPP /nologo /W4 /WX /Gm /GX /ZI /Od /I "..\Wcl" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /Fr /YX"AppHeaders.hpp" /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x809 /d "_DEBUG"
@@ -339,6 +338,10 @@ SOURCE=.\ViewReportDlg.hpp
 # Begin Source File
 
 SOURCE=.\TaskTracker.ico
+# End Source File
+# Begin Source File
+
+SOURCE=.\TaskTracker.rcv
 # End Source File
 # Begin Source File
 
