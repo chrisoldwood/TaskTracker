@@ -452,7 +452,8 @@ void CAppCmds::OnReportWindow()
 		App.m_AppWnd.m_StatusBar.Hint("Generating report...");
 
 		// Setup the memory stream to report to.
-		CMemStream	TxtStream;
+		CBuffer		oBuffer;
+		CMemStream	TxtStream(oBuffer);
 		CTextReport Device(TxtStream);
 
 		TxtStream.Create();
