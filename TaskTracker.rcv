@@ -1,7 +1,7 @@
 /******************************************************************************
-** (C) Chris Wood 1998
+** (C) Chris Oldwood
 **
-** MODULE:		APP15.RCV
+** MODULE:		TASKTRACKER.RCV
 ** COMPONENT:	The Application.
 ** DESCRIPTION:	The application version information resource.
 **
@@ -36,12 +36,12 @@ BEGIN
 		BEGIN
 			VALUE "CompanyName", "Comgraphix Ltd\0"
 			VALUE "FileDescription", "Task Tracker\0"
-			VALUE "FileVersion", "3.0\0"
+			VALUE "FileVersion", "3.1\0"
 			VALUE "InternalName", "TaskTracker.exe\0"
-			VALUE "LegalCopyright", "(C) Chris Oldwood 1996-9\0"
+			VALUE "LegalCopyright", "(C) Chris Oldwood 1995-2000\0"
 			VALUE "OriginalFilename", "TaskTracker.exe\0"
 			VALUE "ProductName", "Task Tracker\0"
-			VALUE "ProductVersion", "3.0\0"
+			VALUE "ProductVersion", "3.1\0"
 		END
 	END
 	BLOCK "VarFileInfo"
