@@ -124,7 +124,7 @@ void CSessionListView::Refresh()
 		strLength.Format("%02d:%02d", nLength / 60,  nLength % 60);
 
 		// Add the item.
-		int i = AppendItem("", pSession);
+		int i = AppendItem("");
 
 		ItemText(i, 0, strStartDay);
 		ItemText(i, 1, strStartDate);
@@ -133,6 +133,7 @@ void CSessionListView::Refresh()
 		ItemText(i, 4, strLength);
 		ItemText(i, 5, strTask);
 		ItemText(i, 6, strLocation);
+		ItemPtr (i,    pSession);
     }
 
 	RestoreSel(iSel);
