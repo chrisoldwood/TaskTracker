@@ -1,1 +1,3 @@
 - HelpFile
+
+- Fix scroll to view bug in session editing dialog.
