@@ -3,8 +3,4 @@
 
 - Two phase save.
 
-- Help file.
-
 - Location session parameter.
-
-- Enhance session list dialog to show day and more of task.
