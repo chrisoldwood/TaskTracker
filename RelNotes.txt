@@ -1,0 +1,25 @@
+Version 3.6
+===========
+
+- Includes fixes to the underlying class libraries.
+
+
+Version 3.5
+===========
+
+- Ported to WIN32.
+- Made various dialogs resizable.
+- Fixed various bugs in the "Edit Sessions" dialog and enhanced the view.
+- Added support for associating a Location with the task.
+
+
+Versions 1.0-3.0
+================
+
+- WIN16 version.
+
+
+Chris Oldwood 
+(gort@cix.co.uk)
+
+19th June 2003
