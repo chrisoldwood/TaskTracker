@@ -1,0 +1,66 @@
+/******************************************************************************
+** (C) Chris Oldwood
+**
+** MODULE:		VIEWREPORTDLG.CPP
+** COMPONENT:	The Application.
+** DESCRIPTION:	CViewReportDlg class definition.
+**
+*******************************************************************************
+*/
+
+#include "AppHeaders.hpp"
+#include "ViewReportDlg.hpp"
+
+/******************************************************************************
+** Method:		Default constructor.
+**
+** Description:	.
+**
+** Parameters:	None.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+CViewReportDlg::CViewReportDlg(CMemStream& rTxtStream) : CDialog(IDD_VIEW_REPORT)
+	, m_rTxtStream(rTxtStream)
+{
+	DEFINE_CTRL_TABLE
+		CTRL(IDC_REPORT,	&m_ebReport)
+	END_CTRL_TABLE
+}
+
+/******************************************************************************
+** Method:		OnInitDialog()
+**
+** Description:	Initialise the dialog.
+**
+** Parameters:	None.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CViewReportDlg::OnInitDialog()
+{
+	CString	strReport;
+
+	m_rTxtStream.Open();
+
+	// Find the length of the text.
+	ulong lLen = m_rTxtStream.Seek(0, CStream::End);
+	m_rTxtStream.Seek(0, CStream::Start);
+
+	// Allocate a buffer big enough.
+	strReport.BufferSize(lLen);
+
+	// Copy the text to the string buffer.
+	m_rTxtStream.Read((void*)(const char*)strReport, lLen);
+	m_rTxtStream.Close();
+
+	// Copy to the control.
+	m_ebReport.Text(strReport);
+	m_ebReport.Font(CFont(ANSI_FIXED_FONT));
+}
