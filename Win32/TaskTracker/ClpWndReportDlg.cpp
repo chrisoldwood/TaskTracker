@@ -63,7 +63,7 @@ void CClpWndReportDlg::OnInitDialog()
 		case ByWeek:	m_rbGroupByWeek.Check(true);	break;
 		case ByMonth:	m_rbGroupByMonth.Check(true);	break;
 		case ByTask:	m_rbGroupByTask.Check(true);	break;
-		default:		ASSERT(false);					break;
+		default:		ASSERT_FALSE();					break;
 	}
 	
 	// Fill period list.

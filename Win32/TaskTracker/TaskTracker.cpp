@@ -608,7 +608,7 @@ void CTaskTracker::ReportData(CReport& rDevice, Grouping eGrouping, const CDate&
 			break;
 			
 		default:
-			ASSERT(false);
+			ASSERT_FALSE();
 			break;
 	}
 
@@ -1184,7 +1184,7 @@ void CTaskTracker::PeriodToDates(Period ePeriod, CDate& rFromDate, CDate& rToDat
 			break;
 		
 		default:
-			ASSERT(false);
+			ASSERT_FALSE();
 			break;
 	}
 }
