@@ -136,6 +136,11 @@ public:
 	CAppWnd		m_AppWnd;
 	CAppCmds	m_AppCmds;
 
+	//
+	// Constants.
+	//
+	static const char* VERSION;
+
 protected:
 	//
 	// Startup and Shutdown template methods.
