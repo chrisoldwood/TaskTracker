@@ -52,6 +52,7 @@ public:
 	// Prune menu.
 	void OnPruneSessions();
 	void OnPruneTasks();
+	void OnPruneLocations();
 
 	// Help menu.
 	void OnHelpAbout();
@@ -62,6 +63,9 @@ public:
 	void OnUISessionClockIn();
 	void OnUISessionSwitchTasks();
 	void OnUISessionClockOut();
+	void OnUIPruneSessions();
+	void OnUIPruneTasks();
+	void OnUIPruneLocations();
 
 protected:
 	//
