@@ -76,8 +76,8 @@ bool CTaskTracker::OnOpen()
 	m_strTitle = "TaskTracker";
 
 	// Create .ini file path.
-	m_IniFile.m_Path  = CPath::AppDir();
-	m_IniFile.m_Path += INI_FILE_NAME;
+	m_IniFile.m_strPath  = CPath::AppDir();
+	m_IniFile.m_strPath += INI_FILE_NAME;
 
 	// Load settings.
 	LoadDefaults();
