@@ -25,21 +25,30 @@
 *******************************************************************************
 */
 
-CEditSessionDlg::CEditSessionDlg() : CDialog(IDD_EDIT_SESSIONS)
+CEditSessionDlg::CEditSessionDlg()
+	: CDialog(IDD_EDIT_SESSIONS)
 {
 	DEFINE_CTRL_TABLE
-		CTRL(IDC_SESSIONS,	&m_lbSessions)
+		CTRL(IDC_SESSIONS,	&m_lvSessions)
 		CTRL(IDC_ADD,		&m_bnAdd)
 		CTRL(IDC_MODIFY,	&m_bnModify)
 		CTRL(IDC_DELETE,	&m_bnDelete)
 	END_CTRL_TABLE
 
 	DEFINE_CTRLMSG_TABLE
-		CMD_CTRLMSG(IDC_ADD, 		BN_CLICKED,		OnAdd)
-		CMD_CTRLMSG(IDC_MODIFY,		BN_CLICKED,		OnModify)
-		CMD_CTRLMSG(IDC_DELETE,		BN_CLICKED,		OnDelete)
-		CMD_CTRLMSG(IDC_SESSIONS,	LBN_DBLCLK,		OnModify)
+		CMD_CTRLMSG(IDC_ADD,      BN_CLICKED, OnAdd)
+		CMD_CTRLMSG(IDC_MODIFY,   BN_CLICKED, OnModify)
+		CMD_CTRLMSG(IDC_DELETE,   BN_CLICKED, OnDelete)
+		NFY_CTRLMSG(IDC_SESSIONS, NM_DBLCLK,  OnGridDblClick)
 	END_CTRLMSG_TABLE
+
+	DEFINE_GRAVITY_TABLE
+		CTRLGRAV(IDC_SESSIONS, LEFT_EDGE,  TOP_EDGE,    RIGHT_EDGE, BOTTOM_EDGE)
+		CTRLGRAV(IDC_ADD,      LEFT_EDGE,  BOTTOM_EDGE, LEFT_EDGE,  BOTTOM_EDGE)
+		CTRLGRAV(IDC_MODIFY,   LEFT_EDGE,  BOTTOM_EDGE, LEFT_EDGE,  BOTTOM_EDGE)
+		CTRLGRAV(IDC_DELETE,   LEFT_EDGE,  BOTTOM_EDGE, LEFT_EDGE,  BOTTOM_EDGE)
+		CTRLGRAV(IDOK,         RIGHT_EDGE, BOTTOM_EDGE, RIGHT_EDGE, BOTTOM_EDGE)
+	END_GRAVITY_TABLE
 }
 
 /******************************************************************************
@@ -90,19 +99,23 @@ void CEditSessionDlg::OnAdd()
 		ASSERT(pNewSession);
 	
 		// Initialise.
-		pNewSession->Start(Dlg.m_dtInDateTime, Dlg.m_strTask);
-		pNewSession->Finish(Dlg.m_dtOutDateTime, Dlg.m_strTask);
+		pNewSession->Start (Dlg.m_dtInDateTime,  Dlg.m_strTask, Dlg.m_strLocn);
+		pNewSession->Finish(Dlg.m_dtOutDateTime, Dlg.m_strTask, Dlg.m_strLocn);
 	
 		// Add task to list if set.
 		if (Dlg.m_strTask != "")
 			App.TaskList().Add(Dlg.m_strTask);
 	
+		// Add Location to list if set.
+		if (Dlg.m_strLocn != "")
+			App.LocnList().Add(Dlg.m_strLocn);
+	
 		// Add to list.
 		int i = App.SessionList().Add(pNewSession);
 		
 		// Refresh session list.
-		m_lbSessions.Refresh();
-		m_lbSessions.CurSel(i);
+		m_lvSessions.Refresh();
+		m_lvSessions.Select(i);
 
     	// Enable delete and modify buttons.
 		m_bnModify.Enable();
@@ -130,31 +143,57 @@ void CEditSessionDlg::OnModify()
 	CModifySessionDlg Dlg;
 
 	// Get selected session.
-	CSession* pSession = m_lbSessions.CurrSession();
+	CSession* pSession = m_lvSessions.CurrSession();
 	ASSERT(pSession);
 	
 	// Initialise dialog.
 	Dlg.m_dtInDateTime  = pSession->Start();
 	Dlg.m_dtOutDateTime = pSession->Finish();
 	Dlg.m_strTask       = pSession->Task();
+	Dlg.m_strLocn       = pSession->Location();
 	
 	// Show it.
 	if (Dlg.RunModal(*this) == IDOK)
 	{
 		// Update session details.
-		pSession->Start(Dlg.m_dtInDateTime, Dlg.m_strTask);
-		pSession->Finish(Dlg.m_dtOutDateTime, Dlg.m_strTask);
+		pSession->Start (Dlg.m_dtInDateTime,  Dlg.m_strTask, Dlg.m_strLocn);
+		pSession->Finish(Dlg.m_dtOutDateTime, Dlg.m_strTask, Dlg.m_strLocn);
 	
 		// Add task to list if set.
 		if (Dlg.m_strTask != "")
 			App.TaskList().Add(Dlg.m_strTask);
 	
+		// Add Location to list if set.
+		if (Dlg.m_strLocn != "")
+			App.LocnList().Add(Dlg.m_strLocn);
+	
 		// Refresh session list.
-		m_lbSessions.Refresh();
+		m_lvSessions.Refresh();
 
 		// Update dirty flag.
 		App.Modified();
 	}
+}
+
+/******************************************************************************
+** Method:		OnGridDblClick()
+**
+** Description:	The user double clicked the grid.
+**
+** Parameters:	None.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+LRESULT CEditSessionDlg::OnGridDblClick(NMHDR&)
+{
+	// If item selected, edit it.
+	if (m_lvSessions.IsSelection())
+		OnModify();
+
+	return 0;
 }
 
 /******************************************************************************
@@ -172,11 +211,11 @@ void CEditSessionDlg::OnModify()
 void CEditSessionDlg::OnDelete()
 {
 	// Get current selection.
-	int iIdx = m_lbSessions.CurSel();
+	int iIdx = m_lvSessions.Selected();
 	ASSERT(iIdx != LB_ERR);
 
 	// Get selected session.
-	CSession* pSession = m_lbSessions.CurrSession();
+	CSession* pSession = m_lvSessions.CurrSession();
 	ASSERT(pSession);
 
 	// Delete session.
@@ -184,7 +223,7 @@ void CEditSessionDlg::OnDelete()
 	delete pSession;
 	
 	// Update listbox.
-	m_lbSessions.Delete(iIdx);
+	m_lvSessions.DeleteItem(iIdx);
 
 	// Change listbox selection.
 	int iNumItems = App.SessionList().Length();
@@ -193,9 +232,9 @@ void CEditSessionDlg::OnDelete()
     {
     	// Select next item
     	if (iIdx == iNumItems)
-    		m_lbSessions.CurSel(iIdx-1);
+    		m_lvSessions.Select(iIdx-1);
     	else
-    		m_lbSessions.CurSel(iIdx);
+    		m_lvSessions.Select(iIdx);
     }
     else
     {
