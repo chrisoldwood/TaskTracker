@@ -98,7 +98,7 @@ void CSessionListView::OnCreate(const CRect&)
 void CSessionListView::Refresh()
 {
 	// Save current selection.
-	int iSel = Selected();
+	int iSel = Selection();
 
 	// Empty contents.
 	DeleteAllItems();

@@ -58,7 +58,7 @@ protected:
 
 inline CSession* CSessionListView::CurrSession()
 {
-	return (CSession*) ItemData(Selected());
+	return (CSession*) ItemData(Selection());
 }
 
 #endif //SESSNLB_HPP
