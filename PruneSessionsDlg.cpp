@@ -78,7 +78,7 @@ bool CPruneSessionsDlg::OnOk()
 {
 	// Delete all data?
 	if (m_rbAll.IsChecked())
-		m_Date.Set(1,1, 2099);
+		m_Date = CDate::Max();
 	else
 		m_Date = m_dtpDate.GetDate();
 
