@@ -155,6 +155,13 @@ void CEditSessionDlg::OnModify()
 	// Show it.
 	if (Dlg.RunModal(*this) == IDOK)
 	{
+		// Get current selection.
+		int iIdx = m_lvSessions.Selection();
+
+		// Remove session from list and view.
+		App.SessionList().Remove(pSession);
+		m_lvSessions.DeleteItem(iIdx);
+
 		// Update session details.
 		pSession->Start (Dlg.m_dtInDateTime,  Dlg.m_strTask, Dlg.m_strLocn);
 		pSession->Finish(Dlg.m_dtOutDateTime, Dlg.m_strTask, Dlg.m_strLocn);
@@ -167,8 +174,13 @@ void CEditSessionDlg::OnModify()
 		if (Dlg.m_strLocn != "")
 			App.LocnList().Add(Dlg.m_strLocn);
 	
+		// Add to list.
+		int i = App.SessionList().Add(pSession);
+		
 		// Refresh session list.
 		m_lvSessions.Refresh();
+		m_lvSessions.Select(i);
+		m_lvSessions.MakeItemVisible(i);
 
 		// Update dirty flag.
 		App.Modified();
