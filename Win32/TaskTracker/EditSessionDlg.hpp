@@ -35,15 +35,16 @@ protected:
 	//
 	// Members.
 	//
-	CSessionListBox	m_lbSessions;
-	CButton			m_bnAdd;
-	CButton			m_bnModify;
-	CButton			m_bnDelete;
+	CSessionListView	m_lvSessions;
+	CButton				m_bnAdd;
+	CButton				m_bnModify;
+	CButton				m_bnDelete;
 	
 	//
 	// Message processors.
 	//
 	virtual void OnInitDialog();
+	     LRESULT OnGridDblClick(NMHDR& rMsgHdr);
 
 	//
 	// Control message processors.
