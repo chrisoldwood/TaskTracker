@@ -54,23 +54,27 @@ void CModifySessionDlg::OnInitDialog()
 	m_dtpOutDateTime.SetDateTime(m_dtOutDateTime);
 	m_dtpOutDateTime.Format(DTP_DATETIME_FORMAT);
 
+	int nTaskIdx = -1;
+	int nLocnIdx = -1;
+
 	// Initialise task.
 	if (m_strTask != "")
 	{
-		int iItem = m_cbTask.FindExact(m_strTask);
-		ASSERT(iItem != CB_ERR);
-			
-		m_cbTask.CurSel(iItem);
+		nTaskIdx = m_cbTask.FindExact(m_strTask);
+
+		ASSERT(nTaskIdx != CB_ERR);
 	}
 
 	// Initialise task.
 	if (m_strLocn != "")
 	{
-		int iItem = m_cbLocn.FindExact(m_strLocn);
-		ASSERT(iItem != CB_ERR);
-			
-		m_cbLocn.CurSel(iItem);
+		nLocnIdx = m_cbLocn.FindExact(m_strLocn);
+
+		ASSERT(nLocnIdx != CB_ERR);
 	}
+
+	m_cbTask.CurSel(nTaskIdx);
+	m_cbLocn.CurSel(nLocnIdx);
 }
 
 /******************************************************************************
