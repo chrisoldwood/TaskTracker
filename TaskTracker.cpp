@@ -29,9 +29,9 @@ CTaskTracker App;
 */
 
 #ifdef _DEBUG
-const char* CTaskTracker::VERSION      = "v3.5 [Debug]";
+const char* CTaskTracker::VERSION      = "v3.6 [Debug]";
 #else
-const char* CTaskTracker::VERSION      = "v3.5";
+const char* CTaskTracker::VERSION      = "v3.6";
 #endif
 
 /******************************************************************************
