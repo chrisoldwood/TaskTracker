@@ -38,18 +38,19 @@
 #include "SessionListEnum.hpp"
 #include "TaskList.hpp"
 #include "TaskListEnum.hpp"
+#include "LocnList.hpp"
+#include "LocnListEnum.hpp"
 
 // GUI classes.
 #include "SessionListBox.hpp"
 #include "TaskComboBox.hpp"
+#include "LocnComboBox.hpp"
 
 // Report classes.
 #include "Report.hpp"
 #include "PrintReport.hpp"
 #include "FileReport.hpp"
 #include "TextReport.hpp"
-
-// Import/Export classes.
 
 // Main app classes.
 #include "AppCmds.hpp"
