@@ -37,6 +37,7 @@ CTaskTracker::CTaskTracker()
 	: CApp(m_AppWnd, m_AppCmds)
 	, m_bClockedIn(false)
 	, m_strLastTask("")
+	, m_strLastLocn("")
 	, m_pCurrSession(NULL)
 	, m_bModified(false)
 {
@@ -126,8 +127,9 @@ bool CTaskTracker::OnClose()
 	if (m_pCurrSession)
 		delete m_pCurrSession;
 	
-	// Free up the last task string.
+	// Free up strings.
 	m_strLastTask = "";
+	m_strLastLocn = "";
 
 	return true;
 }
@@ -140,27 +142,33 @@ bool CTaskTracker::OnClose()
 **
 ** Parameters:	dtIn		The date and time of clocking in.
 **				strTask		The task about to be done.
+**				strLocn		The location of the task.
 **
 ** Returns:		Nothing.
 **
 *******************************************************************************
 */
 
-void CTaskTracker::ClockIn(const CDateTime& dtIn, const CString& strTask)
+void CTaskTracker::ClockIn(const CDateTime& dtIn, const CString& strTask, const CString& strLocn)
 {
 	// Create a new session.
 	m_pCurrSession = new CSession;
 	ASSERT(m_pCurrSession);
 
 	// Initialise.
-	m_pCurrSession->Start(dtIn, strTask);
+	m_pCurrSession->Start(dtIn, strTask, strLocn);
 
 	// Add task to list if set.
 	if (strTask != "")
 		m_TaskList.Add(strTask);
 
+	// Add location to list if set.
+	if (strLocn != "")
+		m_LocnList.Add(strLocn);
+
 	// Update state.
 	m_strLastTask = strTask;
+	m_strLastLocn = strLocn;
 	m_bClockedIn  = true;
 	m_bModified   = true;
 
@@ -174,16 +182,17 @@ void CTaskTracker::ClockIn(const CDateTime& dtIn, const CString& strTask)
 **
 ** Parameters:	dtOut		The date and time of clocking out.
 **				strTask		The task just done.
+**				strLocn		The location of the task.
 **
 ** Returns:		Nothing.
 **
 *******************************************************************************
 */
 
-void CTaskTracker::ClockOut(const CDateTime& dtOut, const CString& strTask)
+void CTaskTracker::ClockOut(const CDateTime& dtOut, const CString& strTask, const CString& strLocn)
 {
 	// Complete session.
-	m_pCurrSession->Finish(dtOut, strTask);
+	m_pCurrSession->Finish(dtOut, strTask, strLocn);
 
 	// Add to list.
 	m_SessionList.Add(m_pCurrSession);
@@ -195,8 +204,13 @@ void CTaskTracker::ClockOut(const CDateTime& dtOut, const CString& strTask)
 	if (strTask != "")
 		m_TaskList.Add(strTask);
 	
+	// Add location to list if set.
+	if (strLocn != "")
+		m_LocnList.Add(strLocn);
+
 	// Update state.
 	m_strLastTask = strTask;
+	m_strLastLocn = strLocn;
 	m_bClockedIn  = false;
 	m_bModified   = true;
 
@@ -237,7 +251,7 @@ ulong CTaskTracker::TotalForPeriod(const CDateTime& dtStart, const CDateTime& dt
 		
 		// Create session based on current time.
 		dtCurrent.Set();
-		CurrSession.Finish(dtCurrent, "");
+		CurrSession.Finish(dtCurrent, "", "");
 		
 		lTotal += CurrSession.Length();
 	}
@@ -439,14 +453,14 @@ void CTaskTracker::ReadData(CFile& rFile)
 		*m_pCurrSession << rFile;
 	}
 
-	// Read last task.
+	// Read last used items.
 	rFile >> m_strLastTask;
+	rFile >> m_strLastLocn;
 	
-	// Read sessions.
+	// Read collections.
 	m_SessionList << rFile;
-
-	// Read tasks.
-	m_TaskList << rFile;
+	m_TaskList    << rFile;
+	m_LocnList    << rFile;
 }
 
 /******************************************************************************
@@ -519,49 +533,14 @@ void CTaskTracker::WriteData(CFile& rFile)
 	if (m_bClockedIn)
 		*m_pCurrSession >> rFile;
 
-	// Write last task.
+	// Write last used items.
 	rFile << m_strLastTask;
+	rFile << m_strLastLocn;
 	
-	// Write sessions.
+	// Write collections.
 	m_SessionList >> rFile;
-
-	// Write tasks.
-	m_TaskList >> rFile;
-}
-
-/******************************************************************************
-** Method:		ReportFileError()
-**
-** Description:	Report the file error to the user.
-**
-** Parameters:	eErr	The error.
-**				rPath	The files path.
-**
-** Returns:		Nothing.
-**
-*******************************************************************************
-*/
-
-void CTaskTracker::ReportFileError(FileErr eErr, const CPath& rPath) const
-{
-	char*		pszMsg      = "";
-	const char*	pszFileName = rPath;
-
-	// Decode error.
-	switch(eErr)
-	{
-		case OpenErr:		pszMsg = "Failed to open the file:\n\n%s";		break;
-		case CreateErr:		pszMsg = "Failed to create the file:\n\n%s";	break;
-		case ReadOnlyErr:	pszMsg = "The file is read-only:\n\n%s";		break;
-		case ReadErr:		pszMsg = "Failed to read from file:\n\n%s";		break;
-		case WriteErr:		pszMsg = "Failed to write to file:\n\n%s";		break;
-		case FormatErr:		pszMsg = "Invalid format for the file:\n\n%s";	break;
-		case VersionErr:	pszMsg = "Invalid version of the file:\n\n%s";	break;
-		default:			ASSERT(false);									break;
-	}
-	
-	// Show the message.
-	m_AppWnd.AlertMsg(pszMsg, pszFileName);
+	m_TaskList    >> rFile;
+	m_LocnList    >> rFile;
 }
 
 /******************************************************************************
@@ -1010,16 +989,25 @@ bool CTaskTracker::ReportDay(CReport& rDevice, const CDate& rDate, ulong& rlTota
 
 bool CTaskTracker::ReportSession(CReport& rDevice, CSession* pSession) const
 {
-	char 	szText[100];
+	CString	strText;
 	CString	strStart = pSession->Start().Time().ToString(CTime::HH_MM);
 	CString	strEnd   = pSession->Finish().Time().ToString(CTime::HH_MM);
 	CString strTask  = pSession->Task();
+	CString strLocn  = pSession->Location();
 	ulong	lLen     = pSession->Length();
 
-	sprintf(szText,"%s to %s for %s on %s", strStart, strEnd,
-					App.MinsToStr(lLen), strTask);
+	// Format core data.
+	strText.Format("%s to %s for %s", strStart, strEnd,	App.MinsToStr(lLen));
 
-	return rDevice.SendText(szText);
+	// Append task, if supplied.
+	if (strTask != "")
+		strText += " on " + strTask;
+
+	// Append location, if supplied.
+	if (strLocn != "")
+		strText += " at " + strLocn;
+
+	return rDevice.SendText(strText);
 }
 
 /******************************************************************************
