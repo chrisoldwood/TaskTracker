@@ -16,10 +16,10 @@
 */
 
 const char*	CSessionListView::apszLabels[NUM_COLUMNS] =
-{ "Day", "Date", "In", "Out", "Length", "Task"};
+{ "Day", "Date", "In", "Out", "Length", "Task", "Location" };
 
 const int	CSessionListView::aiWidths[NUM_COLUMNS] = 
-{    40,     75,   50,    50,       50,   100 };
+{    40,     60,   50,    50,       50,    125,         75 };
 
 /******************************************************************************
 ** Method:		Constructor.
@@ -117,6 +117,7 @@ void CSessionListView::Refresh()
 		CString	strStartTime = pSession->Start().Time().ToString(CTime::HH_MM);
 		CString	strEndTime   = pSession->Finish().Time().ToString(CTime::HH_MM);
 		CString strTask      = pSession->Task();
+		CString strLocation  = pSession->Location();
 		CString strLength;
 
 		// Create length string.
@@ -131,6 +132,7 @@ void CSessionListView::Refresh()
 		ItemText(i, 3, strEndTime);
 		ItemText(i, 4, strLength);
 		ItemText(i, 5, strTask);
+		ItemText(i, 6, strLocation);
     }
 
 	RestoreSel(iSel);

@@ -37,7 +37,7 @@ public:
 
 protected:
 	// Constants.
-	enum { NUM_COLUMNS = 6 };
+	enum { NUM_COLUMNS = 7 };
 
 	// Column data.
 	static const char*	apszLabels[];
