@@ -1,5 +1,3 @@
 - Two phase save.
 
-- Dialog tab orders.
-
 - Scroll to view when refreshing session list control.
