@@ -74,6 +74,9 @@
 #define IDC_OUT_DATETIME                1056
 #define IDC_IN_DATETIME                 1057
 #define IDC_LOCNS                       1059
+#define IDC_WEBSITE                     1083
+#define IDC_EMAIL                       1084
+#define IDC_VERSION                     1085
 #define IDD_MAIN                        5000
 #define IDD_ABOUT                       5001
 #define IDD_CLOCK_IN                    5002
