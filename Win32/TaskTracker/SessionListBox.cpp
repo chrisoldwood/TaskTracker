@@ -3,13 +3,23 @@
 **
 ** MODULE:		SESSNLB.CPP
 ** COMPONENT:	The Application.
-** DESCRIPTION:	CSessionListBox class definition.
+** DESCRIPTION:	CSessionListView class definition.
 **
 *******************************************************************************
 */
 
 #include "AppHeaders.hpp"
 #include <stdio.h>
+
+/******************************************************************************
+** Column definitions.
+*/
+
+const char*	CSessionListView::apszLabels[NUM_COLUMNS] =
+{ "Day", "Date", "In", "Out", "Length", "Task"};
+
+const int	CSessionListView::aiWidths[NUM_COLUMNS] = 
+{    40,     75,   50,    50,       50,   100 };
 
 /******************************************************************************
 ** Method:		Constructor.
@@ -23,7 +33,7 @@
 *******************************************************************************
 */
 
-CSessionListBox::CSessionListBox()
+CSessionListView::CSessionListView()
 {
 }
 
@@ -39,7 +49,7 @@ CSessionListBox::CSessionListBox()
 *******************************************************************************
 */
 
-CSessionListBox::~CSessionListBox()
+CSessionListView::~CSessionListView()
 {
 }
 
@@ -55,20 +65,22 @@ CSessionListBox::~CSessionListBox()
 *******************************************************************************
 */
 
-void CSessionListBox::OnCreate(const CRect&)
+void CSessionListView::OnCreate(const CRect&)
 {
-	// Set the tab stops.
-	enum { NUM_TABSTOPS = 5 };
-	int aiTabStops[NUM_TABSTOPS] = { 20, 55, 80, 105, 130 };
+	// Change style.
+	FullRowSelect(true);
+	GridLines(true);
 
-	SetTabStops(NUM_TABSTOPS, aiTabStops);
+	// Add the columns.
+	for (int i = 0; i < NUM_COLUMNS; i++)
+		InsertColumn(i, apszLabels[i], aiWidths[i]);
 
 	// Fill listbox.
 	Refresh();
 	
 	// Select 1st item, if one.
-	if (App.SessionList().Length())
-		CurSel(0);
+	if (ItemCount())
+		Select(0);
 }
 
 /******************************************************************************
@@ -83,17 +95,16 @@ void CSessionListBox::OnCreate(const CRect&)
 *******************************************************************************
 */
 
-void CSessionListBox::Refresh() const
+void CSessionListView::Refresh()
 {
 	// Save current selection.
-	int iSel = CurSel();
+	int iSel = Selected();
 
-	// Empty listbox.
-	Reset();
+	// Empty contents.
+	DeleteAllItems();
 
 	CSessionEnum	Enum(App.SessionList());
 	CSession*		pSession;
-	CString			strSession;
 	
 	// For all sessions within the period.
 	while((pSession = Enum.Next()) != NULL)
@@ -111,18 +122,16 @@ void CSessionListBox::Refresh() const
 		// Create length string.
 		strLength.Format("%02d:%02d", nLength / 60,  nLength % 60);
 
-		// Convert to a string and add.
-		strSession.Format("%s\t%s\t%s\t%s\t%s\t%s", strStartDay, strStartDate,
-							strStartTime, strEndTime, strLength, strTask);
-		int iIdx = Add(strSession);
-		
-		// Add session as item data.
-		ItemData(iIdx, (LPARAM)pSession);
+		// Add the item.
+		int i = AppendItem("", pSession);
+
+		ItemText(i, 0, strStartDay);
+		ItemText(i, 1, strStartDate);
+		ItemText(i, 2, strStartTime);
+		ItemText(i, 3, strEndTime);
+		ItemText(i, 4, strLength);
+		ItemText(i, 5, strTask);
     }
-    
-    // Was current selection?
-    if (iSel != LB_ERR)
-    	CurSel(iSel);
-    else
-    	CurSel(0);
+
+	RestoreSel(iSel);
 }

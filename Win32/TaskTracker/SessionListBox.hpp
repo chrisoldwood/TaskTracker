@@ -3,7 +3,7 @@
 **
 ** MODULE:		SESSNLB.HPP
 ** COMPONENT:	The Application.
-** DESCRIPTION:	The CSessionListBox class declaration.
+** DESCRIPTION:	The CSessionListView class declaration.
 **
 *******************************************************************************
 */
@@ -14,30 +14,34 @@
 
 /******************************************************************************
 ** 
-** This is a list box used to display the list of sessions.
+** This is a list view used to display the list of sessions.
+** NB: This class used to be based on a CListBox.
 **
 *******************************************************************************
 */
 
-class CSessionListBox : public CListBox
+class CSessionListView : public CListView
 {
 public:
 	//
 	// Constructors/Destructor.
 	//
-	CSessionListBox();
-	~CSessionListBox();
+	CSessionListView();
+	~CSessionListView();
 	
 	//
 	// Methods.
 	//
-	void Refresh() const;
-	CSession* CurrSession() const;
+	void Refresh();
+	CSession* CurrSession();
 
 protected:
-	//
-	// Members.
-	//
+	// Constants.
+	enum { NUM_COLUMNS = 6 };
+
+	// Column data.
+	static const char*	apszLabels[];
+	static const int	aiWidths[];
 
 	//
 	// Message processors.
@@ -52,9 +56,9 @@ protected:
 *******************************************************************************
 */
 
-inline CSession* CSessionListBox::CurrSession() const
+inline CSession* CSessionListView::CurrSession()
 {
-	return (CSession*) ItemData(CurSel());
+	return (CSession*) ItemData(Selected());
 }
 
 #endif //SESSNLB_HPP
