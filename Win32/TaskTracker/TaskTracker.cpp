@@ -418,11 +418,11 @@ bool CTaskTracker::LoadData()
 		
 		// Check header.
 		if ( (szMagic[0] != 'T') || (szMagic[1] != 'T') )
-			throw CFileException(CFileException::E_FORMAT_INVALID, AppFile);
+			throw CFileException(CFileException::E_FORMAT_INVALID, AppFilePath);
 		
 		// Check version number.
 		if (iVersion != DAT_FILE_VERSION)
-			throw CFileException(CFileException::E_VERSION_INVALID, AppFile);
+			throw CFileException(CFileException::E_VERSION_INVALID, AppFilePath);
 		
 		// Read the actual data.
 		ReadData(AppFile);
