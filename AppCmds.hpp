@@ -54,7 +54,6 @@ public:
 	void OnPruneTasks();
 
 	// Help menu.
-	void OnHelpContents();
 	void OnHelpAbout();
 
 	//

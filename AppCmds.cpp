@@ -50,8 +50,7 @@ CAppCmds::CAppCmds()
 		CMD_ENTRY(ID_REPORT_FILE,			OnReportFile,			NULL,					9)
 		CMD_ENTRY(ID_PRUNE_SESSIONS,		OnPruneSessions,		NULL,					-1)
 		CMD_ENTRY(ID_PRUNE_TASKS,			OnPruneTasks,			NULL,					-1)
-		CMD_ENTRY(ID_HELP_CONTENTS,			OnHelpContents,			NULL,					10)
-		CMD_ENTRY(ID_HELP_ABOUT,			OnHelpAbout,			NULL,					-1)
+		CMD_ENTRY(ID_HELP_ABOUT,			OnHelpAbout,			NULL,					10)
 	END_CMD_TABLE
 }
 
@@ -616,23 +615,6 @@ void CAppCmds::OnPruneTasks()
 		// Update dirty flag.
 		App.Modified();
 	}
-}
-
-/******************************************************************************
-** Method:		OnHelpContents()
-**
-** Description:	Show the helps' contents page.
-**
-** Parameters:	None.
-**
-** Returns:		Nothing.
-**
-*******************************************************************************
-*/
-
-void CAppCmds::OnHelpContents()
-{
-	App.m_AppWnd.NotifyMsg("No help available yet");
 }
 
 /******************************************************************************
