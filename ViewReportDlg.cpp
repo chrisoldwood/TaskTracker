@@ -23,12 +23,18 @@
 *******************************************************************************
 */
 
-CViewReportDlg::CViewReportDlg(CMemStream& rTxtStream) : CDialog(IDD_VIEW_REPORT)
+CViewReportDlg::CViewReportDlg(CMemStream& rTxtStream) 
+	: CDialog(IDD_VIEW_REPORT)
 	, m_rTxtStream(rTxtStream)
 {
 	DEFINE_CTRL_TABLE
-		CTRL(IDC_REPORT,	&m_ebReport)
+		CTRL(IDC_REPORT, &m_ebReport)
 	END_CTRL_TABLE
+
+	DEFINE_GRAVITY_TABLE
+		CTRLGRAV(IDC_REPORT, LEFT_EDGE, TOP_EDGE,    RIGHT_EDGE, BOTTOM_EDGE)
+		CTRLGRAV(IDOK,       LEFT_EDGE, BOTTOM_EDGE, LEFT_EDGE,  BOTTOM_EDGE)
+	END_GRAVITY_TABLE
 }
 
 /******************************************************************************
