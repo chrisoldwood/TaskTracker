@@ -141,6 +141,14 @@ SOURCE=.\FileReportDlg.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\LocnComboBox.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\LocnList.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\ModifySessionDlg.cpp
 # End Source File
 # Begin Source File
@@ -150,6 +158,10 @@ SOURCE=.\PrintReport.cpp
 # Begin Source File
 
 SOURCE=.\PrintReportDlg.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\PruneLocnsDlg.cpp
 # End Source File
 # Begin Source File
 
@@ -261,6 +273,18 @@ SOURCE=.\FileReportDlg.hpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\LocnComboBox.hpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\LocnList.hpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\LocnListEnum.hpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\ModifySessionDlg.hpp
 # End Source File
 # Begin Source File
@@ -270,6 +294,10 @@ SOURCE=.\PrintReport.hpp
 # Begin Source File
 
 SOURCE=.\PrintReportDlg.hpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\PruneLocnsDlg.hpp
 # End Source File
 # Begin Source File
 
