@@ -114,6 +114,8 @@ public:
 	ulong TotalForMonth(const CDate& rDate) const;
 	ulong TotalOverall() const;
 
+	void DeleteAllData();
+
 	//
 	// Serialisation.
 	//

@@ -1175,3 +1175,30 @@ void CTaskTracker::PeriodToDates(Period ePeriod, CDate& rFromDate, CDate& rToDat
 			break;
 	}
 }
+
+/******************************************************************************
+** Method:		DeleteAllData()
+**
+** Description:	Deletes all sessions, tasks and locations.
+**
+** Parameters:	None.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CTaskTracker::DeleteAllData()
+{
+	// Reset collections.
+	m_SessionList.RemoveAll();
+	m_TaskList.RemoveAll();
+	m_LocnList.RemoveAll();
+
+	// Reset last used items.
+	m_strLastTask = "";
+	m_strLastLocn = "";
+
+	// Update state.
+	m_bModified = true;
+}
