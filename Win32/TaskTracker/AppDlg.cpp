@@ -96,7 +96,7 @@ void CAppDlg::OnDestroy()
 *******************************************************************************
 */
 
-void CAppDlg::OnTimer(uint iTimerID)
+void CAppDlg::OnTimer(uint /*iTimerID*/)
 {
 	CDateTime	dtCurrent;
 	
