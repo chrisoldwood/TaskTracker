@@ -22,6 +22,19 @@
 CTaskTracker App;
 
 /******************************************************************************
+**
+** Class constants.
+**
+*******************************************************************************
+*/
+
+#ifdef _DEBUG
+const char* CTaskTracker::VERSION      = "v3.5 [Debug]";
+#else
+const char* CTaskTracker::VERSION      = "v3.5";
+#endif
+
+/******************************************************************************
 ** Method:		Constructor
 **
 ** Description:	Default constructor.
