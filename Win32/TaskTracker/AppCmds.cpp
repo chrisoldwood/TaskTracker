@@ -16,6 +16,7 @@
 #include "EditSessionDlg.hpp"
 #include "PruneSessionsDlg.hpp"
 #include "PruneTasksDlg.hpp"
+#include "PruneLocnsDlg.hpp"
 #include "ClpWndReportDlg.hpp"
 #include "FileReportDlg.hpp"
 #include "PrintReportDlg.hpp"
@@ -48,8 +49,9 @@ CAppCmds::CAppCmds()
 		CMD_ENTRY(ID_REPORT_CLIPBOARD,		OnReportClipboard,		NULL,					7)
 		CMD_ENTRY(ID_REPORT_PRINT,			OnReportPrint,			NULL,					8)
 		CMD_ENTRY(ID_REPORT_FILE,			OnReportFile,			NULL,					9)
-		CMD_ENTRY(ID_PRUNE_SESSIONS,		OnPruneSessions,		NULL,					-1)
-		CMD_ENTRY(ID_PRUNE_TASKS,			OnPruneTasks,			NULL,					-1)
+		CMD_ENTRY(ID_PRUNE_SESSIONS,		OnPruneSessions,		OnUIPruneSessions,		-1)
+		CMD_ENTRY(ID_PRUNE_TASKS,			OnPruneTasks,			OnUIPruneTasks,			-1)
+		CMD_ENTRY(ID_PRUNE_LOCNS,			OnPruneLocations,		OnUIPruneLocations,		-1)
 		CMD_ENTRY(ID_HELP_ABOUT,			OnHelpAbout,			NULL,					10)
 	END_CMD_TABLE
 }
@@ -171,6 +173,7 @@ void CAppCmds::OnFileImport()
 		// Free the existing data.
 		rSessions.RemoveAll();
 		rTasks.RemoveAll();
+		App.Modified();
 
 		// Open the file.
 		File.Open(Path, CStream::ReadOnly);
@@ -248,8 +251,8 @@ void CAppCmds::OnFileImport()
 			// Allocate a new session and initialise.
 			CSession* pSession = new CSession;
 
-			pSession->Start (CDateTime(dStartDate, tStartTime), strTask);
-			pSession->Finish(CDateTime(dEndDate,   tEndTime),   strTask);
+			pSession->Start (CDateTime(dStartDate, tStartTime), strTask, "");
+			pSession->Finish(CDateTime(dEndDate,   tEndTime),   strTask, "");
 			
 			// Add to the lists.
 			rSessions.Add(pSession);
@@ -303,7 +306,7 @@ void CAppCmds::OnSessionClockIn()
 	
 	if (Dlg.RunModal(App.m_rMainWnd) == IDOK)
 	{
-		App.ClockIn(Dlg.m_dtDateTime, Dlg.m_strTask);
+		App.ClockIn(Dlg.m_dtDateTime, Dlg.m_strTask, Dlg.m_strLocn);
 		App.m_AppWnd.m_AppDlg.Update();
 	}
 }
@@ -322,8 +325,20 @@ void CAppCmds::OnSessionClockIn()
 
 void CAppCmds::OnSessionSwitchTasks()
 {
+	CDateTime dtCurrent = CDateTime::Current();
+	CString   strLocn   = App.CurrentSession()->Location();
+
+	// Check we haven't clocked in later than now.
+	if (dtCurrent < App.CurrentSession()->Start())
+	{
+		const char* pszMsg = "You cannot switch tasks because the time\n"
+							 "you clocked in is later than the time now.";
+
+		App.AlertMsg(pszMsg);
+		return;
+	}
+
 	CSwitchTasksDlg	Dlg;
-	CDateTime		dtCurrent;
 	
 	if (Dlg.RunModal(App.m_rMainWnd) == IDOK)
 	{
@@ -332,8 +347,8 @@ void CAppCmds::OnSessionSwitchTasks()
 		// Strip seconds.
 		dtCurrent -= CDateTimeSpan(dtCurrent.Time().Secs());
 	
-		App.ClockOut(dtCurrent, Dlg.m_strPrevTask);
-		App.ClockIn(dtCurrent, Dlg.m_strNextTask);
+		App.ClockOut(dtCurrent, Dlg.m_strPrevTask, strLocn);
+		App.ClockIn(dtCurrent, Dlg.m_strNextTask, strLocn);
 		App.m_AppWnd.m_AppDlg.Update();
 	}
 }
@@ -356,7 +371,7 @@ void CAppCmds::OnSessionClockOut()
 	
 	if (Dlg.RunModal(App.m_rMainWnd) == IDOK)
 	{
-		App.ClockOut(Dlg.m_dtDateTime, Dlg.m_strTask);
+		App.ClockOut(Dlg.m_dtDateTime, Dlg.m_strTask, Dlg.m_strLocn);
 		App.m_AppWnd.m_AppDlg.Update();
 	}
 }
@@ -618,6 +633,37 @@ void CAppCmds::OnPruneTasks()
 }
 
 /******************************************************************************
+** Method:		OnPruneLocations()
+**
+** Description:	Show the prune locations dialog.
+**
+** Parameters:	None.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CAppCmds::OnPruneLocations()
+{
+	CPruneLocnsDlg Dlg;
+	
+	if (Dlg.RunModal(App.m_rMainWnd) == IDOK)
+	{
+		CLocnList&		rAppLocnList = App.LocnList();
+		CLocnListEnum	Enum(Dlg.m_LocnList);
+		CString*		pString;
+		
+		// For all locations.
+		while((pString = Enum.Next()) != NULL)
+			rAppLocnList.Remove(*pString);
+		
+		// Update dirty flag.
+		App.Modified();
+	}
+}
+
+/******************************************************************************
 ** Method:		OnHelpAbout()
 **
 ** Description:	Show the about dialog.
@@ -673,4 +719,25 @@ void CAppCmds::OnUISessionClockOut()
 
 	App.m_AppWnd.m_Menu.EnableCmd(ID_SESSION_CLOCK_OUT, bClockedIn);
 	App.m_AppWnd.m_ToolBar.m_ClockOutBtn.Enable(bClockedIn);
+}
+
+void CAppCmds::OnUIPruneSessions()
+{
+	bool bItems = (App.SessionList().Length() > 0);
+
+	App.m_AppWnd.m_Menu.EnableCmd(ID_PRUNE_SESSIONS, bItems);
+}
+
+void CAppCmds::OnUIPruneTasks()
+{
+	bool bItems = (App.TaskList().Length() > 0);
+
+	App.m_AppWnd.m_Menu.EnableCmd(ID_PRUNE_TASKS, bItems);
+}
+
+void CAppCmds::OnUIPruneLocations()
+{
+	bool bItems = (App.LocnList().Length() > 0);
+
+	App.m_AppWnd.m_Menu.EnableCmd(ID_PRUNE_LOCNS, bItems);
 }
