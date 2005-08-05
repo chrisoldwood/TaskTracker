@@ -647,27 +647,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="SessionListEnum.cpp">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-						BrowseInformation="1"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath="SwitchTasksDlg.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -860,9 +839,6 @@
 				RelativePath="LocnList.hpp">
 			</File>
 			<File
-				RelativePath="LocnListEnum.hpp">
-			</File>
-			<File
 				RelativePath="ModifySessionDlg.hpp">
 			</File>
 			<File
@@ -896,9 +872,6 @@
 				RelativePath="SessionListBox.hpp">
 			</File>
 			<File
-				RelativePath="SessionListEnum.hpp">
-			</File>
-			<File
 				RelativePath="SwitchTasksDlg.hpp">
 			</File>
 			<File
@@ -906,9 +879,6 @@
 			</File>
 			<File
 				RelativePath="TaskList.hpp">
-			</File>
-			<File
-				RelativePath="TaskListEnum.hpp">
 			</File>
 			<File
 				RelativePath="TaskTracker.hpp">
