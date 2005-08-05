@@ -50,26 +50,31 @@ CSessionList::~CSessionList()
 **
 ** Parameters:	pNewSession		The new session.
 **
-** Returns:		The position of insertion.
+** Returns:		Nothing.
 **
 *******************************************************************************
 */
 
-int CSessionList::Add(CSession* pNewSession)
+void CSessionList::Add(CSession* pNewSession)
 {
-	CSessionEnum	Enum(*this);
-	CSession*		pSession;
-	
-	// For all sessions.
-	while((pSession = Enum.Next()) != NULL)
+	// Template shorthands.
+	typedef iterator CIter;
+
+	// For all sessions...
+	for(CIter oIter = begin(); oIter != end(); ++oIter)
 	{
-		/* New session starts earlier? */
+		CSession* pSession = *oIter;
+
+		// New session starts earlier?
 		if (pNewSession->Start() < pSession->Start())
-			return CPtrList::InsertBefore(pSession, pNewSession);
+		{
+			insert(oIter, pNewSession);
+			return;
+		}
     }
     
 	// List is empty or session belongs at end.
-	return CPtrList::AddToTail(pNewSession);
+	push_back(pNewSession);
 }
 
 /******************************************************************************
@@ -79,14 +84,14 @@ int CSessionList::Add(CSession* pNewSession)
 **
 ** Parameters:	pSession	The session to remove.
 **
-** Returns:		The position of deletion.
+** Returns:		Nothing.
 **
 *******************************************************************************
 */
 
-int CSessionList::Remove(CSession* pSession)
+void CSessionList::Remove(CSession* pSession)
 {
-	return CPtrList::Remove(pSession);
+	remove(pSession);
 }
 
 /******************************************************************************
@@ -103,14 +108,38 @@ int CSessionList::Remove(CSession* pSession)
 
 void CSessionList::RemoveAll()
 {
-	CSessionEnum	Enum(*this);
-	CSession*		pSession;
-	
-	// Free all sessions.
-	while((pSession = Enum.Next()) != NULL)
-		delete pSession;
+	// Template shorthands.
+	typedef const_iterator CIter;
 
-	CPtrList::RemoveAll();
+	// Free all sessions.
+	for(CIter oIter = begin(); oIter != end(); ++oIter)
+		delete *oIter;
+
+	clear();
+}
+
+/******************************************************************************
+** Method:		IndexOf()
+**
+** Description:	Gets the index of the session in the list.
+**
+** Parameters:	pSession	The session to find.
+**
+** Returns:		The position.
+**
+*******************************************************************************
+*/
+
+int CSessionList::IndexOf(const CSession* pSession) const
+{
+	// Template shorthands.
+	typedef const_iterator CIter;
+
+	CIter oIter = std::find(begin(), end(), pSession);
+
+	ASSERT(oIter != end());
+
+	return std::distance(begin(), oIter);
 }
 
 /******************************************************************************
@@ -127,8 +156,7 @@ void CSessionList::RemoveAll()
 
 void CSessionList::operator <<(CStream& rStream)
 {
-	CSession*	pSession;
-	int16 		iCount;
+	int16 iCount;
 	
 	// Read count.
 	rStream >> iCount;
@@ -136,12 +164,11 @@ void CSessionList::operator <<(CStream& rStream)
 	// Read sessions.
 	while(iCount--)
 	{
-		pSession = new CSession;
-		ASSERT(pSession != NULL);
+		CSession* pSession = new CSession;
 
 		*pSession << rStream;
 			
-		Add(pSession);
+		push_back(pSession);
 	}
 }
 
@@ -159,14 +186,15 @@ void CSessionList::operator <<(CStream& rStream)
 
 void CSessionList::operator >>(CStream& rStream) const
 {
-	CSessionEnum	Enum(*this);
-	CSession*		pSession;
-	int16			iCount = (int16) Length();
+	// Template shorthands.
+	typedef const_iterator CIter;
+
+	int16 iCount = (int16) size();
 	
 	// Write count.
 	rStream << iCount;
 	
 	// Write sessions.
-	while((pSession = Enum.Next()) != NULL)
-		*pSession >> rStream;
+	for(CIter oIter = begin(); oIter != end(); ++oIter)
+		*(*oIter) >> rStream;
 }
