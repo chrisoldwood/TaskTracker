@@ -35,11 +35,8 @@
 
 // Collection classes.
 #include "SessionList.hpp"
-#include "SessionListEnum.hpp"
 #include "TaskList.hpp"
-#include "TaskListEnum.hpp"
 #include "LocnList.hpp"
-#include "LocnListEnum.hpp"
 
 // GUI classes.
 #include "SessionListBox.hpp"
