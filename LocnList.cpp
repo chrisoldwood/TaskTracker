@@ -57,17 +57,11 @@ CLocnList::~CLocnList()
 
 void CLocnList::Add(const char* pszLocn)
 {
-	// String already in list?.
-	CString* pString = Find(pszLocn);
-	if (pString)
+	// Ignore, if string already in list.
+	if (std::find(begin(), end(), pszLocn) != end())
 		return;
 
-	// Make a copy.
-	pString = new CString(pszLocn);
-	ASSERT(pString);
-
-	// And add it.
-	CPtrList::AddToTail(pString);
+	push_back(pszLocn);
 }
 
 /******************************************************************************
@@ -84,13 +78,9 @@ void CLocnList::Add(const char* pszLocn)
 
 void CLocnList::Remove(const char* pszLocn)
 {
-	// Find the string.
-	CString* pString = Find(pszLocn);
-	ASSERT(pString);
+	ASSERT(std::find(begin(), end(), pszLocn) != end());
 
-	// And delete.
-	CPtrList::Remove(pString);
-	delete pString;
+	remove(pszLocn);
 }
 
 /******************************************************************************
@@ -107,42 +97,7 @@ void CLocnList::Remove(const char* pszLocn)
 
 void CLocnList::RemoveAll()
 {
-	CLocnListEnum	Enum(*this);
-	CString*		pString;
-	
-	// Free all tasks.
-	while((pString = Enum.Next()) != NULL)
-		delete pString;
-
-	CPtrList::RemoveAll();
-}
-
-/******************************************************************************
-** Method:		Find()
-**
-** Description:	Finds a location in the list.
-**
-** Parameters:	pszLocn		The location.
-**
-** Returns:		The string if found or NULL.
-**
-*******************************************************************************
-*/
-
-CString* CLocnList::Find(const char* pszLocn) const
-{
-	CLocnListEnum	Enum(*this);
-	CString*		pString;
-	
-	// For all tasks.
-	while((pString = Enum.Next()) != NULL)
-	{
-		// Match?
-		if (*pString == pszLocn)
-			return pString;
-	}
-
-	return NULL;
+	clear();
 }
 
 /******************************************************************************
@@ -159,21 +114,19 @@ CString* CLocnList::Find(const char* pszLocn) const
 
 void CLocnList::operator <<(CStream& rStream)
 {
-	CString*	pTask;
-	int16 		iCount;
+	int16 iCount;
 	
 	// Read count.
 	rStream >> iCount;
 
-	// Read tasks.
+	// Read locations.
 	while(iCount--)
 	{
-		pTask = new CString;
-		ASSERT(pTask != NULL);
+		CString strLocn;
 
-		rStream >> *pTask;
+		rStream >> strLocn;
 
-		CPtrList::AddToTail(pTask);
+		push_back(strLocn);
 	}
 }
 
@@ -191,14 +144,15 @@ void CLocnList::operator <<(CStream& rStream)
 
 void CLocnList::operator >>(CStream& rStream) const
 {
-	CLocnListEnum	Enum(*this);
-	CString*		pTask;
-	int16			iCount = (int16) Length();
+	// Template shorthands.
+	typedef const_iterator CIter;
+
+	int16 iCount = (int16) size();
 	
 	// Write count.
 	rStream << iCount;
 	
-	// Write tasks.
-	while((pTask = Enum.Next()) != NULL)
-		rStream << *pTask;
+	// Write locations.
+	for(CIter oIter = begin(); oIter != end(); ++oIter)
+		rStream << (*oIter);
 }

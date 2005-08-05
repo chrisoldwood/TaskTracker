@@ -57,17 +57,11 @@ CTaskList::~CTaskList()
 
 void CTaskList::Add(const char* pszTask)
 {
-	// String already in list?.
-	CString* pString = Find(pszTask);
-	if (pString)
+	// Ignore, if string already in list.
+	if (std::find(begin(), end(), pszTask) != end())
 		return;
 
-	// Make a copy.
-	pString = new CString(pszTask);
-	ASSERT(pString);
-
-	// And add it.
-	CPtrList::AddToTail(pString);
+	push_back(pszTask);
 }
 
 /******************************************************************************
@@ -84,13 +78,9 @@ void CTaskList::Add(const char* pszTask)
 
 void CTaskList::Remove(const char* pszTask)
 {
-	// Find the string.
-	CString* pString = Find(pszTask);
-	ASSERT(pString);
+	ASSERT(std::find(begin(), end(), pszTask) != end());
 
-	// And delete.
-	CPtrList::Remove(pString);
-	delete pString;
+	remove(pszTask);
 }
 
 /******************************************************************************
@@ -107,42 +97,7 @@ void CTaskList::Remove(const char* pszTask)
 
 void CTaskList::RemoveAll()
 {
-	CTaskListEnum	Enum(*this);
-	CString*		pString;
-	
-	// Free all tasks.
-	while((pString = Enum.Next()) != NULL)
-		delete pString;
-
-	CPtrList::RemoveAll();
-}
-
-/******************************************************************************
-** Method:		Find()
-**
-** Description:	Finds a task in the list.
-**
-** Parameters:	pszTask		The task.
-**
-** Returns:		The string if found or NULL.
-**
-*******************************************************************************
-*/
-
-CString* CTaskList::Find(const char* pszTask) const
-{
-	CTaskListEnum	Enum(*this);
-	CString*		pString;
-	
-	// For all tasks.
-	while((pString = Enum.Next()) != NULL)
-	{
-		// Match?
-		if (*pString == pszTask)
-			return pString;
-	}
-
-	return NULL;
+	clear();
 }
 
 /******************************************************************************
@@ -159,8 +114,7 @@ CString* CTaskList::Find(const char* pszTask) const
 
 void CTaskList::operator <<(CStream& rStream)
 {
-	CString*	pTask;
-	int16 		iCount;
+	int16 iCount;
 	
 	// Read count.
 	rStream >> iCount;
@@ -168,12 +122,11 @@ void CTaskList::operator <<(CStream& rStream)
 	// Read tasks.
 	while(iCount--)
 	{
-		pTask = new CString;
-		ASSERT(pTask != NULL);
+		CString strTask;
 
-		rStream >> *pTask;
+		rStream >> strTask;
 
-		CPtrList::AddToTail(pTask);
+		push_back(strTask);
 	}
 }
 
@@ -191,14 +144,15 @@ void CTaskList::operator <<(CStream& rStream)
 
 void CTaskList::operator >>(CStream& rStream) const
 {
-	CTaskListEnum	Enum(*this);
-	CString*		pTask;
-	int16			iCount = (int16) Length();
+	// Template shorthands.
+	typedef const_iterator CIter;
+
+	int16 iCount = (int16) size();
 	
 	// Write count.
 	rStream << iCount;
 	
 	// Write tasks.
-	while((pTask = Enum.Next()) != NULL)
-		rStream << *pTask;
+	for(CIter oIter = begin(); oIter != end(); ++oIter)
+		rStream << (*oIter);
 }

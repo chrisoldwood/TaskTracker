@@ -16,10 +16,12 @@
 ** 
 ** This class is used to hold a list of locations previously used.
 **
+** NB: This class used to derive from CPtrList.
+**
 *******************************************************************************
 */
 
-class CLocnList : public CPtrList
+class CLocnList : public std::list<CString>
 {
 public:
 	//
@@ -49,7 +51,6 @@ protected:
 	//
 	// Methods.
 	//
-	CString* Find(const char* pszLocn) const;
 };
 
 /******************************************************************************
