@@ -44,21 +44,20 @@ CPruneTasksDlg::CPruneTasksDlg() : CDialog(IDD_PRUNE_TASKS)
 
 void CPruneTasksDlg::OnInitDialog()
 {
-	CTaskListEnum	Enum(App.TaskList());
-	CString*		pString;
-	
-	// For all tasks.
-	while((pString = Enum.Next()) != NULL)
+	// Template shorthands.
+	typedef CTaskList::const_iterator CTaskIter;
+	typedef CSessionList::const_iterator CSessIter;
+
+	// For all tasks...
+	for(CTaskIter oTaskIter = App.TaskList().begin(); oTaskIter != App.TaskList().end(); ++oTaskIter)
 	{
-		CSessionEnum	Enum(App.SessionList());
-		CSession*		pSession;
-		bool			bInUse = false;
+		bool bInUse = false;
 
 		// For all sessions.
-		while((pSession = Enum.Next()) != NULL)
+		for(CSessIter oSessIter = App.SessionList().begin(); oSessIter != App.SessionList().end(); ++oSessIter)
         {
         	// Task in use?
-        	if (*pString == pSession->Task())
+        	if ((*oTaskIter) == (*oSessIter)->Task())
         	{
         		bInUse = true;
         		break;
@@ -66,16 +65,16 @@ void CPruneTasksDlg::OnInitDialog()
         }
         
         // Task in use by current session?
-        if ( (App.CurrentSession()) && (*pString == App.CurrentSession()->Task()) )
+        if ( (App.CurrentSession()) && ((*oTaskIter) == App.CurrentSession()->Task()) )
         	bInUse = true;
 
         // Task in use as "Last Task"?
-        if (*pString == App.LastTask())
+        if ((*oTaskIter) == App.LastTask())
         	bInUse = true;
         
 		// Add task if not in use?
 		if (!bInUse)
-			m_lbTasks.Add(*pString);
+			m_lbTasks.Add(*oTaskIter);
 	}
 
 	// Nothing to delete?

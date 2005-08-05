@@ -56,12 +56,12 @@ CTaskCombo::~CTaskCombo()
 
 void CTaskCombo::OnCreate(const CRect&)
 {
-	CTaskListEnum	Enum(App.TaskList());
-	CString*		pString;
-	
+	// Template shorthands.
+	typedef CTaskList::const_iterator CIter;
+
 	// Add all tasks.
-	while((pString = Enum.Next()) != NULL)
-		Add(*pString);
+	for(CIter oIter = App.TaskList().begin(); oIter != App.TaskList().end(); ++oIter)
+		Add(*oIter);
 	
 	// Select last task, if one
 	if (App.LastTask() != "")

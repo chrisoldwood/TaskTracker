@@ -246,13 +246,19 @@ void CTaskTracker::ClockOut(const CDateTime& dtOut, const CString& strTask, cons
 
 ulong CTaskTracker::TotalForPeriod(const CDateTime& dtStart, const CDateTime& dtEnd) const
 {
-	CSessionEnum	Enum(m_SessionList, dtStart, dtEnd);
-	CSession*		pSession;
-	ulong			lTotal = 0;
-	
+	// Template shorthands.
+	typedef CSessionList::const_iterator CIter;
+
+	CIsSessionInRange oRange(dtStart, dtEnd);
+	CIter             oIter(m_SessionList.begin());
+	ulong			  lTotal = 0;
+
 	// For all sessions within the period.
-	while((pSession = Enum.Next()) != NULL)
-		lTotal += pSession->Length();
+	while ((oIter = std::find_if(oIter, m_SessionList.end(), oRange)) != m_SessionList.end())
+	{
+		lTotal += (*oIter)->Length();
+		++oIter;
+	}
 	
 	// Current session in period?
 	if ( (m_bClockedIn)
@@ -642,17 +648,23 @@ void CTaskTracker::ReportData(CReport& rDevice, Grouping eGrouping, const CDate&
 bool CTaskTracker::ReportUngrouped(CReport& rDevice, ulong& rlTotal, const CDateTime& dtFrom,
 							const CDateTime& dtTo) const
 {
-    CDate			DateDone;
-	CSession*		pSession = NULL;
-	CSessionEnum	Enum(App.SessionList(), dtFrom, dtTo);
-	ulong			lDayTotal = 0;
+	// Template shorthands.
+	typedef CSessionList::const_iterator CIter;
+
+    CDate DateDone;
+	ulong lDayTotal = 0;
 	
 	// Init total.
 	rlTotal = 0;
 
-	// For all sessions.
-	while((pSession = Enum.Next()) != NULL)
+	CIsSessionInRange oRange(dtFrom, dtTo);
+	CIter             oIter(m_SessionList.begin());
+
+	// For all sessions in range...
+	while ((oIter = std::find_if(oIter, m_SessionList.end(), oRange)) != m_SessionList.end())
 	{
+		CSession* pSession = *oIter;
+
 		// New day?
 		if (pSession->Start().Date() > DateDone)
 		{
@@ -666,6 +678,8 @@ bool CTaskTracker::ReportUngrouped(CReport& rDevice, ulong& rlTotal, const CDate
 			DateDone = pSession->Start().Date();
 			rlTotal += lDayTotal;
 		}
+
+		++oIter;
 	}
 
 	return true;
@@ -689,20 +703,29 @@ bool CTaskTracker::ReportUngrouped(CReport& rDevice, ulong& rlTotal, const CDate
 bool CTaskTracker::ReportByWeek(CReport& rDevice, ulong& rlTotal, const CDateTime& dtFrom,
 						const CDateTime& dtTo) const
 {
-	CDateTime		dtStart;
-	CDateTime		dtEnd;
-	CSession*		pSession = NULL;
-	CSessionEnum	Enum(App.SessionList(), dtFrom, dtTo);
+	// Template shorthands.
+	typedef CSessionList::const_iterator CIter;
+
+	CDateTime dtStart;
+	CDateTime dtEnd;
 
 	// Init total.
 	rlTotal = 0;
 
-	// For all sessions.
-	while((pSession = Enum.Next()) != NULL)
+	CIsSessionInRange oRange(dtFrom, dtTo);
+	CIter             oIter(m_SessionList.begin());
+
+	// For all sessions in range...
+	while ((oIter = std::find_if(oIter, m_SessionList.end(), oRange)) != m_SessionList.end())
 	{
+		CSession* pSession = *oIter;
+
 		// Skip sessions still in current week.
 		if ( (pSession->Start() >= dtStart) && (pSession->Start() < dtEnd) )
+		{
+			++oIter;
 			continue;
+		}
 
 		CDate	Date = pSession->Start().Date();
 		int		iDay = Date.DayOfWeek();
@@ -715,13 +738,16 @@ bool CTaskTracker::ReportByWeek(CReport& rDevice, ulong& rlTotal, const CDateTim
 		dtEnd.Time(CTime(23, 59, 59));
 
 		// Create enumerator for the week.
-		CSessionEnum	LenEnum(App.SessionList(), dtStart, dtEnd);
-		CSession*		pLenSession = NULL;
-		ulong			lWeekTotal = 0;
-		
+		CIsSessionInRange oWeekRange(dtStart, dtEnd);
+		CIter             oWeekIter(m_SessionList.begin());
+		ulong			  lWeekTotal = 0;
+
 		// Get total for the week.
-		while((pLenSession = LenEnum.Next()) != NULL)
-			lWeekTotal += pLenSession->Length();
+		while ((oWeekIter = std::find_if(oWeekIter, m_SessionList.end(), oWeekRange)) != m_SessionList.end())
+		{
+			lWeekTotal += (*oWeekIter)->Length();
+			++oWeekIter;
+		}
 
 	    char szHeading[100];
 		CString	strStartDate = dtStart.Date().ToString();
@@ -756,6 +782,8 @@ bool CTaskTracker::ReportByWeek(CReport& rDevice, ulong& rlTotal, const CDateTim
 		
 		// Update total.
 		rlTotal += lWeekTotal;
+
+		++oIter;
 	}
 
 	return true;
@@ -779,20 +807,29 @@ bool CTaskTracker::ReportByWeek(CReport& rDevice, ulong& rlTotal, const CDateTim
 bool CTaskTracker::ReportByMonth(CReport& rDevice, ulong& rlTotal, const CDateTime& dtFrom,
 							const CDateTime& dtTo) const
 {
-	CDateTime		dtStart;
-	CDateTime		dtEnd;
-	CSession*		pSession = NULL;
-	CSessionEnum	Enum(App.SessionList(), dtFrom, dtTo);
+	// Template shorthands.
+	typedef CSessionList::const_iterator CIter;
+
+	CDateTime dtStart;
+	CDateTime dtEnd;
 
 	// Init total.
 	rlTotal = 0;
 
-	// For all sessions.
-	while((pSession = Enum.Next()) != NULL)
+	CIsSessionInRange oRange(dtFrom, dtTo);
+	CIter             oIter(m_SessionList.begin());
+
+	// For all sessions in range...
+	while ((oIter = std::find_if(oIter, m_SessionList.end(), oRange)) != m_SessionList.end())
 	{
+		CSession* pSession = *oIter;
+
 		// Skip sessions still in current month.
 		if ( (pSession->Start() >= dtStart) && (pSession->Start() < dtEnd) )
+		{
+			++oIter;
 			continue;
+		}
 
 		CDate	Date = pSession->Start().Date();
 		int		iDate, iMonth, iYear;
@@ -809,13 +846,16 @@ bool CTaskTracker::ReportByMonth(CReport& rDevice, ulong& rlTotal, const CDateTi
 		dtEnd.Time(CTime(23, 59, 59));
 
 		// Create enumerator for the month.
-		CSessionEnum	LenEnum(App.SessionList(), dtStart, dtEnd);
-		CSession*		pLenSession = NULL;
-		ulong			lMonthTotal = 0;
+		CIsSessionInRange oMonthRange(dtStart, dtEnd);
+		CIter             oMonthIter(m_SessionList.begin());
+		ulong			  lMonthTotal = 0;
 		
 		// Get total for the month.
-		while((pLenSession = LenEnum.Next()) != NULL)
-			lMonthTotal += pLenSession->Length();
+		while ((oMonthIter = std::find_if(oMonthIter, m_SessionList.end(), oMonthRange)) != m_SessionList.end())
+		{
+			lMonthTotal += (*oMonthIter)->Length();
+			++oMonthIter;
+		}
 
 	    char szHeading[100];
 		CString	strStartDate = dtStart.Date().ToString();
@@ -850,6 +890,8 @@ bool CTaskTracker::ReportByMonth(CReport& rDevice, ulong& rlTotal, const CDateTi
 		
 		// Update total.
 		rlTotal += lMonthTotal;
+
+		++oIter;
 	}
 
 	return true;
@@ -873,45 +915,53 @@ bool CTaskTracker::ReportByMonth(CReport& rDevice, ulong& rlTotal, const CDateTi
 bool CTaskTracker::ReportByTask(CReport& rDevice, ulong& rlTotal, const CDateTime& dtFrom,
 						const CDateTime& dtTo) const
 {
-	CTaskListEnum	TaskEnum(App.TaskList());
-	CString*		pString;
+	// Template shorthands.
+	typedef CTaskList::const_iterator CTaskIter;
+	typedef CSessionList::const_iterator CSessIter;
 
 	// Initialise total.
 	rlTotal = 0;
 	
 	// For all tasks.
-	while((pString = TaskEnum.Next()) != NULL)
+	for(CTaskIter oIter = App.TaskList().begin(); oIter != App.TaskList().end(); ++oIter)
 	{
-		CSession*		pSession = NULL;
-		CSessionEnum	LenEnum(App.SessionList(), dtFrom, dtTo);
-		ulong			lTotal = 0;
+		CSessIter         oTotalIter(m_SessionList.begin());
+		CIsSessionInRange oTotalRange(dtFrom, dtTo);
+		ulong			  lTotal = 0;
 	
 		// Get length of all sessions for task.
-		while((pSession = LenEnum.Next()) != NULL)
+		while ((oTotalIter = std::find_if(oTotalIter, m_SessionList.end(), oTotalRange)) != m_SessionList.end())
 		{
-			if (pSession->Task() == *pString)
+			CSession* pSession = *oTotalIter;
+
+			if (pSession->Task() == (*oIter))
 				lTotal += pSession->Length();
+
+			++oTotalIter;
 		}
 		
 		// Update grand total.
 		rlTotal +=lTotal;
 
-		CSessionEnum	SessEnum(App.SessionList(), dtFrom, dtTo);
 		char			szHeading[256];
-		const char*		pszTask = *pString;
+		const char*		pszTask = *oIter;
 		const char*		pszLen  = App.MinsToStr(lTotal);
 		
 		// Output month heading.
 		sprintf(szHeading, "%s (Total: %s)", pszTask, pszLen);
 		if (!rDevice.SendHeading(szHeading))
 			return false;
-		
+
+		oTotalIter = m_SessionList.begin();
+
 		// Output all sessions for task.
-		while((pSession = SessEnum.Next()) != NULL)
+		while ((oTotalIter = std::find_if(oTotalIter, m_SessionList.end(), oTotalRange)) != m_SessionList.end())
 		{
-			if (pSession->Task() == *pString)
+			CSession* pSession = *oTotalIter;
+
+			if (pSession->Task() == (*oIter))
 			{
-				char 		szText[100];
+				char 	szText[100];
 				CString strDate  = pSession->Start().Date().ToString();
 				CString	strStart = pSession->Start().Time().ToString();
 				CString	strEnd   = pSession->Finish().Time().ToString();
@@ -923,6 +973,8 @@ bool CTaskTracker::ReportByTask(CReport& rDevice, ulong& rlTotal, const CDateTim
 				if (!rDevice.SendText(szText))
 					return false;
 			}
+
+			++oTotalIter;
 		}
 
 		// End of task.
@@ -949,25 +1001,30 @@ bool CTaskTracker::ReportByTask(CReport& rDevice, ulong& rlTotal, const CDateTim
 
 bool CTaskTracker::ReportDay(CReport& rDevice, const CDate& rDate, ulong& rlTotal) const
 {
+	// Template shorthands.
+	typedef CSessionList::const_iterator CIter;
+
 	CDateTime	dtStart;
 	CDateTime	dtEnd;
-	CSession*	pSession;
 
 	// Create limits of day.
 	dtStart.Date(rDate);
 	dtEnd.Date(rDate);
 	dtEnd.Time(CTime(23, 59, 59));
 
-	// Create enumerator for the day.
-	CSessionEnum	LenEnum(App.SessionList(), dtStart, dtEnd);
+	// Initialise total.
 	rlTotal = 0;
 
+	CIter             oIter(m_SessionList.begin());
+	CIsSessionInRange oRange(dtStart, dtEnd);
+
 	// Get length of all sessions on the day.
-	while((pSession = LenEnum.Next()) != NULL)
-		rlTotal += pSession->Length();
-	
-	// Create enumerator for the day.
-	CSessionEnum	Enum(App.SessionList(), dtStart, dtEnd);
+	while ((oIter = std::find_if(oIter, m_SessionList.end(), oRange)) != m_SessionList.end())
+	{
+		rlTotal += (*oIter)->Length();
+
+		++oIter;
+	}
 	
 	char szText[100];
 	CString	strDate = rDate.ToString(CDate::SD_DD_MM_YY);
@@ -977,11 +1034,15 @@ bool CTaskTracker::ReportDay(CReport& rDevice, const CDate& rDate, ulong& rlTota
 	if (!rDevice.SendText(szText))
 		return false;
 
+	oIter = m_SessionList.begin();
+
 	// Report all sessions on the day.
-	while((pSession = Enum.Next()) != NULL)
+	while ((oIter = std::find_if(oIter, m_SessionList.end(), oRange)) != m_SessionList.end())
 	{
-		if (!ReportSession(rDevice, pSession))
+		if (!ReportSession(rDevice, *oIter))
 			return false;
+
+		++oIter;
 	}
 		
 	return true;
@@ -1087,28 +1148,16 @@ void CTaskTracker::PeriodToDates(Period ePeriod, CDate& rFromDate, CDate& rToDat
 	{
 		case All:
 			{
+				// Default to todays date.
+				rFromDate = Today;
+				rToDate   = Today;
+
 				// Any sessions?
-				if (m_SessionList.Length())
+				if (!m_SessionList.empty())
 				{
-					CSessionEnum	Enum(m_SessionList);
-					CSession*		pSession = Enum.Next();
-				
-					// First session is earliest.
-					rFromDate = pSession->Start().Date();
-				
-					// Find last session.
-					while(pSession)
-					{
-						// Last session is latest date.
-						rToDate  = pSession->Start().Date();
-						pSession = Enum.Next();
-					}
-				}
-				else
-				{
-					// Use todays date.
-					rFromDate = Today;
-					rToDate   = Today;
+					// Use first and last sessions dates.
+					rFromDate = m_SessionList.front()->Start().Date();
+					rToDate   = m_SessionList.back()->Start().Date();
 				}
 			}
 			break;
