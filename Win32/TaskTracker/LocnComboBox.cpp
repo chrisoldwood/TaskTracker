@@ -56,12 +56,12 @@ CLocnCombo::~CLocnCombo()
 
 void CLocnCombo::OnCreate(const CRect&)
 {
-	CLocnListEnum	Enum(App.LocnList());
-	CString*		pString;
-	
+	// Template shorthands.
+	typedef CLocnList::const_iterator CIter;
+
 	// Add all locations.
-	while((pString = Enum.Next()) != NULL)
-		Add(*pString);
+	for(CIter oIter = App.LocnList().begin(); oIter != App.LocnList().end(); ++oIter)
+		Add(*oIter);
 	
 	// Select last location, if one
 	if (App.LastLocn() != "")

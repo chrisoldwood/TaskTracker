@@ -66,7 +66,7 @@ CEditSessionDlg::CEditSessionDlg()
 void CEditSessionDlg::OnInitDialog()
 {
 	// Session list empty?
-    if (!App.SessionList().Length())
+    if (!App.SessionList().size())
     {
     	// Disable delete and modify buttons.
 		m_bnModify.Enable(false);
@@ -111,8 +111,10 @@ void CEditSessionDlg::OnAdd()
 			App.LocnList().Add(Dlg.m_strLocn);
 	
 		// Add to list.
-		int i = App.SessionList().Add(pNewSession);
-		
+		App.SessionList().Add(pNewSession);
+
+		int i = App.SessionList().IndexOf(pNewSession);
+
 		// Refresh session list.
 		m_lvSessions.Refresh();
 		m_lvSessions.Select(i);
@@ -175,8 +177,10 @@ void CEditSessionDlg::OnModify()
 			App.LocnList().Add(Dlg.m_strLocn);
 	
 		// Add to list.
-		int i = App.SessionList().Add(pSession);
+		App.SessionList().Add(pSession);
 		
+		int i = App.SessionList().IndexOf(pSession);
+
 		// Refresh session list.
 		m_lvSessions.Refresh();
 		m_lvSessions.Select(i);
@@ -238,7 +242,7 @@ void CEditSessionDlg::OnDelete()
 	m_lvSessions.DeleteItem(iIdx);
 
 	// Change listbox selection.
-	int iNumItems = App.SessionList().Length();
+	int iNumItems = App.SessionList().size();
 	
     if (iNumItems)
     {

@@ -45,21 +45,20 @@ CPruneLocnsDlg::CPruneLocnsDlg()
 
 void CPruneLocnsDlg::OnInitDialog()
 {
-	CLocnListEnum	Enum(App.LocnList());
-	CString*		pString;
-	
-	// For all locations.
-	while((pString = Enum.Next()) != NULL)
+	// Template shorthands.
+	typedef CLocnList::const_iterator CLocnIter;
+	typedef CSessionList::const_iterator CSessIter;
+
+	// For all locations...
+	for(CLocnIter oLocnIter = App.LocnList().begin(); oLocnIter != App.LocnList().end(); ++oLocnIter)
 	{
-		CSessionEnum	Enum(App.SessionList());
-		CSession*		pSession;
-		bool			bInUse = false;
+		bool bInUse = false;
 
 		// For all sessions.
-		while((pSession = Enum.Next()) != NULL)
+		for(CSessIter oSessIter = App.SessionList().begin(); oSessIter != App.SessionList().end(); ++oSessIter)
         {
         	// Location in use?
-        	if (*pString == pSession->Location())
+        	if ((*oLocnIter) == (*oSessIter)->Location())
         	{
         		bInUse = true;
         		break;
@@ -67,16 +66,16 @@ void CPruneLocnsDlg::OnInitDialog()
         }
         
         // Location in use by current session?
-        if ( (App.CurrentSession()) && (*pString == App.CurrentSession()->Location()) )
+        if ( (App.CurrentSession()) && ((*oLocnIter) == App.CurrentSession()->Location()) )
         	bInUse = true;
 
         // Location in use as "Last Location"?
-        if (*pString == App.LastLocn())
+        if ((*oLocnIter) == App.LastLocn())
         	bInUse = true;
         
 		// Add location if not in use?
 		if (!bInUse)
-			m_lbLocns.Add(*pString);
+			m_lbLocns.Add(*oLocnIter);
 	}
 
 	// Nothing to delete?

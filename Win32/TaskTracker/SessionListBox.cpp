@@ -97,18 +97,20 @@ void CSessionListView::OnCreate(const CRect&)
 
 void CSessionListView::Refresh()
 {
+	// Template shorthands.
+	typedef CSessionList::const_iterator CIter;
+
 	// Save current selection.
 	int iSel = Selection();
 
 	// Empty contents.
 	DeleteAllItems();
 
-	CSessionEnum	Enum(App.SessionList());
-	CSession*		pSession;
-	
 	// For all sessions within the period.
-	while((pSession = Enum.Next()) != NULL)
+	for(CIter oIter = App.SessionList().begin(); oIter != App.SessionList().end(); ++oIter)
 	{
+		CSession* pSession = *oIter;
+
 		// Get length in minutes.
 		int nLength = pSession->Length();
 

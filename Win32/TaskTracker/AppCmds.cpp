@@ -104,17 +104,19 @@ void CAppCmds::OnFileExport()
 
 	try
 	{
+		// Template shorthands.
+		typedef CSessionList::const_iterator CIter;
+
 		CFile File;
 
 		// Open the file.
 		File.Create(Path);
 
-		CSessionEnum	Enum(App.SessionList());
-		CSession*		pSession;
-		
 		// For all sessions.
-		while((pSession = Enum.Next()) != NULL)
+		for(CIter oIter = App.SessionList().begin(); oIter != App.SessionList().end(); ++oIter)
 		{
+			CSession* pSession = *oIter;
+
 			CString strLine;
 
 			// Create a comma separated text line
@@ -238,7 +240,7 @@ void CAppCmds::OnFileImport()
 			if (!dStartDate.FromString(strStartDate))
 			{
 				// Notify user.
-				App.m_AppWnd.AlertMsg("Invalid start date for line: %d\n", nLine);
+				App.m_AppWnd.AlertMsg("Invalid start date for line: %d\n\n%s", nLine, strLine);
 				break;
 			}
 
@@ -246,7 +248,7 @@ void CAppCmds::OnFileImport()
 			if (!tStartTime.FromString(strStartTime))
 			{
 				// Notify user.
-				App.m_AppWnd.AlertMsg("Invalid start time for line: %d\n", nLine);
+				App.m_AppWnd.AlertMsg("Invalid start time for line: %d\n\n%s", nLine, strLine);
 				break;
 			}
 
@@ -254,7 +256,7 @@ void CAppCmds::OnFileImport()
 			if (!dEndDate.FromString(strEndDate))
 			{
 				// Notify user.
-				App.m_AppWnd.AlertMsg("Invalid end date for line: %d\n", nLine);
+				App.m_AppWnd.AlertMsg("Invalid end date for line: %d\n\n%s", nLine, strLine);
 				break;
 			}
 
@@ -262,15 +264,26 @@ void CAppCmds::OnFileImport()
 			if (!tEndTime.FromString(strEndTime))
 			{
 				// Notify user.
-				App.m_AppWnd.AlertMsg("Invalid end time for line: %d\n", nLine);
+				App.m_AppWnd.AlertMsg("Invalid end time for line: %d\n\n%s", nLine, strLine);
+				break;
+			}
+
+			CDateTime dtStart(dStartDate, tStartTime);
+			CDateTime dtEnd  (dEndDate,   tEndTime);
+
+			// Invalid dates?
+			if (dtEnd < dtStart)
+			{
+				// Notify user.
+				App.m_AppWnd.AlertMsg("Invalid start/end datetimes for line: %d\n\n%s", nLine, strLine);
 				break;
 			}
 
 			// Allocate a new session and initialise.
 			CSession* pSession = new CSession;
 
-			pSession->Start (CDateTime(dStartDate, tStartTime), strTask, strLocn);
-			pSession->Finish(CDateTime(dEndDate,   tEndTime),   strTask, strLocn);
+			pSession->Start (dtStart, strTask, strLocn);
+			pSession->Finish(dtEnd,   strTask, strLocn);
 			
 			// Add to the collections.
 			rSessions.Add(pSession);
@@ -600,29 +613,20 @@ void CAppCmds::OnPruneSessions()
 	
 	if (Dlg.RunModal(App.m_rMainWnd) == IDOK)
 	{
-		CDateTime	dtStart;
-		CDateTime	dtEnd;
+		// Template shorthands.
+		typedef CSessionList::iterator CIter;
 
-		// Setup enum limits.
-		dtEnd.Date(Dlg.m_Date);
-		
-		CSessionList&	SessionList = App.SessionList();
-		CSessionEnum	Enum(SessionList, dtStart, dtEnd);
-		CSession*		pCurrSession = Enum.Next();
-		CSession*		pNextSession = NULL;
-		
-		// For all sessions within the period.
-		while(pCurrSession)
+		CIsSessionInRange oRange(CDateTime::Min(), CDateTime(Dlg.m_Date, CTime::Max()));
+		CIter             oIter(App.SessionList().begin());
+
+		// Delete all sessions within the period.
+		while ((oIter = std::find_if(oIter, App.SessionList().end(), oRange)) != App.SessionList().end())
 		{
-			// Get next session first.
-			pNextSession = Enum.Next();
-			
-			// Delete it.
-			SessionList.Remove(pCurrSession);
-			delete pCurrSession;
-			
-			// Move on.
-			pCurrSession = pNextSession;
+			CIter oCurrIter = oIter++;
+
+			delete *oCurrIter;
+
+			App.SessionList().erase(oCurrIter);
 		}
 
 		// Update dirty flag.
@@ -648,17 +652,16 @@ void CAppCmds::OnPruneSessions()
 
 void CAppCmds::OnPruneTasks()
 {
+	// Template shorthands.
+	typedef CTaskList::const_iterator CIter;
+
 	CPruneTasksDlg Dlg;
 	
 	if (Dlg.RunModal(App.m_rMainWnd) == IDOK)
 	{
-		CTaskList&		rAppTaskList = App.TaskList();
-		CTaskListEnum	Enum(Dlg.m_TaskList);
-		CString*		pString;
-		
 		// For all tasks.
-		while((pString = Enum.Next()) != NULL)
-			rAppTaskList.Remove(*pString);
+		for(CIter oIter = Dlg.m_TaskList.begin(); oIter != Dlg.m_TaskList.end(); ++oIter)
+			App.TaskList().Remove(*oIter);
 		
 		// Update dirty flag.
 		App.Modified();
@@ -682,17 +685,16 @@ void CAppCmds::OnPruneTasks()
 
 void CAppCmds::OnPruneLocations()
 {
+	// Template shorthands.
+	typedef CLocnList::const_iterator CIter;
+
 	CPruneLocnsDlg Dlg;
 	
 	if (Dlg.RunModal(App.m_rMainWnd) == IDOK)
 	{
-		CLocnList&		rAppLocnList = App.LocnList();
-		CLocnListEnum	Enum(Dlg.m_LocnList);
-		CString*		pString;
-		
 		// For all locations.
-		while((pString = Enum.Next()) != NULL)
-			rAppLocnList.Remove(*pString);
+		for(CIter oIter = Dlg.m_LocnList.begin(); oIter != Dlg.m_LocnList.end(); ++oIter)
+			App.LocnList().Remove(*oIter);
 		
 		// Update dirty flag.
 		App.Modified();
@@ -762,21 +764,21 @@ void CAppCmds::OnUISessionClockOut()
 
 void CAppCmds::OnUIPruneSessions()
 {
-	bool bItems = (App.SessionList().Length() > 0);
+	bool bItems = (App.SessionList().size() > 0);
 
 	App.m_AppWnd.m_Menu.EnableCmd(ID_PRUNE_SESSIONS, bItems);
 }
 
 void CAppCmds::OnUIPruneTasks()
 {
-	bool bItems = (App.TaskList().Length() > 0);
+	bool bItems = (App.TaskList().size() > 0);
 
 	App.m_AppWnd.m_Menu.EnableCmd(ID_PRUNE_TASKS, bItems);
 }
 
 void CAppCmds::OnUIPruneLocations()
 {
-	bool bItems = (App.LocnList().Length() > 0);
+	bool bItems = (App.LocnList().size() > 0);
 
 	App.m_AppWnd.m_Menu.EnableCmd(ID_PRUNE_LOCNS, bItems);
 }
