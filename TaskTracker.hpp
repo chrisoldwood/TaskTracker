@@ -203,13 +203,13 @@ protected:
 #define	RPT_FILE_NAME		FILE_TITLE ".txt"
 
 // The format used for all date DateTime pickers.
-#define	DTP_DATE_FORMAT		"ddd' 'dd'/'MM'/'yy"
+#define	DTP_DATE_FORMAT		"ddd' 'dd'/'MM'/'yyyy"
 
 // The format used for all time DateTime pickers.
 #define	DTP_TIME_FORMAT		"HH':'mm"
 
 // The format used for all date & time DateTime pickers.
-#define	DTP_DATETIME_FORMAT	"ddd' 'dd'/'MM'/'yy' 'HH':'mm"
+#define	DTP_DATETIME_FORMAT	"ddd' 'dd'/'MM'/'yyyy' 'HH':'mm"
 
 /******************************************************************************
 **
