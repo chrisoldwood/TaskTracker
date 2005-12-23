@@ -127,8 +127,8 @@ void CAppDlg::OnTimer(uint /*iTimerID*/)
 void CAppDlg::Update()
 {
 	// Update current date and time.
-	m_txtCurrDate.Text(m_dtCurrent.Date().ToString());
-	m_txtCurrTime.Text(m_dtCurrent.Time().ToString());
+	m_txtCurrDate.Text(m_dtCurrent.Date().ToString(CDate::FMT_WIN_SHORT));
+	m_txtCurrTime.Text(m_dtCurrent.Time().ToString(CDate::FMT_WIN_LONG));
 
 	ulong lCurrLen = 0;
 	
@@ -145,8 +145,8 @@ void CAppDlg::Update()
 		m_CurrSession.Finish(m_dtCurrent, pCurrSession->Task(), pCurrSession->Location());
 		
 		// Update fields.
-		m_txtSessionDate.Text(m_CurrSession.Start().Date().ToString());
-		m_txtSessionTime.Text(m_CurrSession.Start().Time().ToString(CTime::HH_MM));
+		m_txtSessionDate.Text(m_CurrSession.Start().Date().ToString(CDate::FMT_WIN_SHORT));
+		m_txtSessionTime.Text(m_CurrSession.Start().Time().ToString(CTime::FMT_WIN_SHORT));
 		m_txtSessionTask.Text(m_CurrSession.Task());
 
 		lCurrLen = m_CurrSession.Length();
