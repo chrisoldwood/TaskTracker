@@ -29,9 +29,9 @@ CTaskTracker App;
 */
 
 #ifdef _DEBUG
-const char* CTaskTracker::VERSION      = "v3.6 [Debug]";
+const char* CTaskTracker::VERSION      = "v3.7 [Debug Alpha]";
 #else
-const char* CTaskTracker::VERSION      = "v3.6";
+const char* CTaskTracker::VERSION      = "v3.7 [Alpha]";
 #endif
 
 /******************************************************************************
@@ -87,7 +87,7 @@ CTaskTracker::~CTaskTracker()
 bool CTaskTracker::OnOpen()
 {
 	// Set the app title.
-	m_strTitle = "TaskTracker";
+	m_strTitle = "Task Tracker";
 
 	// Create .ini file path.
 	m_IniFile.m_strPath  = CPath::ApplicationDir();
@@ -750,8 +750,8 @@ bool CTaskTracker::ReportByWeek(CReport& rDevice, ulong& rlTotal, const CDateTim
 		}
 
 	    char szHeading[100];
-		CString	strStartDate = dtStart.Date().ToString();
-		CString strEndDate   = dtEnd.Date().ToString();
+		CString	strStartDate = dtStart.Date().ToString(CDate::FMT_WIN_SHORT);
+		CString strEndDate   = dtEnd.Date().ToString(CDate::FMT_WIN_SHORT);
 		CString strLen       = App.MinsToStr(lWeekTotal);
 
 		// Output week heading.
@@ -858,8 +858,8 @@ bool CTaskTracker::ReportByMonth(CReport& rDevice, ulong& rlTotal, const CDateTi
 		}
 
 	    char szHeading[100];
-		CString	strStartDate = dtStart.Date().ToString();
-		CString strEndDate   = dtEnd.Date().ToString();
+		CString	strStartDate = dtStart.Date().ToString(CDate::FMT_WIN_SHORT);
+		CString strEndDate   = dtEnd.Date().ToString(CDate::FMT_WIN_SHORT);
 		CString strLen       = App.MinsToStr(lMonthTotal);
 
 		// Output month heading.
@@ -962,9 +962,9 @@ bool CTaskTracker::ReportByTask(CReport& rDevice, ulong& rlTotal, const CDateTim
 			if (pSession->Task() == (*oIter))
 			{
 				char 	szText[100];
-				CString strDate  = pSession->Start().Date().ToString();
-				CString	strStart = pSession->Start().Time().ToString();
-				CString	strEnd   = pSession->Finish().Time().ToString();
+				CString strDate  = pSession->Start().Date().ToString(CDate::FMT_WIN_SHORT);
+				CString	strStart = pSession->Start().Time().ToString(CDate::FMT_WIN_SHORT);
+				CString	strEnd   = pSession->Finish().Time().ToString(CDate::FMT_WIN_SHORT);
 				CString strLen   = App.MinsToStr(pSession->Length());
 
 				sprintf(szText,"%s from %s to %s for %s", strDate,
@@ -1027,7 +1027,7 @@ bool CTaskTracker::ReportDay(CReport& rDevice, const CDate& rDate, ulong& rlTota
 	}
 	
 	char szText[100];
-	CString	strDate = rDate.ToString(CDate::SD_DD_MM_YY);
+	CString	strDate = rDate.ToString(CDate::FMT_WIN_SHORT);
 	CString strLen  = App.MinsToStr(rlTotal);
 	
 	sprintf(szText, "%s (Total: %s)", strDate, strLen);
@@ -1064,8 +1064,8 @@ bool CTaskTracker::ReportDay(CReport& rDevice, const CDate& rDate, ulong& rlTota
 bool CTaskTracker::ReportSession(CReport& rDevice, CSession* pSession) const
 {
 	CString	strText;
-	CString	strStart = pSession->Start().Time().ToString(CTime::HH_MM);
-	CString	strEnd   = pSession->Finish().Time().ToString(CTime::HH_MM);
+	CString	strStart = pSession->Start().Time().ToString(CTime::FMT_WIN_SHORT);
+	CString	strEnd   = pSession->Finish().Time().ToString(CTime::FMT_WIN_SHORT);
 	CString strTask  = pSession->Task();
 	CString strLocn  = pSession->Location();
 	ulong	lLen     = pSession->Length();

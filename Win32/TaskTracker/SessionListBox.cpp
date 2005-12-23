@@ -19,7 +19,7 @@ const char*	CSessionListView::apszLabels[NUM_COLUMNS] =
 { "Day", "Date", "In", "Out", "Length", "Task", "Location" };
 
 const int	CSessionListView::aiWidths[NUM_COLUMNS] = 
-{    40,     60,   50,    50,       50,    125,         75 };
+{    40,     75,   50,    50,       65,    100,         80 };
 
 /******************************************************************************
 ** Method:		Constructor.
@@ -114,16 +114,16 @@ void CSessionListView::Refresh()
 		// Get length in minutes.
 		int nLength = pSession->Length();
 
-		CString strStartDay  = pSession->Start().Date().ToString(CDate::SD);
-		CString	strStartDate = pSession->Start().Date().ToString(CDate::DD_MM_YY);
-		CString	strStartTime = pSession->Start().Time().ToString(CTime::HH_MM);
-		CString	strEndTime   = pSession->Finish().Time().ToString(CTime::HH_MM);
+		CString strStartDay  = pSession->Start().Date().DayOfWeekStr();
+		CString	strStartDate = pSession->Start().Date().ToString(CDate::FMT_WIN_SHORT);
+		CString	strStartTime = pSession->Start().Time().ToString(CTime::FMT_WIN_SHORT);
+		CString	strEndTime   = pSession->Finish().Time().ToString(CTime::FMT_WIN_SHORT);
 		CString strTask      = pSession->Task();
 		CString strLocation  = pSession->Location();
 		CString strLength;
 
 		// Create length string.
-		strLength.Format("%02d:%02d", nLength / 60,  nLength % 60);
+		strLength.Format("%02d h %02d m", nLength / 60,  nLength % 60);
 
 		// Add the item.
 		int i = AppendItem("");
