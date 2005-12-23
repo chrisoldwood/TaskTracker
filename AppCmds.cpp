@@ -94,12 +94,12 @@ void CAppCmds::OnFileExport()
 								"\0\0"							};
 
 	// Select a filename.
-	if (!Path.Select(App.m_AppWnd, CPath::SaveFile, szExts, "CSV"))
+	if (!Path.Select(App.m_AppWnd, CPath::SaveFile, szExts, "CSV", CPath::ApplicationDir()))
 		return;
 
 	// Warn user if file exists.
 	if ( (Path.Exists())
-	  && (App.QueryMsg("The file already exists:\n\n%s\n\nOverwrite?", Path) != IDYES) )
+	  && (App.QueryMsg("The file already exists:\n\n%s\n\nDo you want to overwrite it?", Path) != IDYES) )
 		return;
 
 	try
@@ -119,13 +119,10 @@ void CAppCmds::OnFileExport()
 
 			CString strLine;
 
-			// Create a comma separated text line
-			// for the session.
-			strLine.Format("%s,%s,%s,%s,%s,%s", 
-							pSession->Start().Date().ToString(CDate::DD_MM_YYYY),
-							pSession->Start().Time().ToString(CTime::HH_MM),
-							pSession->Finish().Date().ToString(CDate::DD_MM_YYYY),
-							pSession->Finish().Time().ToString(CTime::HH_MM),
+			// Format as Start,End,Task,Location
+			strLine.Format("\"%s\",\"%s\",\"%s\",\"%s\"", 
+							pSession->Start().ToString(CDate::FMT_ISO, CDate::FMT_ISO),
+							pSession->Finish().ToString(CDate::FMT_ISO, CDate::FMT_ISO),
 							pSession->Task(),
 							pSession->Location());
 
@@ -164,7 +161,7 @@ void CAppCmds::OnFileImport()
 								"\0\0"							};
 
 	// Select a filename.
-	if (!Path.Select(App.m_AppWnd, CPath::OpenFile, szExts, "CSV"))
+	if (!Path.Select(App.m_AppWnd, CPath::OpenFile, szExts, "CSV", CPath::ApplicationDir()))
 		return;
 
 	try
@@ -188,102 +185,78 @@ void CAppCmds::OnFileImport()
 			// Read a line.
 			CString strLine = File.ReadLine();
 
-			// Count the number of felds.
+			// Count the number of fields.
 			int nFields = strLine.Count(',') + 1;
 
-			// Expecting 5 or 6 fields.
-			if ( (nFields < 5) || (nFields > 6) )
+			// Expecting "Start,End,Task,Location".
+			if (nFields != 4)
 			{
 				// Notify user.
-				App.m_AppWnd.AlertMsg("Invalid number of fields in line: %d\n"
-										"(Found: %d Expected: 5 or 6).",
-										nLine, nFields);
+				App.m_AppWnd.AlertMsg("Invalid number of fields in line: %d\n\n"
+									  "Found: %d fields. Expected 'Start,End,Task,Location'",
+									  nLine, nFields);
 				break;
 			}
 
 			// Find field separators.
-			int nStartDate = -1;
-			int nStartTime = strLine.Find(',', nStartDate + 1);
-			int	nEndDate   = strLine.Find(',', nStartTime + 1);
-			int nEndTime   = strLine.Find(',', nEndDate   + 1);
-			int nTask      = strLine.Find(',', nEndTime   + 1);
-			int nLocn      = strLine.Find(',', nTask      + 1);
-			int nEOS       = strLine.Length();
+			int nStartDateTime = -1;
+			int	nEndDateTime   = strLine.Find(',', nStartDateTime + 1);
+			int nTask          = strLine.Find(',', nEndDateTime   + 1);
+			int nLocation      = strLine.Find(',', nTask          + 1);
+			int nEOS           = strLine.Length();
 
 			// Extract basic fields.
-			CString strStartDate = strLine.Mid(nStartDate + 1, nStartTime - nStartDate - 1);
-			CString strStartTime = strLine.Mid(nStartTime + 1, nEndDate   - nStartTime - 1);
-			CString strEndDate   = strLine.Mid(nEndDate   + 1, nEndTime   - nEndDate   - 1);
-			CString strEndTime   = strLine.Mid(nEndTime   + 1, nTask      - nEndTime   - 1);
-			CString strTask;
-			CString strLocn;
+			CString strStartDateTime = strLine.Mid(nStartDateTime + 1, nEndDateTime - nStartDateTime - 1);
+			CString strEndDateTime   = strLine.Mid(nEndDateTime   + 1, nTask        - nEndDateTime   - 1);
+			CString strTask          = strLine.Mid(nTask          + 1, nLocation    - nTask          - 1);
+			CString strLocation      = strLine.Mid(nLocation      + 1, nEOS         - nLocation      - 1);
 
-			// Old format?
-			if (nFields == 5)
-			{
-				// Final field is the task.
-				strTask = strLine.Mid(nTask + 1, nEOS - nTask - 1);
-				strLocn = "";
-			}
-			// New format?
-			if (nFields == 6)
-			{
-				// Final field is the location.
-				strTask = strLine.Mid(nTask + 1, nLocn - nTask - 1);
-				strLocn = strLine.Mid(nLocn + 1, nEOS  - nLocn - 1);
-			}
+			int nPos = -1;
 
-			CDate dStartDate, dEndDate;
-			CTime tStartTime, tEndTime;
+			// Trim quotes, if present.
+			while ((nPos = strStartDateTime.Find('\"')) != -1)
+				strStartDateTime.Delete(nPos);
 
-			// Convert start date.
-			if (!dStartDate.FromString(strStartDate))
+			while ((nPos = strEndDateTime.Find('\"')) != -1)
+				strEndDateTime.Delete(nPos);
+
+			while ((nPos = strTask.Find('\"')) != -1)
+				strTask.Delete(nPos);
+
+			while ((nPos = strLocation.Find('\"')) != -1)
+				strLocation.Delete(nPos);
+
+			CDateTime dtStart, dtEnd;
+
+			// Convert start date/time.
+			if (!dtStart.FromString(strStartDateTime))
 			{
 				// Notify user.
-				App.m_AppWnd.AlertMsg("Invalid start date for line: %d\n\n%s", nLine, strLine);
+				App.m_AppWnd.AlertMsg("Invalid 'Start' date/time format on line: %d\n\n%s", nLine, strLine);
 				break;
 			}
 
-			// Convert start time.
-			if (!tStartTime.FromString(strStartTime))
+			// Convert end date/time.
+			if (!dtEnd.FromString(strEndDateTime))
 			{
 				// Notify user.
-				App.m_AppWnd.AlertMsg("Invalid start time for line: %d\n\n%s", nLine, strLine);
+				App.m_AppWnd.AlertMsg("Invalid 'End' date/time format on line: %d\n\n%s", nLine, strLine);
 				break;
 			}
-
-			// Convert end date.
-			if (!dEndDate.FromString(strEndDate))
-			{
-				// Notify user.
-				App.m_AppWnd.AlertMsg("Invalid end date for line: %d\n\n%s", nLine, strLine);
-				break;
-			}
-
-			// Convert end time.
-			if (!tEndTime.FromString(strEndTime))
-			{
-				// Notify user.
-				App.m_AppWnd.AlertMsg("Invalid end time for line: %d\n\n%s", nLine, strLine);
-				break;
-			}
-
-			CDateTime dtStart(dStartDate, tStartTime);
-			CDateTime dtEnd  (dEndDate,   tEndTime);
 
 			// Invalid dates?
 			if (dtEnd < dtStart)
 			{
 				// Notify user.
-				App.m_AppWnd.AlertMsg("Invalid start/end datetimes for line: %d\n\n%s", nLine, strLine);
+				App.m_AppWnd.AlertMsg("'End' date/time precedes 'Start' date/time on line: %d\n\n%s", nLine, strLine);
 				break;
 			}
 
 			// Allocate a new session and initialise.
 			CSession* pSession = new CSession;
 
-			pSession->Start (dtStart, strTask, strLocn);
-			pSession->Finish(dtEnd,   strTask, strLocn);
+			pSession->Start (dtStart, strTask, strLocation);
+			pSession->Finish(dtEnd,   strTask, strLocation);
 			
 			// Add to the collections.
 			rSessions.Add(pSession);
@@ -291,8 +264,8 @@ void CAppCmds::OnFileImport()
 			if (strTask != "")
 				rTasks.Add(strTask);
 
-			if (strLocn != "")
-				rLocns.Add(strLocn);
+			if (strLocation != "")
+				rLocns.Add(strLocation);
 
 			nLine++;
 		}
