@@ -59,7 +59,7 @@ CPrintReport::~CPrintReport()
 
 bool CPrintReport::Init()
 {
-	HFONT hFont = NULL;
+	HFONT hFont = nullptr;
 
 	// Initialise page settings.
 	m_rcArea      = m_rPrinterDC.PrintableArea();
@@ -69,7 +69,7 @@ bool CPrintReport::Init()
 	hFont = CreateFont(0, 0, 0, 0, FW_DONTCARE, 0, 0, 0, ANSI_CHARSET,
 						OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
 						DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-						NULL);
+						nullptr);
 	
 	m_NormalFont.Create(hFont, true);
 
@@ -77,7 +77,7 @@ bool CPrintReport::Init()
 	hFont = CreateFont(0, 0, 0, 0, FW_DONTCARE, 0, TRUE, 0, ANSI_CHARSET,
 						OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
 						DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-						NULL);
+						nullptr);
 	
 	m_HeadingFont.Create(hFont, true);
 
