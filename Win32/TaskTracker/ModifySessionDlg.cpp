@@ -49,10 +49,10 @@ void CModifySessionDlg::OnInitDialog()
 {
 	// Initialise date and time fields.
 	m_dtpInDateTime.SetDateTime(m_dtInDateTime);
-	m_dtpInDateTime.Format(DTP_DATETIME_FORMAT);
+	m_dtpInDateTime.Format(App.DateTimePickerFormat());
 
 	m_dtpOutDateTime.SetDateTime(m_dtOutDateTime);
-	m_dtpOutDateTime.Format(DTP_DATETIME_FORMAT);
+	m_dtpOutDateTime.Format(App.DateTimePickerFormat());
 
 	int nTaskIdx = -1;
 	int nLocnIdx = -1;

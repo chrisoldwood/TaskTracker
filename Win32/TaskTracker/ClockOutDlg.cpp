@@ -54,7 +54,7 @@ CClockOutDlg::CClockOutDlg() : CDialog(IDD_CLOCK_OUT)
 void CClockOutDlg::OnInitDialog()
 {
 	ASSERT(App.ClockedIn());
-	ASSERT(App.CurrentSession() != NULL);
+	ASSERT(App.CurrentSession().Get() != nullptr);
 
 	// Get the time now.
 	CTime tNow;
@@ -65,7 +65,7 @@ void CClockOutDlg::OnInitDialog()
 	m_dtDateTime.Time(tNow);
 
 	m_dtpDateTime.SetDateTime(m_dtDateTime);
-	m_dtpDateTime.Format(DTP_DATETIME_FORMAT);
+	m_dtpDateTime.Format(App.DateTimePickerFormat());
 
 	// Initalise clock out selection.
 	m_rbNow.Check(true);

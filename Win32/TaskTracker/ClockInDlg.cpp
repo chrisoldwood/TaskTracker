@@ -56,7 +56,7 @@ void CClockInDlg::OnInitDialog()
 	// Initialise date and time fields.
 	m_dtDateTime.Set();
 	m_dtpDateTime.SetDateTime(m_dtDateTime);
-	m_dtpDateTime.Format(DTP_DATETIME_FORMAT);
+	m_dtpDateTime.Format(App.DateTimePickerFormat());
 
 	// Initalise clock in selection.
 	m_rbNow.Check(true);
