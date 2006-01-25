@@ -10,6 +10,11 @@
 
 #include "AppHeaders.hpp"
 
+#ifdef _DEBUG
+// For memory leak detection.
+#define new DBGCRT_NEW
+#endif
+
 /******************************************************************************
 ** Method:		Constructor.
 **
@@ -55,7 +60,7 @@ CSessionList::~CSessionList()
 *******************************************************************************
 */
 
-void CSessionList::Add(CSession* pNewSession)
+void CSessionList::Add(CSessionPtr& pNewSession)
 {
 	// Template shorthands.
 	typedef iterator CIter;
@@ -63,7 +68,7 @@ void CSessionList::Add(CSession* pNewSession)
 	// For all sessions...
 	for(CIter oIter = begin(); oIter != end(); ++oIter)
 	{
-		CSession* pSession = *oIter;
+		CSessionPtr pSession = *oIter;
 
 		// New session starts earlier?
 		if (pNewSession->Start() < pSession->Start())
@@ -89,7 +94,7 @@ void CSessionList::Add(CSession* pNewSession)
 *******************************************************************************
 */
 
-void CSessionList::Remove(CSession* pSession)
+void CSessionList::Remove(CSessionPtr& pSession)
 {
 	remove(pSession);
 }
@@ -111,10 +116,6 @@ void CSessionList::RemoveAll()
 	// Template shorthands.
 	typedef const_iterator CIter;
 
-	// Free all sessions.
-	for(CIter oIter = begin(); oIter != end(); ++oIter)
-		delete *oIter;
-
 	clear();
 }
 
@@ -130,7 +131,7 @@ void CSessionList::RemoveAll()
 *******************************************************************************
 */
 
-int CSessionList::IndexOf(const CSession* pSession) const
+int CSessionList::IndexOf(const CSessionPtr& pSession) const
 {
 	// Template shorthands.
 	typedef const_iterator CIter;
@@ -143,18 +144,19 @@ int CSessionList::IndexOf(const CSession* pSession) const
 }
 
 /******************************************************************************
-** Method:		Operator<<()
+** Function:	Operator>>()
 **
 ** Description:	Read a session list from a stream.
 **
-** Parameters:	rStream		The stream.
+** Parameters:	rStream		The stream to read from.
+**				oList		The list to read into.
 **
 ** Returns:		Nothing.
 **
 *******************************************************************************
 */
 
-void CSessionList::operator <<(CStream& rStream)
+void operator >>(CStream& rStream, CSessionList& oList)
 {
 	int16 iCount;
 	
@@ -166,35 +168,36 @@ void CSessionList::operator <<(CStream& rStream)
 	{
 		CSession* pSession = new CSession;
 
-		*pSession << rStream;
+		rStream >> *pSession;
 			
-		push_back(pSession);
+		oList.push_back(pSession);
 	}
 }
 
 /******************************************************************************
-** Method:		Operator>>()
+** Function:	Operator<<()
 **
 ** Description:	Write a session list to a stream.
 **
-** Parameters:	rStream		The stream.
+** Parameters:	rStream		The stream to write to.
+**				oList		The list to write.
 **
 ** Returns:		Nothing.
 **
 *******************************************************************************
 */
 
-void CSessionList::operator >>(CStream& rStream) const
+void operator <<(CStream& rStream, const CSessionList& oList)
 {
 	// Template shorthands.
-	typedef const_iterator CIter;
+	typedef CSessionList::const_iterator CIter;
 
-	int16 iCount = (int16) size();
+	int16 iCount = (int16) oList.size();
 	
 	// Write count.
 	rStream << iCount;
 	
 	// Write sessions.
-	for(CIter oIter = begin(); oIter != end(); ++oIter)
-		*(*oIter) >> rStream;
+	for(CIter oIter = oList.begin(); oIter != oList.end(); ++oIter)
+		rStream << *(*oIter);
 }

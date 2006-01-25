@@ -21,7 +21,7 @@
 *******************************************************************************
 */
 
-class CSessionList : public std::list<CSession*>
+class CSessionList : public std::list<CSessionPtr>
 {
 public:
 	//
@@ -33,22 +33,18 @@ public:
 	//
 	// Methods.
 	//
-	void Add(CSession* pSession);
-	void Remove(CSession* pSession);
+	void Add(CSessionPtr& pSession);
+	void Remove(CSessionPtr& pSession);
 	void RemoveAll();
 
-	int IndexOf(const CSession* pSession) const;
+	int IndexOf(const CSessionPtr& pSession) const;
 
+private:
 	//
 	// File I/O.
 	//
-	void operator <<(CStream& rStream);
-	void operator >>(CStream& rStream) const;
-
-protected:
-	//
-	// Members.
-	//
+	friend void operator >>(CStream& rStream, CSessionList& oList);
+	friend void operator <<(CStream& rStream, const CSessionList& oList);
 };
 
 /******************************************************************************
@@ -63,7 +59,7 @@ class CIsSessionInRange : public std::unary_function<const CSession*, bool>
 public:
 	CIsSessionInRange(const CDateTime& dtStart, const CDateTime& dtEnd);
 
-	bool operator()(const CSession* pSession);
+	bool operator()(const CSessionPtr& pSession);
 
 private:
 	//
@@ -86,9 +82,9 @@ inline CIsSessionInRange::CIsSessionInRange(const CDateTime& dtStart, const CDat
 {
 }
 
-inline bool CIsSessionInRange::operator()(const CSession* pSession)
+inline bool CIsSessionInRange::operator()(const CSessionPtr& pSession)
 {
-	ASSERT(pSession != NULL);
+	ASSERT(pSession.Get() != nullptr);
 
 	return ( (pSession->Start() >= m_dtStart) && (pSession->Start() < m_dtEnd) );
 }
