@@ -54,7 +54,7 @@ void CPruneSessionsDlg::OnInitDialog()
 	// Initialise date and time fields.
 	m_Date.Set();
 	m_dtpDate.SetDate(m_Date);
-	m_dtpDate.Format(DTP_DATE_FORMAT);
+	m_dtpDate.Format(App.DatePickerFormat());
 
 	// Initalise prune selection.
 	m_rbAll.Check(true);
