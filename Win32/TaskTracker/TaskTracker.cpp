@@ -11,6 +11,11 @@
 #include "AppHeaders.hpp"
 #include <stdio.h>
 
+#ifdef _DEBUG
+// For memory leak detection.
+#define new DBGCRT_NEW
+#endif
+
 /******************************************************************************
 **
 ** Global variables.
@@ -51,8 +56,10 @@ CTaskTracker::CTaskTracker()
 	, m_bClockedIn(false)
 	, m_strLastTask("")
 	, m_strLastLocn("")
-	, m_pCurrSession(NULL)
+	, m_pCurrSession(nullptr)
 	, m_bModified(false)
+	, m_eMinsFormat(HoursMins)
+	, m_bMinToTray(false)
 {
 }
 
@@ -136,10 +143,6 @@ bool CTaskTracker::OnClose()
 	// Save settings.
 	SaveDefaults();
 
-	// Free up current session.
-	if (m_pCurrSession)
-		delete m_pCurrSession;
-	
 	// Free up strings.
 	m_strLastTask = "";
 	m_strLastLocn = "";
@@ -166,7 +169,6 @@ void CTaskTracker::ClockIn(const CDateTime& dtIn, const CString& strTask, const 
 {
 	// Create a new session.
 	m_pCurrSession = new CSession;
-	ASSERT(m_pCurrSession);
 
 	// Initialise.
 	m_pCurrSession->Start(dtIn, strTask, strLocn);
@@ -211,7 +213,7 @@ void CTaskTracker::ClockOut(const CDateTime& dtOut, const CString& strTask, cons
 	m_SessionList.Add(m_pCurrSession);
 	
 	// Reset current session.
-	m_pCurrSession = NULL;
+	m_pCurrSession.Reset();
 
 	// Add task to list if set.
 	if (strTask != "")
@@ -466,10 +468,9 @@ void CTaskTracker::ReadData(CFile& rFile)
 	if (m_bClockedIn)
 	{
 		m_pCurrSession = new CSession;
-		ASSERT(m_pCurrSession);
 
 		// Read current session.
-		*m_pCurrSession << rFile;
+		rFile >> *m_pCurrSession;
 	}
 
 	// Read last used items.
@@ -477,9 +478,9 @@ void CTaskTracker::ReadData(CFile& rFile)
 	rFile >> m_strLastLocn;
 	
 	// Read collections.
-	m_SessionList << rFile;
-	m_TaskList    << rFile;
-	m_LocnList    << rFile;
+	rFile >> m_SessionList;
+	rFile >> m_TaskList;
+	rFile >> m_LocnList;
 }
 
 /******************************************************************************
@@ -496,6 +497,8 @@ void CTaskTracker::ReadData(CFile& rFile)
 
 bool CTaskTracker::SaveData()
 {
+	ASSERT(m_bModified);
+
 	CFile AppFile;
 	CPath AppFilePath;
 
@@ -550,16 +553,16 @@ void CTaskTracker::WriteData(CFile& rFile)
 
 	// Write current session.
 	if (m_bClockedIn)
-		*m_pCurrSession >> rFile;
+		rFile << *m_pCurrSession;
 
 	// Write last used items.
 	rFile << m_strLastTask;
 	rFile << m_strLastLocn;
 	
 	// Write collections.
-	m_SessionList >> rFile;
-	m_TaskList    >> rFile;
-	m_LocnList    >> rFile;
+	rFile << m_SessionList;
+	rFile << m_TaskList;
+	rFile << m_LocnList;
 }
 
 /******************************************************************************
@@ -580,7 +583,6 @@ void CTaskTracker::WriteData(CFile& rFile)
 void CTaskTracker::ReportData(CReport& rDevice, Grouping eGrouping, const CDate& rFromDate,
 						const CDate& rToDate) const
 {
-    char 		szTotal[100];
 	ulong		lTotal = 0;
 	bool		bOkay  = false;
 	CDateTime	dtFrom, dtTo;
@@ -622,8 +624,9 @@ void CTaskTracker::ReportData(CReport& rDevice, Grouping eGrouping, const CDate&
 	if (bOkay)
 	{
 		// Output total.
-		sprintf(szTotal, "Total For All Sessions: %s", App.MinsToStr(lTotal));
-		rDevice.SendText(szTotal);
+		CString strTotal = CString::Fmt("Total For All Sessions: %s", App.MinsToStr(lTotal));
+
+		rDevice.SendText(strTotal);
 	}
 
 	// Cleanup the device.
@@ -663,7 +666,7 @@ bool CTaskTracker::ReportUngrouped(CReport& rDevice, ulong& rlTotal, const CDate
 	// For all sessions in range...
 	while ((oIter = std::find_if(oIter, m_SessionList.end(), oRange)) != m_SessionList.end())
 	{
-		CSession* pSession = *oIter;
+		CSessionPtr pSession = *oIter;
 
 		// New day?
 		if (pSession->Start().Date() > DateDone)
@@ -718,7 +721,7 @@ bool CTaskTracker::ReportByWeek(CReport& rDevice, ulong& rlTotal, const CDateTim
 	// For all sessions in range...
 	while ((oIter = std::find_if(oIter, m_SessionList.end(), oRange)) != m_SessionList.end())
 	{
-		CSession* pSession = *oIter;
+		CSessionPtr pSession = *oIter;
 
 		// Skip sessions still in current week.
 		if ( (pSession->Start() >= dtStart) && (pSession->Start() < dtEnd) )
@@ -749,14 +752,13 @@ bool CTaskTracker::ReportByWeek(CReport& rDevice, ulong& rlTotal, const CDateTim
 			++oWeekIter;
 		}
 
-	    char szHeading[100];
+		// Output week heading.
 		CString	strStartDate = dtStart.Date().ToString(CDate::FMT_WIN_SHORT);
 		CString strEndDate   = dtEnd.Date().ToString(CDate::FMT_WIN_SHORT);
 		CString strLen       = App.MinsToStr(lWeekTotal);
+		CString strHeading   = CString::Fmt("Week: %s to %s (Total: %s)", strStartDate, strEndDate, strLen);
 
-		// Output week heading.
-		sprintf(szHeading, "Week: %s to %s (Total: %s)", strStartDate, strEndDate, strLen);
-		if (!rDevice.SendHeading(szHeading))
+		if (!rDevice.SendHeading(strHeading))
 			return false;
 
 		// Get date for week start.
@@ -822,7 +824,7 @@ bool CTaskTracker::ReportByMonth(CReport& rDevice, ulong& rlTotal, const CDateTi
 	// For all sessions in range...
 	while ((oIter = std::find_if(oIter, m_SessionList.end(), oRange)) != m_SessionList.end())
 	{
-		CSession* pSession = *oIter;
+		CSessionPtr pSession = *oIter;
 
 		// Skip sessions still in current month.
 		if ( (pSession->Start() >= dtStart) && (pSession->Start() < dtEnd) )
@@ -857,14 +859,13 @@ bool CTaskTracker::ReportByMonth(CReport& rDevice, ulong& rlTotal, const CDateTi
 			++oMonthIter;
 		}
 
-	    char szHeading[100];
+		// Output month heading.
 		CString	strStartDate = dtStart.Date().ToString(CDate::FMT_WIN_SHORT);
 		CString strEndDate   = dtEnd.Date().ToString(CDate::FMT_WIN_SHORT);
 		CString strLen       = App.MinsToStr(lMonthTotal);
+		CString strHeading   = CString::Fmt("Month: %s to %s (Total: %s)", strStartDate, strEndDate, strLen);
 
-		// Output month heading.
-		sprintf(szHeading, "Month: %s to %s (Total: %s)", strStartDate, strEndDate, strLen);
-		if (!rDevice.SendHeading(szHeading))
+		if (!rDevice.SendHeading(strHeading))
 			return false;
 
 		// Get date for month start.
@@ -932,7 +933,7 @@ bool CTaskTracker::ReportByTask(CReport& rDevice, ulong& rlTotal, const CDateTim
 		// Get length of all sessions for task.
 		while ((oTotalIter = std::find_if(oTotalIter, m_SessionList.end(), oTotalRange)) != m_SessionList.end())
 		{
-			CSession* pSession = *oTotalIter;
+			CSessionPtr pSession = *oTotalIter;
 
 			if (pSession->Task() == (*oIter))
 				lTotal += pSession->Length();
@@ -943,13 +944,10 @@ bool CTaskTracker::ReportByTask(CReport& rDevice, ulong& rlTotal, const CDateTim
 		// Update grand total.
 		rlTotal +=lTotal;
 
-		char			szHeading[256];
-		const char*		pszTask = *oIter;
-		const char*		pszLen  = App.MinsToStr(lTotal);
-		
 		// Output month heading.
-		sprintf(szHeading, "%s (Total: %s)", pszTask, pszLen);
-		if (!rDevice.SendHeading(szHeading))
+		CString strHeading = CString::Fmt("%s (Total: %s)", *oIter, App.MinsToStr(lTotal));
+
+		if (!rDevice.SendHeading(strHeading))
 			return false;
 
 		oTotalIter = m_SessionList.begin();
@@ -957,20 +955,18 @@ bool CTaskTracker::ReportByTask(CReport& rDevice, ulong& rlTotal, const CDateTim
 		// Output all sessions for task.
 		while ((oTotalIter = std::find_if(oTotalIter, m_SessionList.end(), oTotalRange)) != m_SessionList.end())
 		{
-			CSession* pSession = *oTotalIter;
+			CSessionPtr pSession = *oTotalIter;
 
 			if (pSession->Task() == (*oIter))
 			{
-				char 	szText[100];
+				// Output session.
 				CString strDate  = pSession->Start().Date().ToString(CDate::FMT_WIN_SHORT);
 				CString	strStart = pSession->Start().Time().ToString(CDate::FMT_WIN_SHORT);
 				CString	strEnd   = pSession->Finish().Time().ToString(CDate::FMT_WIN_SHORT);
 				CString strLen   = App.MinsToStr(pSession->Length());
-
-				sprintf(szText,"%s from %s to %s for %s", strDate,
-								strStart, strEnd, strLen);
+				CString strText  = CString::Fmt("%s from %s to %s for %s", strDate, strStart, strEnd, strLen);
 			
-				if (!rDevice.SendText(szText))
+				if (!rDevice.SendText(strText))
 					return false;
 			}
 
@@ -1026,12 +1022,11 @@ bool CTaskTracker::ReportDay(CReport& rDevice, const CDate& rDate, ulong& rlTota
 		++oIter;
 	}
 	
-	char szText[100];
 	CString	strDate = rDate.ToString(CDate::FMT_WIN_SHORT);
 	CString strLen  = App.MinsToStr(rlTotal);
-	
-	sprintf(szText, "%s (Total: %s)", strDate, strLen);
-	if (!rDevice.SendText(szText))
+	CString strText = CString::Fmt("%s (Total: %s)", strDate, strLen);
+
+	if (!rDevice.SendText(strText))
 		return false;
 
 	oIter = m_SessionList.begin();
@@ -1061,9 +1056,8 @@ bool CTaskTracker::ReportDay(CReport& rDevice, const CDate& rDate, ulong& rlTota
 *******************************************************************************
 */
 
-bool CTaskTracker::ReportSession(CReport& rDevice, CSession* pSession) const
+bool CTaskTracker::ReportSession(CReport& rDevice, const CSessionPtr& pSession) const
 {
-	CString	strText;
 	CString	strStart = pSession->Start().Time().ToString(CTime::FMT_WIN_SHORT);
 	CString	strEnd   = pSession->Finish().Time().ToString(CTime::FMT_WIN_SHORT);
 	CString strTask  = pSession->Task();
@@ -1071,7 +1065,7 @@ bool CTaskTracker::ReportSession(CReport& rDevice, CSession* pSession) const
 	ulong	lLen     = pSession->Length();
 
 	// Format core data.
-	strText.Format("%s to %s for %s", strStart, strEnd,	App.MinsToStr(lLen));
+	CString strText = CString::Fmt("%s to %s for %s", strStart, strEnd, App.MinsToStr(lLen));
 
 	// Append task, if supplied.
 	if (strTask != "")
@@ -1099,8 +1093,10 @@ bool CTaskTracker::ReportSession(CReport& rDevice, CSession* pSession) const
 void CTaskTracker::LoadDefaults()
 {
 	m_strDefFile   = m_IniFile.ReadString("Prefs", "ReportFile", RPT_FILE_NAME);
-	m_eDefGrouping = (Grouping)m_IniFile.ReadInt("Prefs", "Grouping", Ungrouped);
-	m_eDefPeriod   = (Period)m_IniFile.ReadInt("Prefs", "Period", All);
+	m_eDefGrouping = static_cast<Grouping>(m_IniFile.ReadInt("Prefs", "Grouping", Ungrouped));
+	m_eDefPeriod   = static_cast<Period>(m_IniFile.ReadInt("Prefs", "Period", All));
+	m_eMinsFormat  = static_cast<MinsFormat>(m_IniFile.ReadInt("Prefs", "MinsFormat", m_eMinsFormat));
+	m_bMinToTray   = m_IniFile.ReadBool("Prefs", "MinToTray", m_bMinToTray);
 }
 
 /******************************************************************************
@@ -1120,6 +1116,8 @@ void CTaskTracker::SaveDefaults()
 	m_IniFile.WriteString("Prefs", "ReportFile", m_strDefFile);
 	m_IniFile.WriteInt("Prefs", "Grouping", m_eDefGrouping);
 	m_IniFile.WriteInt("Prefs", "Period",   m_eDefPeriod);
+	m_IniFile.WriteInt("Prefs", "MinsFormat", m_eMinsFormat);
+	m_IniFile.WriteBool("Prefs", "MinToTray", m_bMinToTray);
 }
 
 /******************************************************************************
@@ -1239,6 +1237,41 @@ void CTaskTracker::PeriodToDates(Period ePeriod, CDate& rFromDate, CDate& rToDat
 }
 
 /******************************************************************************
+** Method:		MinsToStr()
+**
+** Description:	Format a number of minutes as a string according to the user
+**				setting.
+**
+** Parameters:	lMins	The number of minutes.
+**
+** Returns:		The formatted string.
+**
+*******************************************************************************
+*/
+
+CString CTaskTracker::MinsToStr(ulong lMins)
+{
+	CString str;
+
+	switch (m_eMinsFormat)
+	{
+		case HoursMins:
+			str.Format("%d h %02d m", (lMins / 60), (lMins % 60));
+			break;
+
+		case HoursOnly:
+			str.Format("%.2f h", (double)lMins / 60.0);
+			break;
+
+		default:
+			ASSERT_FALSE();
+			break;
+	}
+
+	return str;
+}
+
+/******************************************************************************
 ** Method:		DeleteAllData()
 **
 ** Description:	Deletes all sessions, tasks and locations.
@@ -1263,4 +1296,110 @@ void CTaskTracker::DeleteAllData()
 
 	// Update state.
 	m_bModified = true;
+}
+
+/******************************************************************************
+** Method:		DayMonthYearFormat()
+**
+** Description:	Generate the basic format string for the day, month and year.
+**
+** Parameters:	None.
+**
+** Returns:		The format string.
+**
+*******************************************************************************
+*/
+
+static const char* DayMonthYearFormat()
+{
+	static CString s_strFormat;
+
+	// Format on first request.
+	if (s_strFormat.Empty())
+	{
+		CDate::DateOrder eOrder = CDate::DateFormatOrder();
+		CString          strSep = CDate::FieldSeparator();
+
+		ASSERT((eOrder >= 0) && (eOrder <=2));
+
+		// CDate::DateOrder formats:           MONTH_DAY_YEAR    DAY_MONTH_YEAR    YEAR_MONTH_DAY
+		static const char* s_pszFormats[3] = { "MM'%s'dd'%s'yyyy", "dd'%s'MM'%s'yyyy", "yyyy'%s'MM'%s'dd" };
+
+		s_strFormat.Format(s_pszFormats[eOrder], strSep, strSep);
+	}
+
+	return s_strFormat;
+}
+
+/******************************************************************************
+** Method:		DatePickerFormat()
+**
+** Description:	Gets the format to use for date only date/time picker.
+**
+** Parameters:	None.
+**
+** Returns:		The format string.
+**
+*******************************************************************************
+*/
+
+const char* CTaskTracker::DatePickerFormat()
+{
+	static CString s_strFormat;
+
+	// Format on first request.
+	if (s_strFormat.Empty())
+		s_strFormat.Format("ddd' '%s", DayMonthYearFormat());
+
+	return s_strFormat;
+}
+
+/******************************************************************************
+** Method:		TimePickerFormat()
+**
+** Description:	Gets the format to use for time only date/time picker.
+**
+** Parameters:	None.
+**
+** Returns:		The format string.
+**
+*******************************************************************************
+*/
+
+const char* CTaskTracker::TimePickerFormat()
+{
+	static CString s_strFormat;
+
+	// Format on first request.
+	if (s_strFormat.Empty())
+	{
+		CString strSep = CTime::FieldSeparator();
+
+		s_strFormat.Format("HH'%s'mm", strSep);
+	}
+
+	return s_strFormat;
+}
+
+/******************************************************************************
+** Method:		DateTimePickerFormat()
+**
+** Description:	Gets the format to use for a date/time picker.
+**
+** Parameters:	None.
+**
+** Returns:		The format string.
+**
+*******************************************************************************
+*/
+
+const char* CTaskTracker::DateTimePickerFormat()
+{
+	static CString s_strFormat;
+
+	// Format on first request.
+	if (s_strFormat.Empty())
+		s_strFormat.Format("ddd' '%s' '%s", DayMonthYearFormat(), TimePickerFormat());
+
+	return s_strFormat;
 }

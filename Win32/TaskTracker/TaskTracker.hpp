@@ -46,6 +46,19 @@ typedef enum tagPeriod
 
 /******************************************************************************
 ** 
+** Formats used for converting 'n' minutes to a string.
+**
+*******************************************************************************
+*/
+
+typedef enum tagMinsFormat
+{
+	HoursMins,
+	HoursOnly,
+} MinsFormat;
+
+/******************************************************************************
+** 
 ** File errors.
 **
 *******************************************************************************
@@ -81,27 +94,39 @@ public:
 	//
 	// Member access
 	//
-	bool ClockedIn() const;
-	CTaskList& TaskList();
-	const CString& LastTask() const;
 	CSessionList& SessionList();
-	const CSession* CurrentSession() const;
+	CTaskList& TaskList();
 	CLocnList& LocnList();
+
+	bool ClockedIn() const;
+
+	const CSessionPtr& CurrentSession() const;
+
+	const CString& LastTask() const;
+	void SetLastTask(const CString& strTask);
+
 	const CString& LastLocn() const;
+	void SetLastLocn(const CString& strLocn);
+
 	bool IsModified() const;
 	void Modified();
 
+	//
+	// Preferences access.
+	//
 	CPrinter& Printer();
 	const char* DefaultFile() const;
 	Grouping DefaultGrouping() const;
 	Period DefaultPeriod() const;
+	bool MinimiseToTray() const;
 
 	//
-	// Member setting.
+	// Preferences setting.
 	//
 	void DefaultFile(const char* pszPath);
 	void DefaultGrouping(Grouping eGrouping);
 	void DefaultPeriod(Period ePeriod);
+	bool MinimiseToTray(bool bMinToTray);
 
 	//
 	// Session status.
@@ -128,7 +153,11 @@ public:
 	//
 	void PeriodToDates(Period ePeriod, CDate& rFromDate, CDate& rToDate) const;
 	
-	const char* MinsToStr(ulong lMins);
+	CString MinsToStr(ulong lMins);
+
+	static const char* DatePickerFormat();
+	static const char* TimePickerFormat();
+	static const char* DateTimePickerFormat();
 
 	//
 	// Members
@@ -155,10 +184,9 @@ protected:
 	CTaskList		m_TaskList;
 	CLocnList		m_LocnList;
 	int16			m_bClockedIn;
-	CSession*		m_pCurrSession;
+	CSessionPtr		m_pCurrSession;
 	CString			m_strLastTask;
 	CString			m_strLastLocn;
-	char			m_szMins[20];
 	bool			m_bModified;
 	CPrinter		m_Printer;
 
@@ -169,6 +197,8 @@ protected:
 	CString			m_strDefFile;
 	Grouping		m_eDefGrouping;
 	Period			m_eDefPeriod;
+	MinsFormat		m_eMinsFormat;
+	bool			m_bMinToTray;
 
 	//
 	// Internal methods.
@@ -181,7 +211,7 @@ protected:
 	bool ReportByMonth(CReport& rDevice, ulong& rlTotal, const CDateTime& dtFrom, const CDateTime& dtTo) const;
 	bool ReportByTask(CReport& rDevice, ulong& rlTotal, const CDateTime& dtFrom, const CDateTime& dtTo) const;
 	bool ReportDay(CReport& rDevice, const CDate& rDate, ulong& rlTotal) const;
-	bool ReportSession(CReport& rDevice, CSession* pSession) const;
+	bool ReportSession(CReport& rDevice, const CSessionPtr& pSession) const;
 
 	void LoadDefaults();
 	void SaveDefaults();
@@ -201,15 +231,6 @@ protected:
 
 // The default report filename.
 #define	RPT_FILE_NAME		FILE_TITLE ".txt"
-
-// The format used for all date DateTime pickers.
-#define	DTP_DATE_FORMAT		"ddd' 'dd'/'MM'/'yyyy"
-
-// The format used for all time DateTime pickers.
-#define	DTP_TIME_FORMAT		"HH':'mm"
-
-// The format used for all date & time DateTime pickers.
-#define	DTP_DATETIME_FORMAT	"ddd' 'dd'/'MM'/'yyyy' 'HH':'mm"
 
 /******************************************************************************
 **
@@ -243,12 +264,17 @@ inline const CString& CTaskTracker::LastTask() const
 	return m_strLastTask;
 }
 
+inline void CTaskTracker::SetLastTask(const CString& strTask)
+{
+	m_strLastTask = strTask;
+}
+
 inline CSessionList& CTaskTracker::SessionList()
 {
 	return m_SessionList;
 }
 
-inline const CSession* CTaskTracker::CurrentSession() const
+inline const CSessionPtr& CTaskTracker::CurrentSession() const
 {
 	return m_pCurrSession;
 }
@@ -263,10 +289,9 @@ inline const CString& CTaskTracker::LastLocn() const
 	return m_strLastLocn;
 }
 
-inline const char* CTaskTracker::MinsToStr(ulong lMins)
+inline void CTaskTracker::SetLastLocn(const CString& strLocn)
 {
-	wsprintf(m_szMins, "%ld h %02ld m", (lMins / 60), (lMins % 60));
-	return m_szMins;
+	m_strLastLocn = strLocn;
 }
 
 inline bool CTaskTracker::IsModified() const
@@ -299,6 +324,11 @@ inline Period CTaskTracker::DefaultPeriod() const
 	return m_eDefPeriod;
 }
 
+inline bool CTaskTracker::MinimiseToTray() const
+{
+	return m_bMinToTray;
+}
+
 inline void CTaskTracker::DefaultFile(const char* pszPath)
 {
 	m_strDefFile = pszPath;
@@ -312,6 +342,11 @@ inline void CTaskTracker::DefaultGrouping(Grouping eGrouping)
 inline void CTaskTracker::DefaultPeriod(Period ePeriod)
 {
 	m_eDefPeriod = ePeriod;
+}
+
+inline bool CTaskTracker::MinimiseToTray(bool bMinToTray)
+{
+	m_bMinToTray = bMinToTray;
 }
 
 #endif //TASKTRACKER_HPP
