@@ -23,7 +23,8 @@
 *******************************************************************************
 */
 
-CFileReportDlg::CFileReportDlg() : CDialog(IDD_FILE_REPORT)
+CFileReportDlg::CFileReportDlg()
+	: CDialog(IDD_FILE_REPORT)
 {
 	DEFINE_CTRL_TABLE
 		CTRL(IDC_FILENAME,		&m_ebFileName)
@@ -34,6 +35,7 @@ CFileReportDlg::CFileReportDlg() : CDialog(IDD_FILE_REPORT)
 		CTRL(IDC_PERIOD,		&m_cbPeriod)
 		CTRL(IDC_FROM_DATE,		&m_dtpFromDate)
 		CTRL(IDC_TO_DATE, 		&m_dtpToDate)
+		CTRL(IDC_REMEMBER, 		&m_ckRemember)
 	END_CTRL_TABLE
 
 	DEFINE_CTRLMSG_TABLE
@@ -84,8 +86,11 @@ void CFileReportDlg::OnInitDialog()
 	// Initialise date fields.
 	OnPeriodChange();
 
-	m_dtpFromDate.Format(DTP_DATE_FORMAT);
-	m_dtpToDate.Format(DTP_DATE_FORMAT);
+	m_dtpFromDate.Format(App.DatePickerFormat());
+	m_dtpToDate.Format(App.DatePickerFormat());
+
+	// Initialise other fields.
+	m_ckRemember.Check(true);
 }
 
 /******************************************************************************
@@ -133,10 +138,13 @@ bool CFileReportDlg::OnOk()
 	// Get filename from edit control.
 	m_strFileName = m_ebFileName.Text();
 
-	// Save prefs.
-	App.DefaultFile(m_strFileName);
-	App.DefaultGrouping(m_eGrouping);
-	App.DefaultPeriod(ePeriod);
+	// Save prefs, if required.
+	if (m_ckRemember.IsChecked())
+	{
+		App.DefaultFile(m_strFileName);
+		App.DefaultGrouping(m_eGrouping);
+		App.DefaultPeriod(ePeriod);
+	}
 	
 	return true;
 }

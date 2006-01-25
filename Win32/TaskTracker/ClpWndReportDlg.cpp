@@ -23,7 +23,8 @@
 *******************************************************************************
 */
 
-CClpWndReportDlg::CClpWndReportDlg() : CDialog(IDD_CLPWND_REPORT)
+CClpWndReportDlg::CClpWndReportDlg()
+	: CDialog(IDD_CLPWND_REPORT)
 {
 	DEFINE_CTRL_TABLE
 		CTRL(IDC_GROUP_NONE,	&m_rbGroupByNone)
@@ -33,6 +34,7 @@ CClpWndReportDlg::CClpWndReportDlg() : CDialog(IDD_CLPWND_REPORT)
 		CTRL(IDC_PERIOD,		&m_cbPeriod)
 		CTRL(IDC_FROM_DATE,		&m_dtpFromDate)
 		CTRL(IDC_TO_DATE, 		&m_dtpToDate)
+		CTRL(IDC_REMEMBER, 		&m_ckRemember)
 	END_CTRL_TABLE
 
 	DEFINE_CTRLMSG_TABLE
@@ -80,8 +82,11 @@ void CClpWndReportDlg::OnInitDialog()
 	// Initialise date fields.
 	OnPeriodChange();
 
-	m_dtpFromDate.Format(DTP_DATE_FORMAT);
-	m_dtpToDate.Format(DTP_DATE_FORMAT);
+	m_dtpFromDate.Format(App.DatePickerFormat());
+	m_dtpToDate.Format(App.DatePickerFormat());
+
+	// Initialise other fields.
+	m_ckRemember.Check(true);
 }
 
 /******************************************************************************
@@ -126,10 +131,13 @@ bool CClpWndReportDlg::OnOk()
 	else if (m_rbGroupByTask.IsChecked())
 		m_eGrouping = ByTask;
 
-	// Save prefs.
-	App.DefaultGrouping(m_eGrouping);
-	App.DefaultPeriod(ePeriod);
-	
+	// Save prefs, if required.
+	if (m_ckRemember.IsChecked())
+	{
+		App.DefaultGrouping(m_eGrouping);
+		App.DefaultPeriod(ePeriod);
+	}
+
 	return true;
 }
 
