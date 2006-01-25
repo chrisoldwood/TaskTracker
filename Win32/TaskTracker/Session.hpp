@@ -43,12 +43,6 @@ public:
 	void Start (const CDateTime& dtStart,  const char* pszTask, const char* pszLocn);
 	void Finish(const CDateTime& dtFinish, const char* pszTask, const char* pszLocn);
 	
-	//
-	// File I/O.
-	//
-	void operator <<(CStream& rStream);
-	void operator >>(CStream& rStream) const;
-
 protected:
 	//
 	// Members.
@@ -57,7 +51,16 @@ protected:
 	CDateTime	m_dtFinish;		// Clock Out time.
 	CString		m_strTask;		// Task.
 	CString		m_strLocn;		// Location.
+
+	//
+	// File I/O.
+	//
+	friend void operator >>(CStream& rStream, CSession& oSession);
+	friend void operator <<(CStream& rStream, const CSession& oSession);
 };
+
+// Smart pointer type.
+typedef Core::SharedPtr<CSession> CSessionPtr;
 
 /******************************************************************************
 **

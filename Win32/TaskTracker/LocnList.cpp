@@ -57,6 +57,9 @@ CLocnList::~CLocnList()
 
 void CLocnList::Add(const char* pszLocn)
 {
+	ASSERT(pszLocn != NULL);
+	ASSERT(strlen(pszLocn) > 0);
+
 	// Ignore, if string already in list.
 	if (std::find(begin(), end(), pszLocn) != end())
 		return;
@@ -78,6 +81,7 @@ void CLocnList::Add(const char* pszLocn)
 
 void CLocnList::Remove(const char* pszLocn)
 {
+	ASSERT(pszLocn != NULL);
 	ASSERT(std::find(begin(), end(), pszLocn) != end());
 
 	remove(pszLocn);
@@ -101,18 +105,19 @@ void CLocnList::RemoveAll()
 }
 
 /******************************************************************************
-** Method:		Operator<<()
+** Function:	Operator>>()
 **
 ** Description:	Read a location list from a stream.
 **
-** Parameters:	rStream		The stream.
+** Parameters:	rStream		The stream to read from.
+**				oList		The list to read into.
 **
 ** Returns:		Nothing.
 **
 *******************************************************************************
 */
 
-void CLocnList::operator <<(CStream& rStream)
+void operator >>(CStream& rStream, CLocnList& oList)
 {
 	int16 iCount;
 	
@@ -126,33 +131,34 @@ void CLocnList::operator <<(CStream& rStream)
 
 		rStream >> strLocn;
 
-		push_back(strLocn);
+		oList.push_back(strLocn);
 	}
 }
 
 /******************************************************************************
-** Method:		Operator>>()
+** Function:	Operator<<()
 **
 ** Description:	Write a location list to a stream.
 **
-** Parameters:	rStream		The stream.
+** Parameters:	rStream		The stream to write to.
+**				oList		The list to write.
 **
 ** Returns:		Nothing.
 **
 *******************************************************************************
 */
 
-void CLocnList::operator >>(CStream& rStream) const
+void operator <<(CStream& rStream, const CLocnList& oList)
 {
 	// Template shorthands.
-	typedef const_iterator CIter;
+	typedef CLocnList::const_iterator CIter;
 
-	int16 iCount = (int16) size();
+	int16 iCount = (int16) oList.size();
 	
 	// Write count.
 	rStream << iCount;
 	
 	// Write locations.
-	for(CIter oIter = begin(); oIter != end(); ++oIter)
+	for(CIter oIter = oList.begin(); oIter != oList.end(); ++oIter)
 		rStream << (*oIter);
 }

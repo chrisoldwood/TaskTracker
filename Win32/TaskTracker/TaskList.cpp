@@ -57,6 +57,9 @@ CTaskList::~CTaskList()
 
 void CTaskList::Add(const char* pszTask)
 {
+	ASSERT(pszTask != NULL);
+	ASSERT(strlen(pszTask) > 0);
+
 	// Ignore, if string already in list.
 	if (std::find(begin(), end(), pszTask) != end())
 		return;
@@ -78,6 +81,7 @@ void CTaskList::Add(const char* pszTask)
 
 void CTaskList::Remove(const char* pszTask)
 {
+	ASSERT(pszTask != NULL);
 	ASSERT(std::find(begin(), end(), pszTask) != end());
 
 	remove(pszTask);
@@ -101,18 +105,19 @@ void CTaskList::RemoveAll()
 }
 
 /******************************************************************************
-** Method:		Operator<<()
+** Function:	Operator>>()
 **
 ** Description:	Read a task list from a stream.
 **
-** Parameters:	rStream		The stream.
+** Parameters:	rStream		The stream to read from.
+**				oList		The list to read into.
 **
 ** Returns:		Nothing.
 **
 *******************************************************************************
 */
 
-void CTaskList::operator <<(CStream& rStream)
+void operator >>(CStream& rStream, CTaskList& oList)
 {
 	int16 iCount;
 	
@@ -126,33 +131,34 @@ void CTaskList::operator <<(CStream& rStream)
 
 		rStream >> strTask;
 
-		push_back(strTask);
+		oList.push_back(strTask);
 	}
 }
 
 /******************************************************************************
-** Method:		Operator>>()
+** Function:	Operator<<()
 **
 ** Description:	Write a task list to a stream.
 **
-** Parameters:	rStream		The stream.
+** Parameters:	rStream		The stream to write to.
+**				oList		The list to write.
 **
 ** Returns:		Nothing.
 **
 *******************************************************************************
 */
 
-void CTaskList::operator >>(CStream& rStream) const
+void operator <<(CStream& rStream, const CTaskList& oList)
 {
 	// Template shorthands.
-	typedef const_iterator CIter;
+	typedef CTaskList::const_iterator CIter;
 
-	int16 iCount = (int16) size();
+	int16 iCount = (int16) oList.size();
 	
 	// Write count.
 	rStream << iCount;
 	
 	// Write tasks.
-	for(CIter oIter = begin(); oIter != end(); ++oIter)
+	for(CIter oIter = oList.begin(); oIter != oList.end(); ++oIter)
 		rStream << (*oIter);
 }

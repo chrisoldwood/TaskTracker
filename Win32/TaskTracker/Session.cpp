@@ -65,41 +65,43 @@ ulong CSession::Length() const
 }
 
 /******************************************************************************
-** Method:		Operator<<()
+** Function:	Operator>>()
 **
 ** Description:	Read a session from a stream.
 **
-** Parameters:	rStream		The stream.
+** Parameters:	rStream		The stream to read from.
+**				oList		The session to read into.
 **
 ** Returns:		Nothing.
 **
 *******************************************************************************
 */
 
-void CSession::operator <<(CStream& rStream)
+void operator >>(CStream& rStream, CSession& oSession)
 {
-	rStream >> m_dtStart;
-	rStream >> m_dtFinish;
-	rStream >> m_strTask;
-	rStream >> m_strLocn;
+	rStream >> oSession.m_dtStart;
+	rStream >> oSession.m_dtFinish;
+	rStream >> oSession.m_strTask;
+	rStream >> oSession.m_strLocn;
 }
 
 /******************************************************************************
-** Method:		Operator>>()
+** Function:	Operator<<()
 **
 ** Description:	Write a session to a stream.
 **
-** Parameters:	rStream		The stream.
+** Parameters:	rStream		The stream to write to.
+**				oSession	The session to write.
 **
 ** Returns:		Nothing.
 **
 *******************************************************************************
 */
 
-void CSession::operator >>(CStream& rStream) const
+void operator <<(CStream& rStream, const CSession& oSession)
 {
-	rStream << m_dtStart;
-	rStream << m_dtFinish;
-	rStream << m_strTask;
-	rStream << m_strLocn;
+	rStream << oSession.m_dtStart;
+	rStream << oSession.m_dtFinish;
+	rStream << oSession.m_strTask;
+	rStream << oSession.m_strLocn;
 }
