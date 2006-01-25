@@ -33,7 +33,8 @@ public:
 	// Methods.
 	//
 	void Refresh();
-	CSession* CurrSession();
+
+	CSessionPtr SelSession();
 
 protected:
 	// Constants.
@@ -55,10 +56,5 @@ protected:
 **
 *******************************************************************************
 */
-
-inline CSession* CSessionListView::CurrSession()
-{
-	return (CSession*) ItemData(Selection());
-}
 
 #endif //SESSNLB_HPP

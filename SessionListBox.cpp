@@ -106,15 +106,15 @@ void CSessionListView::Refresh()
 	// Empty contents.
 	DeleteAllItems();
 
-	// For all sessions within the period.
+	// For all sessions...
 	for(CIter oIter = App.SessionList().begin(); oIter != App.SessionList().end(); ++oIter)
 	{
-		CSession* pSession = *oIter;
+		CSessionPtr pSession = *oIter;
 
 		// Get length in minutes.
 		int nLength = pSession->Length();
 
-		CString strStartDay  = pSession->Start().Date().DayOfWeekStr();
+		CString strStartDay  = pSession->Start().Date().DayOfWeekStr(false);
 		CString	strStartDate = pSession->Start().Date().ToString(CDate::FMT_WIN_SHORT);
 		CString	strStartTime = pSession->Start().Time().ToString(CTime::FMT_WIN_SHORT);
 		CString	strEndTime   = pSession->Finish().Time().ToString(CTime::FMT_WIN_SHORT);
@@ -135,8 +135,31 @@ void CSessionListView::Refresh()
 		ItemText(i, 4, strLength);
 		ItemText(i, 5, strTask);
 		ItemText(i, 6, strLocation);
-		ItemPtr (i,    pSession);
+		ItemPtr (i,    &(*oIter));
     }
 
 	RestoreSel(iSel);
+}
+
+/******************************************************************************
+** Method:		SelSession.
+**
+** Description:	Gets the currently selected session.
+**
+** Parameters:	None.
+**
+** Returns:		The currently selected session or nullptr, if none.
+**
+*******************************************************************************
+*/
+
+CSessionPtr CSessionListView::SelSession()
+{
+	CSessionPtr pSession;
+
+	// Is a selected session?
+	if (IsSelection())
+		pSession = *static_cast<CSessionPtr*>(ItemPtr(Selection()));
+
+	return pSession;
 }
