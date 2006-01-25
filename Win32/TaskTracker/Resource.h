@@ -1,11 +1,12 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Developer Studio generated include file.
+// Microsoft Visual C++ generated include file.
 // Used by TaskTracker.rc
 //
 #define IDR_APPICON                     2
 #define IDR_APPMENU                     3
 #define IDR_APPACCEL                    4
 #define IDR_APPTOOLBAR                  5
+#define IDR_TRAYMENU                    6
 #define ID_FILE_POPUP                   100
 #define ID_FILE_EXPORT                  101
 #define ID_FILE_IMPORT                  102
@@ -26,9 +27,13 @@
 #define ID_PRUNE_SESSIONS               401
 #define ID_PRUNE_TASKS                  402
 #define ID_PRUNE_LOCNS                  403
-#define ID_HELP_POPUP                   500
-#define ID_HELP_ABOUT                   502
+#define ID_TOOLS_POPUP                  800
+#define ID_TOOLS_OPTIONS                801
+#define ID_HELP_POPUP                   900
+#define ID_HELP_ABOUT                   902
+#define ID_TRAY_RESTORE                 1001
 #define IDC_CURRENT_TIME                1001
+#define ID_TRAY_EXIT                    1002
 #define IDC_CURRENT_DATE                1002
 #define IDC_NOW                         1003
 #define IDC_SESSION_DATE                1004
@@ -74,9 +79,11 @@
 #define IDC_OUT_DATETIME                1056
 #define IDC_IN_DATETIME                 1057
 #define IDC_LOCNS                       1059
+#define IDC_CHECK1                      1060
 #define IDC_WEBSITE                     1083
 #define IDC_EMAIL                       1084
 #define IDC_VERSION                     1085
+#define IDC_REMEMBER                    1086
 #define IDD_MAIN                        5000
 #define IDD_ABOUT                       5001
 #define IDD_CLOCK_IN                    5002
@@ -99,7 +106,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        115
 #define _APS_NEXT_COMMAND_VALUE         117
-#define _APS_NEXT_CONTROL_VALUE         1060
+#define _APS_NEXT_CONTROL_VALUE         1061
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif
