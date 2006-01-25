@@ -64,9 +64,14 @@ void CPruneTasksDlg::OnInitDialog()
         	}
         }
         
+		CSessionPtr pCurrSession = App.CurrentSession();
+
         // Task in use by current session?
-        if ( (App.CurrentSession()) && ((*oTaskIter) == App.CurrentSession()->Task()) )
+        if ( (pCurrSession.Get()   != nullptr)
+		  && (pCurrSession->Task() == (*oTaskIter)) )
+		{
         	bInUse = true;
+		}
 
         // Task in use as "Last Task"?
         if ((*oTaskIter) == App.LastTask())
