@@ -22,6 +22,11 @@
 #include "PrintReportDlg.hpp"
 #include "ViewReportDlg.hpp"
 
+#ifdef _DEBUG
+// For memory leak detection.
+#define new DBGCRT_NEW
+#endif
+
 /******************************************************************************
 ** Method:		Constructor.
 **
@@ -38,21 +43,21 @@ CAppCmds::CAppCmds()
 {
 	// Define the command table.
 	DEFINE_CMD_TABLE
-		CMD_ENTRY(ID_FILE_EXPORT,			OnFileExport,			NULL,					0)
-		CMD_ENTRY(ID_FILE_IMPORT,			OnFileImport,			NULL,					1)
-		CMD_ENTRY(ID_FILE_EXIT,				OnFileExit,				NULL,					-1)
+		CMD_ENTRY(ID_FILE_EXPORT,			OnFileExport,			nullptr,				0)
+		CMD_ENTRY(ID_FILE_IMPORT,			OnFileImport,			nullptr,				1)
+		CMD_ENTRY(ID_FILE_EXIT,				OnFileExit,				nullptr,				-1)
 		CMD_ENTRY(ID_SESSION_CLOCK_IN,		OnSessionClockIn,		OnUISessionClockIn,		2)
 		CMD_ENTRY(ID_SESSION_SWITCH_TASKS,	OnSessionSwitchTasks,	OnUISessionSwitchTasks,	3)
 		CMD_ENTRY(ID_SESSION_CLOCK_OUT,		OnSessionClockOut,		OnUISessionClockOut,	4)
-		CMD_ENTRY(ID_SESSION_EDIT,			OnSessionEdit,			NULL,					5)
-		CMD_ENTRY(ID_REPORT_WINDOW,			OnReportWindow,			NULL,					6)
-		CMD_ENTRY(ID_REPORT_CLIPBOARD,		OnReportClipboard,		NULL,					7)
-		CMD_ENTRY(ID_REPORT_PRINT,			OnReportPrint,			NULL,					8)
-		CMD_ENTRY(ID_REPORT_FILE,			OnReportFile,			NULL,					9)
+		CMD_ENTRY(ID_SESSION_EDIT,			OnSessionEdit,			nullptr,				5)
+		CMD_ENTRY(ID_REPORT_WINDOW,			OnReportWindow,			nullptr,				6)
+		CMD_ENTRY(ID_REPORT_CLIPBOARD,		OnReportClipboard,		nullptr,				7)
+		CMD_ENTRY(ID_REPORT_PRINT,			OnReportPrint,			nullptr,				8)
+		CMD_ENTRY(ID_REPORT_FILE,			OnReportFile,			nullptr,				9)
 		CMD_ENTRY(ID_PRUNE_SESSIONS,		OnPruneSessions,		OnUIPruneSessions,		-1)
 		CMD_ENTRY(ID_PRUNE_TASKS,			OnPruneTasks,			OnUIPruneTasks,			-1)
 		CMD_ENTRY(ID_PRUNE_LOCNS,			OnPruneLocations,		OnUIPruneLocations,		-1)
-		CMD_ENTRY(ID_HELP_ABOUT,			OnHelpAbout,			NULL,					10)
+		CMD_ENTRY(ID_HELP_ABOUT,			OnHelpAbout,			nullptr,				10)
 	END_CMD_TABLE
 }
 
@@ -115,7 +120,7 @@ void CAppCmds::OnFileExport()
 		// For all sessions.
 		for(CIter oIter = App.SessionList().begin(); oIter != App.SessionList().end(); ++oIter)
 		{
-			CSession* pSession = *oIter;
+			CSessionPtr pSession = *oIter;
 
 			CString strLine;
 
@@ -253,7 +258,7 @@ void CAppCmds::OnFileImport()
 			}
 
 			// Allocate a new session and initialise.
-			CSession* pSession = new CSession;
+			CSessionPtr pSession = new CSession;
 
 			pSession->Start (dtStart, strTask, strLocation);
 			pSession->Finish(dtEnd,   strTask, strLocation);
@@ -315,9 +320,12 @@ void CAppCmds::OnFileExit()
 
 void CAppCmds::OnSessionClockIn()
 {
+	// Use desktop as dialog parent when in system tray.
+	CWnd* pParent = (App.m_rMainWnd.IsVisible()) ? &App.m_rMainWnd : &CWnd::g_oDesktop;
+
 	CClockInDlg	Dlg;
-	
-	if (Dlg.RunModal(App.m_rMainWnd) == IDOK)
+
+	if (Dlg.RunModal(*pParent) == IDOK)
 	{
 		App.ClockIn(Dlg.m_dtDateTime, Dlg.m_strTask, Dlg.m_strLocn);
 		App.m_AppWnd.m_AppDlg.Update();
@@ -351,9 +359,12 @@ void CAppCmds::OnSessionSwitchTasks()
 		return;
 	}
 
+	// Use desktop as dialog parent when in system tray.
+	CWnd* pParent = (App.m_rMainWnd.IsVisible()) ? &App.m_rMainWnd : &CWnd::g_oDesktop;
+
 	CSwitchTasksDlg	Dlg;
 	
-	if (Dlg.RunModal(App.m_rMainWnd) == IDOK)
+	if (Dlg.RunModal(*pParent) == IDOK)
 	{
 		dtCurrent.Set();
 
@@ -380,9 +391,12 @@ void CAppCmds::OnSessionSwitchTasks()
 
 void CAppCmds::OnSessionClockOut()
 {
+	// Use desktop as dialog parent when in system tray.
+	CWnd* pParent = (App.m_rMainWnd.IsVisible()) ? &App.m_rMainWnd : &CWnd::g_oDesktop;
+
 	CClockOutDlg Dlg;
 	
-	if (Dlg.RunModal(App.m_rMainWnd) == IDOK)
+	if (Dlg.RunModal(*pParent) == IDOK)
 	{
 		App.ClockOut(Dlg.m_dtDateTime, Dlg.m_strTask, Dlg.m_strLocn);
 		App.m_AppWnd.m_AppDlg.Update();
@@ -589,18 +603,12 @@ void CAppCmds::OnPruneSessions()
 		// Template shorthands.
 		typedef CSessionList::iterator CIter;
 
-		CIsSessionInRange oRange(CDateTime::Min(), CDateTime(Dlg.m_Date, CTime::Max()));
+		CIsSessionInRange oRange(CDateTime::Min(), CDateTime(Dlg.m_Date, CTime::Min()));
 		CIter             oIter(App.SessionList().begin());
 
 		// Delete all sessions within the period.
 		while ((oIter = std::find_if(oIter, App.SessionList().end(), oRange)) != App.SessionList().end())
-		{
-			CIter oCurrIter = oIter++;
-
-			delete *oCurrIter;
-
-			App.SessionList().erase(oCurrIter);
-		}
+			App.SessionList().erase(oIter++);
 
 		// Update dirty flag.
 		App.Modified();
