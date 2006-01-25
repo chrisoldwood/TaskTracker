@@ -13,6 +13,11 @@
 #include "AddSessionDlg.hpp"
 #include "ModifySessionDlg.hpp"
 
+#ifdef _DEBUG
+// For memory leak detection.
+#define new DBGCRT_NEW
+#endif
+
 /******************************************************************************
 ** Method:		Default constructor.
 **
@@ -92,12 +97,9 @@ void CEditSessionDlg::OnAdd()
 	
 	if (Dlg.RunModal(*this) == IDOK)
 	{
-		CSession*	pNewSession;
-		
 		// Create a new session.
-		pNewSession = new CSession;
-		ASSERT(pNewSession);
-	
+		CSessionPtr pNewSession = new CSession;
+		
 		// Initialise.
 		pNewSession->Start (Dlg.m_dtInDateTime,  Dlg.m_strTask, Dlg.m_strLocn);
 		pNewSession->Finish(Dlg.m_dtOutDateTime, Dlg.m_strTask, Dlg.m_strLocn);
@@ -110,7 +112,11 @@ void CEditSessionDlg::OnAdd()
 		if (Dlg.m_strLocn != "")
 			App.LocnList().Add(Dlg.m_strLocn);
 	
-		// Add to list.
+		// Remember task and location used.
+		App.SetLastTask(Dlg.m_strTask);
+		App.SetLastLocn(Dlg.m_strLocn);
+
+		// Add to sessionlist.
 		App.SessionList().Add(pNewSession);
 
 		int i = App.SessionList().IndexOf(pNewSession);
@@ -118,6 +124,7 @@ void CEditSessionDlg::OnAdd()
 		// Refresh session list.
 		m_lvSessions.Refresh();
 		m_lvSessions.Select(i);
+		m_lvSessions.MakeItemVisible(i);
 
     	// Enable delete and modify buttons.
 		m_bnModify.Enable();
@@ -145,8 +152,9 @@ void CEditSessionDlg::OnModify()
 	CModifySessionDlg Dlg;
 
 	// Get selected session.
-	CSession* pSession = m_lvSessions.CurrSession();
-	ASSERT(pSession);
+	CSessionPtr pSession = m_lvSessions.SelSession();
+
+	ASSERT(pSession.Get() != nullptr);
 	
 	// Initialise dialog.
 	Dlg.m_dtInDateTime  = pSession->Start();
@@ -231,12 +239,12 @@ void CEditSessionDlg::OnDelete()
 	ASSERT(iIdx != LB_ERR);
 
 	// Get selected session.
-	CSession* pSession = m_lvSessions.CurrSession();
-	ASSERT(pSession);
+	CSessionPtr pSession = m_lvSessions.SelSession();
+
+	ASSERT(pSession.Get() != nullptr);
 
 	// Delete session.
 	App.SessionList().Remove(pSession);
-	delete pSession;
 	
 	// Update listbox.
 	m_lvSessions.DeleteItem(iIdx);
