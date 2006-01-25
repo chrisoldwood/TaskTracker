@@ -136,7 +136,7 @@ void CAppDlg::Update()
 	if (App.ClockedIn())
 	{
 		// Get the current session.
-		const CSession* pCurrSession = App.CurrentSession();
+		const CSessionPtr& pCurrSession = App.CurrentSession();
 
 		// Create a copy of the current session.
 		CSession m_CurrSession(*pCurrSession);
