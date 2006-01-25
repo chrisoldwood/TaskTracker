@@ -37,20 +37,12 @@ public:
 	void Remove(const char* pszLocn);
 	void RemoveAll();
 
+private:
 	//
 	// File I/O.
 	//
-	void operator <<(CStream& rStream);
-	void operator >>(CStream& rStream) const;
-
-protected:
-	//
-	// Members.
-	//
-
-	//
-	// Methods.
-	//
+	friend void operator >>(CStream& rStream, CLocnList& oList);
+	friend void operator <<(CStream& rStream, const CLocnList& oList);
 };
 
 /******************************************************************************
