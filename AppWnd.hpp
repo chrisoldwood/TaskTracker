@@ -29,12 +29,18 @@ public:
 	~CAppWnd();
 
 	//
+	// Methods.
+	//
+	void ShowTrayIcon(bool bShow);
+
+	//
 	// Members.
 	//
 	CAppDlg		m_AppDlg;
 	CFrameMenu	m_Menu;
 	CAppToolBar	m_ToolBar;
 	CStatusBar	m_StatusBar;
+	CTrayIcon	m_oTrayIcon;
 
 protected:
 	//
@@ -49,11 +55,28 @@ protected:
 		IDC_STATUS_BAR = 101
 	};
 
+	// Tray icon IDs.
+	enum
+	{
+		TRAY_ICON_ID = 100,
+	};
+
+	// Tray icon message ID.
+	enum { WM_USER_TRAY_NOTIFY = WM_USER };
+
 	//
 	// Message processors.
 	//
 	virtual void OnCreate(const CRect& rcClient);
+	virtual void OnUserMsg(uint nMsg, WPARAM wParam, LPARAM lParam);
+	virtual void OnResize(int iFlag, const CSize& rNewSize);
 	virtual bool OnQueryClose();
+	virtual void OnClose();
+
+	//
+	// Internal methods.
+	//
+	void Restore();
 };
 
 /******************************************************************************
@@ -62,5 +85,13 @@ protected:
 **
 *******************************************************************************
 */
+
+inline void CAppWnd::ShowTrayIcon(bool bShow)
+{
+	if (bShow)
+		m_oTrayIcon.Add(*this, TRAY_ICON_ID, WM_USER_TRAY_NOTIFY, IDR_APPICON, "Task Tracker");
+	else
+		m_oTrayIcon.Remove();
+}
 
 #endif //APPWND_HPP
