@@ -46,6 +46,7 @@ protected:
 	CComboBox		m_cbPeriod;
 	CDateTimePicker	m_dtpFromDate;
 	CDateTimePicker	m_dtpToDate;
+	CCheckBox		m_ckRemember;
 	
 	//
 	// Message processors.
