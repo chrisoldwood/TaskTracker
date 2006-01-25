@@ -64,10 +64,15 @@ void CPruneLocnsDlg::OnInitDialog()
         		break;
         	}
         }
-        
+
+		CSessionPtr pCurrSession = App.CurrentSession();
+
         // Location in use by current session?
-        if ( (App.CurrentSession()) && ((*oLocnIter) == App.CurrentSession()->Location()) )
+        if ( (pCurrSession.Get()       != nullptr)
+		  && (pCurrSession->Location() == (*oLocnIter)) )
+		{
         	bInUse = true;
+		}
 
         // Location in use as "Last Location"?
         if ((*oLocnIter) == App.LastLocn())
