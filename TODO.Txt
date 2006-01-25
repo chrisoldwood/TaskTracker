@@ -1,3 +1,15 @@
-- HelpFile
+- XML format import/export.
 
-- Fix scroll to view bug in session editing dialog.
+- Export a range of dates only.
+
+- Preferences dialog (Tray + fmt options + Holidays).
+
+- Add Holidays option. Enter date range/time and Task name.
+
+- Other report formats, e.g. HTML & XML
+
+- Better formatting options, e.g length in mins (<60) / hours (<24) / days.
+
+- Tighten up dialog layouts.
+
+- Save using .tmp file and add .bak file.
