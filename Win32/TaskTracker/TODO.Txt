@@ -1,15 +1,27 @@
+- Add UI for turning off session overlap check.
+
 - XML format import/export.
+
+- Allow merging on import.
 
 - Export a range of dates only.
 
-- Preferences dialog (Tray + fmt options + Holidays).
+- Preferences dialog (Holidays).
 
 - Add Holidays option. Enter date range/time and Task name.
 
-- Other report formats, e.g. HTML & XML
-
-- Better formatting options, e.g length in mins (<60) / hours (<24) / days.
-
-- Tighten up dialog layouts.
+- Other report formats, e.g. HTML & XML (File & Clipboard)
 
 - Save using .tmp file and add .bak file.
+
+- Allow font to be configured for window report.
+
+- Allow session pruning using a range.
+
+- Warning option for overlapping sessions.
+
+- User configurable 1st day of the week.
+
+- Task renaming.
+
+- '*' when "Out" time is a different day.
