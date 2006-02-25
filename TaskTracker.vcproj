@@ -374,6 +374,9 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\ExportDlg.cpp">
+			</File>
+			<File
 				RelativePath="FileReport.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -414,6 +417,9 @@
 						AdditionalIncludeDirectories=""
 						PreprocessorDefinitions=""/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\ImportDlg.cpp">
 			</File>
 			<File
 				RelativePath="LocnComboBox.cpp">
@@ -477,6 +483,9 @@
 						AdditionalIncludeDirectories=""
 						PreprocessorDefinitions=""/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\OptionsDlg.cpp">
 			</File>
 			<File
 				RelativePath="PrintReport.cpp">
@@ -827,10 +836,16 @@
 				RelativePath="EditSessionDlg.hpp">
 			</File>
 			<File
+				RelativePath=".\ExportDlg.hpp">
+			</File>
+			<File
 				RelativePath="FileReport.hpp">
 			</File>
 			<File
 				RelativePath="FileReportDlg.hpp">
+			</File>
+			<File
+				RelativePath=".\ImportDlg.hpp">
 			</File>
 			<File
 				RelativePath="LocnComboBox.hpp">
@@ -840,6 +855,9 @@
 			</File>
 			<File
 				RelativePath="ModifySessionDlg.hpp">
+			</File>
+			<File
+				RelativePath=".\OptionsDlg.hpp">
 			</File>
 			<File
 				RelativePath="PrintReport.hpp">
