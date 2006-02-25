@@ -38,6 +38,7 @@ protected:
 	// Message processors.
 	//
 	virtual void OnInitDialog();
+	virtual void OnDestroy();
 };
 
 /******************************************************************************
