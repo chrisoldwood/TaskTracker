@@ -60,13 +60,13 @@ void CLocnCombo::OnCreate(const CRect&)
 	typedef CLocnList::const_iterator CIter;
 
 	// Add all locations.
-	for(CIter oIter = App.LocnList().begin(); oIter != App.LocnList().end(); ++oIter)
+	for(CIter oIter = App.m_oLocnList.begin(); oIter != App.m_oLocnList.end(); ++oIter)
 		Add(*oIter);
 	
 	// Select last location, if one
-	if (App.LastLocn() != "")
+	if (App.m_strLastLocn != "")
 	{
-		int iItem = FindExact(App.LastLocn());
+		int iItem = FindExact(App.m_strLastLocn);
 		ASSERT(iItem != CB_ERR);
 		
 		CurSel(iItem);
