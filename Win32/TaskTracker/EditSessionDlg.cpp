@@ -71,12 +71,34 @@ CEditSessionDlg::CEditSessionDlg()
 void CEditSessionDlg::OnInitDialog()
 {
 	// Session list empty?
-    if (!App.SessionList().size())
+    if (!App.m_oSessionList.size())
     {
     	// Disable delete and modify buttons.
 		m_bnModify.Enable(false);
 		m_bnDelete.Enable(false);
     }
+
+	// Resize dialog to previous size.
+	if (!App.m_rcEditDlg.Empty())
+		Move(App.m_rcEditDlg);
+}
+
+/******************************************************************************
+** Method:		OnDestroy()
+**
+** Description:	The window is being destroyed.
+**
+** Parameters:	None.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CEditSessionDlg::OnDestroy()
+{
+	// Remember its position.
+	App.m_rcEditDlg = Placement();
 }
 
 /******************************************************************************
@@ -106,20 +128,20 @@ void CEditSessionDlg::OnAdd()
 	
 		// Add task to list if set.
 		if (Dlg.m_strTask != "")
-			App.TaskList().Add(Dlg.m_strTask);
+			App.m_oTaskList.Add(Dlg.m_strTask);
 	
 		// Add Location to list if set.
 		if (Dlg.m_strLocn != "")
-			App.LocnList().Add(Dlg.m_strLocn);
+			App.m_oLocnList.Add(Dlg.m_strLocn);
 	
 		// Remember task and location used.
-		App.SetLastTask(Dlg.m_strTask);
-		App.SetLastLocn(Dlg.m_strLocn);
+		App.m_strLastTask = Dlg.m_strTask;
+		App.m_strLastLocn = Dlg.m_strLocn;
 
 		// Add to sessionlist.
-		App.SessionList().Add(pNewSession);
+		App.m_oSessionList.Add(pNewSession);
 
-		int i = App.SessionList().IndexOf(pNewSession);
+		int i = App.m_oSessionList.IndexOf(pNewSession);
 
 		// Refresh session list.
 		m_lvSessions.Refresh();
@@ -131,7 +153,7 @@ void CEditSessionDlg::OnAdd()
 		m_bnDelete.Enable();
 		
 		// Update dirty flag.
-		App.Modified();
+		App.m_bModified = true;
 	}
 }
 
@@ -157,6 +179,7 @@ void CEditSessionDlg::OnModify()
 	ASSERT(pSession.Get() != nullptr);
 	
 	// Initialise dialog.
+	Dlg.m_pSession      = pSession;
 	Dlg.m_dtInDateTime  = pSession->Start();
 	Dlg.m_dtOutDateTime = pSession->Finish();
 	Dlg.m_strTask       = pSession->Task();
@@ -169,7 +192,7 @@ void CEditSessionDlg::OnModify()
 		int iIdx = m_lvSessions.Selection();
 
 		// Remove session from list and view.
-		App.SessionList().Remove(pSession);
+		App.m_oSessionList.Remove(pSession);
 		m_lvSessions.DeleteItem(iIdx);
 
 		// Update session details.
@@ -178,16 +201,16 @@ void CEditSessionDlg::OnModify()
 	
 		// Add task to list if set.
 		if (Dlg.m_strTask != "")
-			App.TaskList().Add(Dlg.m_strTask);
+			App.m_oTaskList.Add(Dlg.m_strTask);
 	
 		// Add Location to list if set.
 		if (Dlg.m_strLocn != "")
-			App.LocnList().Add(Dlg.m_strLocn);
+			App.m_oLocnList.Add(Dlg.m_strLocn);
 	
 		// Add to list.
-		App.SessionList().Add(pSession);
+		App.m_oSessionList.Add(pSession);
 		
-		int i = App.SessionList().IndexOf(pSession);
+		int i = App.m_oSessionList.IndexOf(pSession);
 
 		// Refresh session list.
 		m_lvSessions.Refresh();
@@ -195,7 +218,7 @@ void CEditSessionDlg::OnModify()
 		m_lvSessions.MakeItemVisible(i);
 
 		// Update dirty flag.
-		App.Modified();
+		App.m_bModified = true;
 	}
 }
 
@@ -244,13 +267,13 @@ void CEditSessionDlg::OnDelete()
 	ASSERT(pSession.Get() != nullptr);
 
 	// Delete session.
-	App.SessionList().Remove(pSession);
+	App.m_oSessionList.Remove(pSession);
 	
 	// Update listbox.
 	m_lvSessions.DeleteItem(iIdx);
 
 	// Change listbox selection.
-	int iNumItems = App.SessionList().size();
+	int iNumItems = App.m_oSessionList.size();
 	
     if (iNumItems)
     {
@@ -268,5 +291,5 @@ void CEditSessionDlg::OnDelete()
     }
     
 	// Update dirty flag.
-	App.Modified();
+	App.m_bModified = true;
 }
