@@ -50,12 +50,12 @@ void CPruneLocnsDlg::OnInitDialog()
 	typedef CSessionList::const_iterator CSessIter;
 
 	// For all locations...
-	for(CLocnIter oLocnIter = App.LocnList().begin(); oLocnIter != App.LocnList().end(); ++oLocnIter)
+	for(CLocnIter oLocnIter = App.m_oLocnList.begin(); oLocnIter != App.m_oLocnList.end(); ++oLocnIter)
 	{
 		bool bInUse = false;
 
 		// For all sessions.
-		for(CSessIter oSessIter = App.SessionList().begin(); oSessIter != App.SessionList().end(); ++oSessIter)
+		for(CSessIter oSessIter = App.m_oSessionList.begin(); oSessIter != App.m_oSessionList.end(); ++oSessIter)
         {
         	// Location in use?
         	if ((*oLocnIter) == (*oSessIter)->Location())
@@ -65,17 +65,15 @@ void CPruneLocnsDlg::OnInitDialog()
         	}
         }
 
-		CSessionPtr pCurrSession = App.CurrentSession();
-
         // Location in use by current session?
-        if ( (pCurrSession.Get()       != nullptr)
-		  && (pCurrSession->Location() == (*oLocnIter)) )
+        if ( (App.m_pCurrSession.Get()       != nullptr)
+		  && (App.m_pCurrSession->Location() == (*oLocnIter)) )
 		{
         	bInUse = true;
 		}
 
         // Location in use as "Last Location"?
-        if ((*oLocnIter) == App.LastLocn())
+        if ((*oLocnIter) == App.m_strLastLocn)
         	bInUse = true;
         
 		// Add location if not in use?

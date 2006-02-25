@@ -59,7 +59,7 @@ void CClpWndReportDlg::OnInitDialog()
 	Title(m_strTitle);
 
 	// Select default grouping.
-	switch (App.DefaultGrouping())
+	switch (App.m_eDefGrouping)
 	{
 		case Ungrouped:	m_rbGroupByNone.Check(true);	break;
 		case ByWeek:	m_rbGroupByWeek.Check(true);	break;
@@ -77,7 +77,7 @@ void CClpWndReportDlg::OnInitDialog()
 	m_cbPeriod.Add("Custom...");
 	
 	// Select default.
-	m_cbPeriod.CurSel(App.DefaultPeriod());
+	m_cbPeriod.CurSel(App.m_eDefPeriod);
 
 	// Initialise date fields.
 	OnPeriodChange();
@@ -134,8 +134,8 @@ bool CClpWndReportDlg::OnOk()
 	// Save prefs, if required.
 	if (m_ckRemember.IsChecked())
 	{
-		App.DefaultGrouping(m_eGrouping);
-		App.DefaultPeriod(ePeriod);
+		App.m_eDefGrouping = m_eGrouping;
+		App.m_eDefPeriod   = ePeriod;
 	}
 
 	return true;

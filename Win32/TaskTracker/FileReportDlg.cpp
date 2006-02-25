@@ -59,11 +59,11 @@ CFileReportDlg::CFileReportDlg()
 void CFileReportDlg::OnInitDialog()
 {
 	// Initialise filename.
-	m_strFileName = App.DefaultFile();
+	m_strFileName = App.m_strReportFile;
 	m_ebFileName.Text(m_strFileName);
 
 	// Select default grouping.
-	switch (App.DefaultGrouping())
+	switch (App.m_eDefGrouping)
 	{
 		case Ungrouped:	m_rbGroupByNone.Check(true);	break;
 		case ByWeek:	m_rbGroupByWeek.Check(true);	break;
@@ -81,7 +81,7 @@ void CFileReportDlg::OnInitDialog()
 	m_cbPeriod.Add("Custom...");
 	
 	// Select default.
-	m_cbPeriod.CurSel(App.DefaultPeriod());
+	m_cbPeriod.CurSel(App.m_eDefPeriod);
 
 	// Initialise date fields.
 	OnPeriodChange();
@@ -107,6 +107,14 @@ void CFileReportDlg::OnInitDialog()
 
 bool CFileReportDlg::OnOk()
 {
+	// Validate file name.
+	if (m_ebFileName.TextLength() == 0)
+	{
+		AlertMsg("Please select the report file name.");
+		m_ebFileName.Focus();
+		return false;
+	}
+
 	// Get period selection.
 	Period ePeriod = (Period) m_cbPeriod.CurSel();
 
@@ -141,9 +149,9 @@ bool CFileReportDlg::OnOk()
 	// Save prefs, if required.
 	if (m_ckRemember.IsChecked())
 	{
-		App.DefaultFile(m_strFileName);
-		App.DefaultGrouping(m_eGrouping);
-		App.DefaultPeriod(ePeriod);
+		App.m_strReportFile = m_strFileName;
+		App.m_eDefGrouping  = m_eGrouping;
+		App.m_eDefPeriod    = ePeriod;
 	}
 	
 	return true;

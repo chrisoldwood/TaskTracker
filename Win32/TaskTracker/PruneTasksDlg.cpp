@@ -49,12 +49,12 @@ void CPruneTasksDlg::OnInitDialog()
 	typedef CSessionList::const_iterator CSessIter;
 
 	// For all tasks...
-	for(CTaskIter oTaskIter = App.TaskList().begin(); oTaskIter != App.TaskList().end(); ++oTaskIter)
+	for(CTaskIter oTaskIter = App.m_oTaskList.begin(); oTaskIter != App.m_oTaskList.end(); ++oTaskIter)
 	{
 		bool bInUse = false;
 
 		// For all sessions.
-		for(CSessIter oSessIter = App.SessionList().begin(); oSessIter != App.SessionList().end(); ++oSessIter)
+		for(CSessIter oSessIter = App.m_oSessionList.begin(); oSessIter != App.m_oSessionList.end(); ++oSessIter)
         {
         	// Task in use?
         	if ((*oTaskIter) == (*oSessIter)->Task())
@@ -64,17 +64,15 @@ void CPruneTasksDlg::OnInitDialog()
         	}
         }
         
-		CSessionPtr pCurrSession = App.CurrentSession();
-
         // Task in use by current session?
-        if ( (pCurrSession.Get()   != nullptr)
-		  && (pCurrSession->Task() == (*oTaskIter)) )
+        if ( (App.m_pCurrSession.Get()   != nullptr)
+		  && (App.m_pCurrSession->Task() == (*oTaskIter)) )
 		{
         	bInUse = true;
 		}
 
         // Task in use as "Last Task"?
-        if ((*oTaskIter) == App.LastTask())
+        if ((*oTaskIter) == App.m_strLastTask)
         	bInUse = true;
         
 		// Add task if not in use?

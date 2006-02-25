@@ -60,11 +60,11 @@ CPrintReportDlg::CPrintReportDlg()
 void CPrintReportDlg::OnInitDialog()
 {
 	// Show printer details.
-	m_txtPrinter.Text(App.Printer().m_strName);
-	m_txtPort.Text(App.Printer().m_strPort);
+	m_txtPrinter.Text(App.m_oPrinter.m_strName);
+	m_txtPort.Text(App.m_oPrinter.m_strPort);
 
 	// Select default grouping.
-	switch (App.DefaultGrouping())
+	switch (App.m_eDefGrouping)
 	{
 		case Ungrouped:	m_rbGroupByNone.Check(true);	break;
 		case ByWeek:	m_rbGroupByWeek.Check(true);	break;
@@ -82,7 +82,7 @@ void CPrintReportDlg::OnInitDialog()
 	m_cbPeriod.Add("Custom...");
 	
 	// Select default.
-	m_cbPeriod.CurSel(App.DefaultPeriod());
+	m_cbPeriod.CurSel(App.m_eDefPeriod);
 
 	// Initialise date fields.
 	OnPeriodChange();
@@ -108,12 +108,10 @@ void CPrintReportDlg::OnInitDialog()
 
 bool CPrintReportDlg::OnOk()
 {
-	CPrinter& rPrinter = App.Printer();
-
 	// Check printer selection.
-	if ( (rPrinter.m_strName   == "")
-	  || (rPrinter.m_strDriver == "") 
-	  || (rPrinter.m_strPort   == "") )
+	if ( (App.m_oPrinter.m_strName   == "")
+	  || (App.m_oPrinter.m_strDriver == "") 
+	  || (App.m_oPrinter.m_strPort   == "") )
 	{
 		AlertMsg("You must select a printer.");
 		return false;
@@ -150,8 +148,8 @@ bool CPrintReportDlg::OnOk()
 	// Save prefs, if required.
 	if (m_ckRemember.IsChecked())
 	{
-		App.DefaultGrouping(m_eGrouping);
-		App.DefaultPeriod(ePeriod);
+		App.m_eDefGrouping = m_eGrouping;
+		App.m_eDefPeriod   = ePeriod;
 	}
 	
 	return true;
@@ -174,11 +172,11 @@ void CPrintReportDlg::OnSelect()
 	CBusyCursor BusyCursor;
 
 	// Select a new printer.
-	if (App.Printer().Select(*this))
+	if (App.m_oPrinter.Select(*this))
 	{
 		// Update printer details.
-		m_txtPrinter.Text(App.Printer().m_strName);
-		m_txtPort.Text(App.Printer().m_strPort);
+		m_txtPrinter.Text(App.m_oPrinter.m_strName);
+		m_txtPort.Text(App.m_oPrinter.m_strPort);
 	}
 }
 
