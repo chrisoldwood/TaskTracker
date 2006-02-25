@@ -37,7 +37,7 @@ BEGIN
 			VALUE "FileDescription",  "Task Tracker\0"
 			VALUE "FileVersion",      "3.7 Alpha\0"
 			VALUE "InternalName",     "TaskTrak.exe\0"
-			VALUE "LegalCopyright",   "(C) Chris Oldwood 1995-2005\0"
+			VALUE "LegalCopyright",   "(C) Chris Oldwood 1995-2006\0"
 			VALUE "OriginalFilename", "TaskTrak.exe\0"
 			VALUE "ProductName",      "Task Tracker\0"
 			VALUE "ProductVersion",   "3.7 Alpha\0"
