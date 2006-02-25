@@ -28,6 +28,22 @@ CTaskTracker App;
 
 /******************************************************************************
 **
+** Local constants.
+**
+*******************************************************************************
+*/
+
+// The current file version.
+static const uint DAT_FILE_VERSION = 35;
+
+// The data filename.
+static const char* DAT_FILE_NAME = "TaskTrak.dat";
+
+// The cfg filename.
+static const char* INI_FILE_NAME = "TaskTrak.ini";
+
+/******************************************************************************
+**
 ** Class constants.
 **
 *******************************************************************************
@@ -58,8 +74,9 @@ CTaskTracker::CTaskTracker()
 	, m_strLastLocn("")
 	, m_pCurrSession(nullptr)
 	, m_bModified(false)
-	, m_eMinsFormat(HoursMins)
+	, m_eLenFormat(HoursMins)
 	, m_bMinToTray(false)
+	, m_bCheckOverlap(true)
 {
 }
 
@@ -175,11 +192,11 @@ void CTaskTracker::ClockIn(const CDateTime& dtIn, const CString& strTask, const 
 
 	// Add task to list if set.
 	if (strTask != "")
-		m_TaskList.Add(strTask);
+		m_oTaskList.Add(strTask);
 
 	// Add location to list if set.
 	if (strLocn != "")
-		m_LocnList.Add(strLocn);
+		m_oLocnList.Add(strLocn);
 
 	// Update state.
 	m_strLastTask = strTask;
@@ -210,18 +227,18 @@ void CTaskTracker::ClockOut(const CDateTime& dtOut, const CString& strTask, cons
 	m_pCurrSession->Finish(dtOut, strTask, strLocn);
 
 	// Add to list.
-	m_SessionList.Add(m_pCurrSession);
+	m_oSessionList.Add(m_pCurrSession);
 	
 	// Reset current session.
 	m_pCurrSession.Reset();
 
 	// Add task to list if set.
 	if (strTask != "")
-		m_TaskList.Add(strTask);
+		m_oTaskList.Add(strTask);
 	
 	// Add location to list if set.
 	if (strLocn != "")
-		m_LocnList.Add(strLocn);
+		m_oLocnList.Add(strLocn);
 
 	// Update state.
 	m_strLastTask = strTask;
@@ -252,11 +269,11 @@ ulong CTaskTracker::TotalForPeriod(const CDateTime& dtStart, const CDateTime& dt
 	typedef CSessionList::const_iterator CIter;
 
 	CIsSessionInRange oRange(dtStart, dtEnd);
-	CIter             oIter(m_SessionList.begin());
+	CIter             oIter(m_oSessionList.begin());
 	ulong			  lTotal = 0;
 
 	// For all sessions within the period.
-	while ((oIter = std::find_if(oIter, m_SessionList.end(), oRange)) != m_SessionList.end())
+	while ((oIter = std::find_if(oIter, m_oSessionList.end(), oRange)) != m_oSessionList.end())
 	{
 		lTotal += (*oIter)->Length();
 		++oIter;
@@ -478,9 +495,9 @@ void CTaskTracker::ReadData(CFile& rFile)
 	rFile >> m_strLastLocn;
 	
 	// Read collections.
-	rFile >> m_SessionList;
-	rFile >> m_TaskList;
-	rFile >> m_LocnList;
+	rFile >> m_oSessionList;
+	rFile >> m_oTaskList;
+	rFile >> m_oLocnList;
 }
 
 /******************************************************************************
@@ -560,9 +577,9 @@ void CTaskTracker::WriteData(CFile& rFile)
 	rFile << m_strLastLocn;
 	
 	// Write collections.
-	rFile << m_SessionList;
-	rFile << m_TaskList;
-	rFile << m_LocnList;
+	rFile << m_oSessionList;
+	rFile << m_oTaskList;
+	rFile << m_oLocnList;
 }
 
 /******************************************************************************
@@ -661,10 +678,10 @@ bool CTaskTracker::ReportUngrouped(CReport& rDevice, ulong& rlTotal, const CDate
 	rlTotal = 0;
 
 	CIsSessionInRange oRange(dtFrom, dtTo);
-	CIter             oIter(m_SessionList.begin());
+	CIter             oIter(m_oSessionList.begin());
 
 	// For all sessions in range...
-	while ((oIter = std::find_if(oIter, m_SessionList.end(), oRange)) != m_SessionList.end())
+	while ((oIter = std::find_if(oIter, m_oSessionList.end(), oRange)) != m_oSessionList.end())
 	{
 		CSessionPtr pSession = *oIter;
 
@@ -716,10 +733,10 @@ bool CTaskTracker::ReportByWeek(CReport& rDevice, ulong& rlTotal, const CDateTim
 	rlTotal = 0;
 
 	CIsSessionInRange oRange(dtFrom, dtTo);
-	CIter             oIter(m_SessionList.begin());
+	CIter             oIter(m_oSessionList.begin());
 
 	// For all sessions in range...
-	while ((oIter = std::find_if(oIter, m_SessionList.end(), oRange)) != m_SessionList.end())
+	while ((oIter = std::find_if(oIter, m_oSessionList.end(), oRange)) != m_oSessionList.end())
 	{
 		CSessionPtr pSession = *oIter;
 
@@ -742,11 +759,11 @@ bool CTaskTracker::ReportByWeek(CReport& rDevice, ulong& rlTotal, const CDateTim
 
 		// Create enumerator for the week.
 		CIsSessionInRange oWeekRange(dtStart, dtEnd);
-		CIter             oWeekIter(m_SessionList.begin());
+		CIter             oWeekIter(m_oSessionList.begin());
 		ulong			  lWeekTotal = 0;
 
 		// Get total for the week.
-		while ((oWeekIter = std::find_if(oWeekIter, m_SessionList.end(), oWeekRange)) != m_SessionList.end())
+		while ((oWeekIter = std::find_if(oWeekIter, m_oSessionList.end(), oWeekRange)) != m_oSessionList.end())
 		{
 			lWeekTotal += (*oWeekIter)->Length();
 			++oWeekIter;
@@ -819,10 +836,10 @@ bool CTaskTracker::ReportByMonth(CReport& rDevice, ulong& rlTotal, const CDateTi
 	rlTotal = 0;
 
 	CIsSessionInRange oRange(dtFrom, dtTo);
-	CIter             oIter(m_SessionList.begin());
+	CIter             oIter(m_oSessionList.begin());
 
 	// For all sessions in range...
-	while ((oIter = std::find_if(oIter, m_SessionList.end(), oRange)) != m_SessionList.end())
+	while ((oIter = std::find_if(oIter, m_oSessionList.end(), oRange)) != m_oSessionList.end())
 	{
 		CSessionPtr pSession = *oIter;
 
@@ -849,11 +866,11 @@ bool CTaskTracker::ReportByMonth(CReport& rDevice, ulong& rlTotal, const CDateTi
 
 		// Create enumerator for the month.
 		CIsSessionInRange oMonthRange(dtStart, dtEnd);
-		CIter             oMonthIter(m_SessionList.begin());
+		CIter             oMonthIter(m_oSessionList.begin());
 		ulong			  lMonthTotal = 0;
 		
 		// Get total for the month.
-		while ((oMonthIter = std::find_if(oMonthIter, m_SessionList.end(), oMonthRange)) != m_SessionList.end())
+		while ((oMonthIter = std::find_if(oMonthIter, m_oSessionList.end(), oMonthRange)) != m_oSessionList.end())
 		{
 			lMonthTotal += (*oMonthIter)->Length();
 			++oMonthIter;
@@ -924,14 +941,14 @@ bool CTaskTracker::ReportByTask(CReport& rDevice, ulong& rlTotal, const CDateTim
 	rlTotal = 0;
 	
 	// For all tasks.
-	for(CTaskIter oIter = App.TaskList().begin(); oIter != App.TaskList().end(); ++oIter)
+	for(CTaskIter oIter = App.m_oTaskList.begin(); oIter != App.m_oTaskList.end(); ++oIter)
 	{
-		CSessIter         oTotalIter(m_SessionList.begin());
+		CSessIter         oTotalIter(m_oSessionList.begin());
 		CIsSessionInRange oTotalRange(dtFrom, dtTo);
 		ulong			  lTotal = 0;
 	
 		// Get length of all sessions for task.
-		while ((oTotalIter = std::find_if(oTotalIter, m_SessionList.end(), oTotalRange)) != m_SessionList.end())
+		while ((oTotalIter = std::find_if(oTotalIter, m_oSessionList.end(), oTotalRange)) != m_oSessionList.end())
 		{
 			CSessionPtr pSession = *oTotalIter;
 
@@ -950,10 +967,10 @@ bool CTaskTracker::ReportByTask(CReport& rDevice, ulong& rlTotal, const CDateTim
 		if (!rDevice.SendHeading(strHeading))
 			return false;
 
-		oTotalIter = m_SessionList.begin();
+		oTotalIter = m_oSessionList.begin();
 
 		// Output all sessions for task.
-		while ((oTotalIter = std::find_if(oTotalIter, m_SessionList.end(), oTotalRange)) != m_SessionList.end())
+		while ((oTotalIter = std::find_if(oTotalIter, m_oSessionList.end(), oTotalRange)) != m_oSessionList.end())
 		{
 			CSessionPtr pSession = *oTotalIter;
 
@@ -1011,11 +1028,11 @@ bool CTaskTracker::ReportDay(CReport& rDevice, const CDate& rDate, ulong& rlTota
 	// Initialise total.
 	rlTotal = 0;
 
-	CIter             oIter(m_SessionList.begin());
+	CIter             oIter(m_oSessionList.begin());
 	CIsSessionInRange oRange(dtStart, dtEnd);
 
 	// Get length of all sessions on the day.
-	while ((oIter = std::find_if(oIter, m_SessionList.end(), oRange)) != m_SessionList.end())
+	while ((oIter = std::find_if(oIter, m_oSessionList.end(), oRange)) != m_oSessionList.end())
 	{
 		rlTotal += (*oIter)->Length();
 
@@ -1029,10 +1046,10 @@ bool CTaskTracker::ReportDay(CReport& rDevice, const CDate& rDate, ulong& rlTota
 	if (!rDevice.SendText(strText))
 		return false;
 
-	oIter = m_SessionList.begin();
+	oIter = m_oSessionList.begin();
 
 	// Report all sessions on the day.
-	while ((oIter = std::find_if(oIter, m_SessionList.end(), oRange)) != m_SessionList.end())
+	while ((oIter = std::find_if(oIter, m_oSessionList.end(), oRange)) != m_oSessionList.end())
 	{
 		if (!ReportSession(rDevice, *oIter))
 			return false;
@@ -1092,11 +1109,21 @@ bool CTaskTracker::ReportSession(CReport& rDevice, const CSessionPtr& pSession) 
 
 void CTaskTracker::LoadDefaults()
 {
-	m_strDefFile   = m_IniFile.ReadString("Prefs", "ReportFile", RPT_FILE_NAME);
-	m_eDefGrouping = static_cast<Grouping>(m_IniFile.ReadInt("Prefs", "Grouping", Ungrouped));
-	m_eDefPeriod   = static_cast<Period>(m_IniFile.ReadInt("Prefs", "Period", All));
-	m_eMinsFormat  = static_cast<MinsFormat>(m_IniFile.ReadInt("Prefs", "MinsFormat", m_eMinsFormat));
-	m_bMinToTray   = m_IniFile.ReadBool("Prefs", "MinToTray", m_bMinToTray);
+	// Load UI settings.
+	m_eLenFormat    = static_cast<LenFormat>(m_IniFile.ReadInt("Prefs", "LenFormat", m_eLenFormat));
+	m_bMinToTray    = m_IniFile.ReadBool("Prefs", "MinToTray", m_bMinToTray);
+	m_bCheckOverlap = m_IniFile.ReadBool("Prefs", "CheckOverlap", m_bCheckOverlap);
+	m_rcReportDlg   = m_IniFile.ReadRect("Prefs", "ReportDlg", m_rcReportDlg);
+	m_rcEditDlg     = m_IniFile.ReadRect("Prefs", "EditDlg",   m_rcEditDlg);
+
+	// Load report settings.
+	m_eDefGrouping  = static_cast<Grouping>(m_IniFile.ReadInt("Prefs", "Grouping", Ungrouped));
+	m_eDefPeriod    = static_cast<Period>(m_IniFile.ReadInt("Prefs", "Period", All));
+	m_strReportFile = m_IniFile.ReadString("Prefs", "ReportFile", m_strReportFile);
+
+	// Load export/import settings.
+	m_strExportFile = m_IniFile.ReadString("Prefs", "ExportFile", m_strExportFile);
+	m_strImportFile = m_IniFile.ReadString("Prefs", "ImportFile", m_strImportFile);
 }
 
 /******************************************************************************
@@ -1113,11 +1140,21 @@ void CTaskTracker::LoadDefaults()
 
 void CTaskTracker::SaveDefaults()
 {
-	m_IniFile.WriteString("Prefs", "ReportFile", m_strDefFile);
-	m_IniFile.WriteInt("Prefs", "Grouping", m_eDefGrouping);
-	m_IniFile.WriteInt("Prefs", "Period",   m_eDefPeriod);
-	m_IniFile.WriteInt("Prefs", "MinsFormat", m_eMinsFormat);
-	m_IniFile.WriteBool("Prefs", "MinToTray", m_bMinToTray);
+	// Save UI settings.
+	m_IniFile.WriteInt ("Prefs", "LenFormat",    m_eLenFormat);
+	m_IniFile.WriteBool("Prefs", "MinToTray",    m_bMinToTray);
+	m_IniFile.WriteBool("Prefs", "CheckOverlap", m_bCheckOverlap);
+	m_IniFile.WriteRect("Prefs", "ReportDlg",    m_rcReportDlg);
+	m_IniFile.WriteRect("Prefs", "EditDlg",      m_rcEditDlg);
+
+	// Save report settings.
+	m_IniFile.WriteInt   ("Prefs", "Grouping",   m_eDefGrouping);
+	m_IniFile.WriteInt   ("Prefs", "Period",     m_eDefPeriod);
+	m_IniFile.WriteString("Prefs", "ReportFile", m_strReportFile);
+
+	// Save export/import settings.
+	m_IniFile.WriteString("Prefs", "ExportFile", m_strExportFile);
+	m_IniFile.WriteString("Prefs", "ImportFile", m_strImportFile);
 }
 
 /******************************************************************************
@@ -1151,11 +1188,11 @@ void CTaskTracker::PeriodToDates(Period ePeriod, CDate& rFromDate, CDate& rToDat
 				rToDate   = Today;
 
 				// Any sessions?
-				if (!m_SessionList.empty())
+				if (!m_oSessionList.empty())
 				{
 					// Use first and last sessions dates.
-					rFromDate = m_SessionList.front()->Start().Date();
-					rToDate   = m_SessionList.back()->Start().Date();
+					rFromDate = m_oSessionList.front()->Start().Date();
+					rToDate   = m_oSessionList.back()->Start().Date();
 				}
 			}
 			break;
@@ -1253,7 +1290,7 @@ CString CTaskTracker::MinsToStr(ulong lMins)
 {
 	CString str;
 
-	switch (m_eMinsFormat)
+	switch (m_eLenFormat)
 	{
 		case HoursMins:
 			str.Format("%d h %02d m", (lMins / 60), (lMins % 60));
@@ -1286,9 +1323,9 @@ CString CTaskTracker::MinsToStr(ulong lMins)
 void CTaskTracker::DeleteAllData()
 {
 	// Reset collections.
-	m_SessionList.RemoveAll();
-	m_TaskList.RemoveAll();
-	m_LocnList.RemoveAll();
+	m_oSessionList.RemoveAll();
+	m_oTaskList.RemoveAll();
+	m_oLocnList.RemoveAll();
 
 	// Reset last used items.
 	m_strLastTask = "";
