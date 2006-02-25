@@ -32,8 +32,8 @@ CViewReportDlg::CViewReportDlg(CMemStream& rTxtStream)
 	END_CTRL_TABLE
 
 	DEFINE_GRAVITY_TABLE
-		CTRLGRAV(IDC_REPORT, LEFT_EDGE, TOP_EDGE,    RIGHT_EDGE, BOTTOM_EDGE)
-		CTRLGRAV(IDOK,       LEFT_EDGE, BOTTOM_EDGE, LEFT_EDGE,  BOTTOM_EDGE)
+		CTRLGRAV(IDC_REPORT, LEFT_EDGE,  TOP_EDGE,    RIGHT_EDGE, BOTTOM_EDGE)
+		CTRLGRAV(IDOK,       RIGHT_EDGE, BOTTOM_EDGE, RIGHT_EDGE, BOTTOM_EDGE)
 	END_GRAVITY_TABLE
 }
 
@@ -69,4 +69,26 @@ void CViewReportDlg::OnInitDialog()
 	// Copy to the control.
 	m_ebReport.Text(strReport);
 	m_ebReport.Font(CFont(ANSI_FIXED_FONT));
+
+	// Resize dialog to previous size.
+	if (!App.m_rcReportDlg.Empty())
+		Move(App.m_rcReportDlg);
+}
+
+/******************************************************************************
+** Method:		OnDestroy()
+**
+** Description:	The window is being destroyed.
+**
+** Parameters:	None.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CViewReportDlg::OnDestroy()
+{
+	// Remember its position.
+	App.m_rcReportDlg = Placement();
 }
