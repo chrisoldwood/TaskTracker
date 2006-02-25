@@ -95,7 +95,7 @@ void CAppWnd::OnCreate(const CRect& rcClient)
 void CAppWnd::OnResize(int iFlag, const CSize& rNewSize)
 {
 	// Window minimised AND "Minimise To Tray" set?
-	if ( (iFlag == SIZE_MINIMIZED) && (App.MinimiseToTray()) )
+	if ( (iFlag == SIZE_MINIMIZED) && (App.m_bMinToTray) )
 	{
 		ShowTrayIcon(true);
 		Show(SW_HIDE);
@@ -129,18 +129,15 @@ void CAppWnd::OnUserMsg(uint /*nMsg*/, WPARAM /*wParam*/, LPARAM lParam)
 	// Icon clicked with right button?
 	else if ( (lParam == WM_RBUTTONUP) || (lParam == WM_CONTEXTMENU) )
 	{
-		// Get current status.
-		bool bClockedIn = App.ClockedIn();
-
 		// Required to allow menu to be dismissed.
 		::SetForegroundWindow(m_hWnd);
 
 		CPopupMenu oMenu(IDR_TRAYMENU);
 
 		// Disable relevant commands.
-		oMenu.EnableCmd(ID_SESSION_CLOCK_IN,     !bClockedIn);
-		oMenu.EnableCmd(ID_SESSION_SWITCH_TASKS, bClockedIn);
-		oMenu.EnableCmd(ID_SESSION_CLOCK_OUT,    bClockedIn);
+		oMenu.EnableCmd(ID_SESSION_CLOCK_IN,     !App.m_bClockedIn);
+		oMenu.EnableCmd(ID_SESSION_SWITCH_TASKS, App.m_bClockedIn);
+		oMenu.EnableCmd(ID_SESSION_CLOCK_OUT,    App.m_bClockedIn);
 
 		// Show context menu.
 		uint nCmdID = oMenu.TrackMenu(*this, CCursor::CurrentPos());
@@ -179,7 +176,7 @@ void CAppWnd::OnUserMsg(uint /*nMsg*/, WPARAM /*wParam*/, LPARAM lParam)
 bool CAppWnd::OnQueryClose()
 {
 	// Data changed?
-	if (!App.IsModified())
+	if (!App.m_bModified)
 		return true;
 
 	CBusyCursor BusyCursor;
