@@ -107,12 +107,9 @@ void CSessionListView::Refresh()
 	DeleteAllItems();
 
 	// For all sessions...
-	for(CIter oIter = App.SessionList().begin(); oIter != App.SessionList().end(); ++oIter)
+	for(CIter oIter = App.m_oSessionList.begin(); oIter != App.m_oSessionList.end(); ++oIter)
 	{
 		CSessionPtr pSession = *oIter;
-
-		// Get length in minutes.
-		int nLength = pSession->Length();
 
 		CString strStartDay  = pSession->Start().Date().DayOfWeekStr(false);
 		CString	strStartDate = pSession->Start().Date().ToString(CDate::FMT_WIN_SHORT);
@@ -120,10 +117,7 @@ void CSessionListView::Refresh()
 		CString	strEndTime   = pSession->Finish().Time().ToString(CTime::FMT_WIN_SHORT);
 		CString strTask      = pSession->Task();
 		CString strLocation  = pSession->Location();
-		CString strLength;
-
-		// Create length string.
-		strLength.Format("%02d h %02d m", nLength / 60,  nLength % 60);
+		CString strLength    = App.MinsToStr(pSession->Length());
 
 		// Add the item.
 		int i = AppendItem("");
