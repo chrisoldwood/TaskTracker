@@ -54,6 +54,9 @@ public:
 	void OnPruneTasks();
 	void OnPruneLocations();
 
+	// Tools menu.
+	void OnToolsOptions();
+
 	// Help menu.
 	void OnHelpAbout();
 
