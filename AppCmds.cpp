@@ -21,6 +21,9 @@
 #include "FileReportDlg.hpp"
 #include "PrintReportDlg.hpp"
 #include "ViewReportDlg.hpp"
+#include "OptionsDlg.hpp"
+#include "ExportDlg.hpp"
+#include "ImportDlg.hpp"
 
 #ifdef _DEBUG
 // For memory leak detection.
@@ -57,6 +60,7 @@ CAppCmds::CAppCmds()
 		CMD_ENTRY(ID_PRUNE_SESSIONS,		OnPruneSessions,		OnUIPruneSessions,		-1)
 		CMD_ENTRY(ID_PRUNE_TASKS,			OnPruneTasks,			OnUIPruneTasks,			-1)
 		CMD_ENTRY(ID_PRUNE_LOCNS,			OnPruneLocations,		OnUIPruneLocations,		-1)
+		CMD_ENTRY(ID_TOOLS_OPTIONS,			OnToolsOptions,			nullptr,				-1)
 		CMD_ENTRY(ID_HELP_ABOUT,			OnHelpAbout,			nullptr,				10)
 	END_CMD_TABLE
 }
@@ -80,7 +84,7 @@ CAppCmds::~CAppCmds()
 /******************************************************************************
 ** Method:		OnFileExport()
 **
-** Description:	Dump the database to a Comma Separated Values text file.
+** Description:	Dump the database to a CSV format text file.
 **
 ** Parameters:	None.
 **
@@ -91,20 +95,15 @@ CAppCmds::~CAppCmds()
 
 void CAppCmds::OnFileExport()
 {
-	CPath Path;
+	CExportDlg Dlg;
 
-	// File extensions.
-	static char szExts[] = {	"Data Files (*.CSV)\0*.CSV\0"
-								"All Files (*.*)\0*.*\0"
-								"\0\0"							};
-
-	// Select a filename.
-	if (!Path.Select(App.m_AppWnd, CPath::SaveFile, szExts, "CSV", CPath::ApplicationDir()))
+	// Get export settings.
+	if (Dlg.RunModal(App.m_AppWnd) != IDOK)
 		return;
 
 	// Warn user if file exists.
-	if ( (Path.Exists())
-	  && (App.QueryMsg("The file already exists:\n\n%s\n\nDo you want to overwrite it?", Path) != IDYES) )
+	if ( (Dlg.m_strFileName.Exists())
+	  && (App.QueryMsg("The file already exists:\n\n%s\n\nDo you want to overwrite it?", Dlg.m_strFileName) != IDYES) )
 		return;
 
 	try
@@ -115,27 +114,45 @@ void CAppCmds::OnFileExport()
 		CFile File;
 
 		// Open the file.
-		File.Create(Path);
+		File.Create(Dlg.m_strFileName);
 
 		// For all sessions.
-		for(CIter oIter = App.SessionList().begin(); oIter != App.SessionList().end(); ++oIter)
+		for(CIter oIter = App.m_oSessionList.begin(); oIter != App.m_oSessionList.end(); ++oIter)
 		{
+			CString     strLine;
 			CSessionPtr pSession = *oIter;
+			CString     strTask  = pSession->Task();
+			CString     strLocn  = pSession->Location();
+			int         nPos;
 
-			CString strLine;
+			// Strip special CSV characters from task.
+			while ((nPos = strTask.Find('\"')) != -1)
+				strTask.Delete(nPos);
+
+			while ((nPos = strTask.Find(',')) != -1)
+				strTask.Delete(nPos);
+
+			// Strip special CSV characters from location.
+			while ((nPos = strLocn.Find('\"')) != -1)
+				strLocn.Delete(nPos);
+
+			while ((nPos = strLocn.Find(',')) != -1)
+				strLocn.Delete(nPos);
 
 			// Format as Start,End,Task,Location
 			strLine.Format("\"%s\",\"%s\",\"%s\",\"%s\"", 
 							pSession->Start().ToString(CDate::FMT_ISO, CDate::FMT_ISO),
 							pSession->Finish().ToString(CDate::FMT_ISO, CDate::FMT_ISO),
-							pSession->Task(),
-							pSession->Location());
+							strTask, strLocn);
 
 			File.WriteLine(strLine);
 		}
 
 		// Done.
 		File.Close();
+
+		// Remember settings.
+		App.m_strExportFile = Dlg.m_strFileName;
 	}
 	catch(CFileException& rException)
 	{
@@ -147,7 +164,7 @@ void CAppCmds::OnFileExport()
 /******************************************************************************
 ** Method:		OnFileImport()
 **
-** Description:	.
+** Description:	Import the database from a CSV format text file.
 **
 ** Parameters:	None.
 **
@@ -158,29 +175,21 @@ void CAppCmds::OnFileExport()
 
 void CAppCmds::OnFileImport()
 {
-	CPath Path;
+	CImportDlg Dlg;
 
-	// File extensions.
-	static char szExts[] = {	"Data Files (*.CSV)\0*.CSV\0"
-								"All Files (*.*)\0*.*\0"
-								"\0\0"							};
-
-	// Select a filename.
-	if (!Path.Select(App.m_AppWnd, CPath::OpenFile, szExts, "CSV", CPath::ApplicationDir()))
+	// Get export settings.
+	if (Dlg.RunModal(App.m_AppWnd) != IDOK)
 		return;
 
 	try
 	{
 		CFile File;
-		CSessionList&	rSessions = App.SessionList();
-		CTaskList&		rTasks    = App.TaskList();
-		CLocnList&		rLocns    = App.LocnList();
 
 		// Free the existing data.
 		App.DeleteAllData();
 
 		// Open the file.
-		File.Open(Path, GENERIC_READ);
+		File.Open(Dlg.m_strFileName, GENERIC_READ);
 
 		int nLine = 1;
 
@@ -198,8 +207,9 @@ void CAppCmds::OnFileImport()
 			{
 				// Notify user.
 				App.m_AppWnd.AlertMsg("Invalid number of fields in line: %d\n\n"
-									  "Found: %d fields. Expected 'Start,End,Task,Location'",
-									  nLine, nFields);
+									  "Found %d fields. Expected 4 [Start, End, Task, Location]\n\n"
+									  "%s",
+									  nLine, nFields, strLine);
 				break;
 			}
 
@@ -264,19 +274,22 @@ void CAppCmds::OnFileImport()
 			pSession->Finish(dtEnd,   strTask, strLocation);
 			
 			// Add to the collections.
-			rSessions.Add(pSession);
+			App.m_oSessionList.Add(pSession);
 
 			if (strTask != "")
-				rTasks.Add(strTask);
+				App.m_oTaskList.Add(strTask);
 
 			if (strLocation != "")
-				rLocns.Add(strLocation);
+				App.m_oLocnList.Add(strLocation);
 
 			nLine++;
 		}
 
 		// Done.
 		File.Close();
+
+		// Remember settings.
+		App.m_strImportFile = Dlg.m_strFileName;
 	}
 	catch(CFileException& rException)
 	{
@@ -347,10 +360,10 @@ void CAppCmds::OnSessionClockIn()
 void CAppCmds::OnSessionSwitchTasks()
 {
 	CDateTime dtCurrent = CDateTime::Current();
-	CString   strLocn   = App.CurrentSession()->Location();
+	CString   strLocn   = App.m_pCurrSession->Location();
 
 	// Check we haven't clocked in later than now.
-	if (dtCurrent < App.CurrentSession()->Start())
+	if (dtCurrent < App.m_pCurrSession->Start())
 	{
 		const char* pszMsg = "You cannot switch tasks because the time\n"
 							 "you clocked in is later than the time now.";
@@ -532,7 +545,7 @@ void CAppCmds::OnReportPrint()
 	if (Dlg.RunModal(App.m_rMainWnd) == IDOK)
 	{
 		CBusyCursor BusyCursor;
-		CPrinterDC	DC(App.Printer());
+		CPrinterDC	DC(App.m_oPrinter);
 
 		// Report status.
 		App.m_AppWnd.m_StatusBar.Hint("Generating report...");
@@ -604,14 +617,14 @@ void CAppCmds::OnPruneSessions()
 		typedef CSessionList::iterator CIter;
 
 		CIsSessionInRange oRange(CDateTime::Min(), CDateTime(Dlg.m_Date, CTime::Min()));
-		CIter             oIter(App.SessionList().begin());
+		CIter             oIter(App.m_oSessionList.begin());
 
 		// Delete all sessions within the period.
-		while ((oIter = std::find_if(oIter, App.SessionList().end(), oRange)) != App.SessionList().end())
-			App.SessionList().erase(oIter++);
+		while ((oIter = std::find_if(oIter, App.m_oSessionList.end(), oRange)) != App.m_oSessionList.end())
+			App.m_oSessionList.erase(oIter++);
 
 		// Update dirty flag.
-		App.Modified();
+		App.m_bModified = true;
 	
 		// Update UI.
 		UpdateUI();
@@ -642,10 +655,10 @@ void CAppCmds::OnPruneTasks()
 	{
 		// For all tasks.
 		for(CIter oIter = Dlg.m_TaskList.begin(); oIter != Dlg.m_TaskList.end(); ++oIter)
-			App.TaskList().Remove(*oIter);
+			App.m_oTaskList.Remove(*oIter);
 		
 		// Update dirty flag.
-		App.Modified();
+		App.m_bModified = true;
 
 		// Update UI.
 		UpdateUI();
@@ -673,16 +686,35 @@ void CAppCmds::OnPruneLocations()
 	
 	if (Dlg.RunModal(App.m_rMainWnd) == IDOK)
 	{
-		// For all locations.
+		// Remove all selected locations.
 		for(CIter oIter = Dlg.m_LocnList.begin(); oIter != Dlg.m_LocnList.end(); ++oIter)
-			App.LocnList().Remove(*oIter);
+			App.m_oLocnList.Remove(*oIter);
 		
 		// Update dirty flag.
-		App.Modified();
+		App.m_bModified = true;
 
 		// Update UI.
 		UpdateUI();
 	}
+}
+
+/******************************************************************************
+** Method:		OnToolsOptions()
+**
+** Description:	Show the options dialog.
+**
+** Parameters:	None.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CAppCmds::OnToolsOptions()
+{
+	COptionsDlg Dlg;
+
+	Dlg.RunModal(App.m_rMainWnd);
 }
 
 /******************************************************************************
@@ -719,7 +751,7 @@ void CAppCmds::OnHelpAbout()
 void CAppCmds::OnUISessionClockIn()
 {
 	// Get current status.
-	bool bClockedIn = App.ClockedIn();
+	bool bClockedIn = App.m_bClockedIn;
 
 	App.m_AppWnd.m_Menu.EnableCmd(ID_SESSION_CLOCK_IN, !bClockedIn);
 	App.m_AppWnd.m_ToolBar.m_ClockInBtn.Enable(!bClockedIn);
@@ -728,7 +760,7 @@ void CAppCmds::OnUISessionClockIn()
 void CAppCmds::OnUISessionSwitchTasks()
 {
 	// Get current status.
-	bool bClockedIn = App.ClockedIn();
+	bool bClockedIn = App.m_bClockedIn;
 
 	App.m_AppWnd.m_Menu.EnableCmd(ID_SESSION_SWITCH_TASKS, bClockedIn);
 	App.m_AppWnd.m_ToolBar.m_SwitchTasksBtn.Enable(bClockedIn);
@@ -737,7 +769,7 @@ void CAppCmds::OnUISessionSwitchTasks()
 void CAppCmds::OnUISessionClockOut()
 {
 	// Get current status.
-	bool bClockedIn = App.ClockedIn();
+	bool bClockedIn = App.m_bClockedIn;
 
 	App.m_AppWnd.m_Menu.EnableCmd(ID_SESSION_CLOCK_OUT, bClockedIn);
 	App.m_AppWnd.m_ToolBar.m_ClockOutBtn.Enable(bClockedIn);
@@ -745,21 +777,21 @@ void CAppCmds::OnUISessionClockOut()
 
 void CAppCmds::OnUIPruneSessions()
 {
-	bool bItems = (App.SessionList().size() > 0);
+	bool bItems = (App.m_oSessionList.size() > 0);
 
 	App.m_AppWnd.m_Menu.EnableCmd(ID_PRUNE_SESSIONS, bItems);
 }
 
 void CAppCmds::OnUIPruneTasks()
 {
-	bool bItems = (App.TaskList().size() > 0);
+	bool bItems = (App.m_oTaskList.size() > 0);
 
 	App.m_AppWnd.m_Menu.EnableCmd(ID_PRUNE_TASKS, bItems);
 }
 
 void CAppCmds::OnUIPruneLocations()
 {
-	bool bItems = (App.LocnList().size() > 0);
+	bool bItems = (App.m_oLocnList.size() > 0);
 
 	App.m_AppWnd.m_Menu.EnableCmd(ID_PRUNE_LOCNS, bItems);
 }
