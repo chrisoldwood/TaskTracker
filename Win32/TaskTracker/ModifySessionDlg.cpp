@@ -102,6 +102,40 @@ bool CModifySessionDlg::OnOk()
 		return false;
 	}
 
+	// Check for session overlap?
+	if (App.m_bCheckOverlap)
+	{
+		// Template shorthands.
+		typedef CSessionList::const_iterator CIter;
+
+		// Check all sessions...
+		for(CIter oIter = App.m_oSessionList.begin(); oIter != App.m_oSessionList.end(); ++oIter)
+		{
+			CSessionPtr pSession = *oIter;
+
+			// Ignore if the session we're editing.
+			if (pSession == m_pSession)
+				continue;
+
+			// Overlaps another?
+			if ( (m_dtInDateTime < pSession->Finish()) && (m_dtOutDateTime >= pSession->Start()) )
+			{
+				CString strDate    = pSession->Start().Date().ToString();
+				CString strStart   = pSession->Start().Time().ToString(CTime::FMT_WIN_SHORT);
+				CString strFinish  = pSession->Finish().Time().ToString(CTime::FMT_WIN_SHORT);
+				CString strTask    = pSession->Task();
+				CString strSession = CString::Fmt("%s  %s - %s  %s", strDate, strStart, strFinish, strTask);
+
+				// Query user for action.
+				if (QueryMsg("This session overlaps another:-\n\n%s\n\nDo you want to continue?", strSession) != IDYES)
+					return false;
+				else
+					break;
+			}
+		}
+
+	}
+
 	// Get task and location.
 	m_strTask = m_cbTask.Text();
 	m_strLocn = m_cbLocn.Text();

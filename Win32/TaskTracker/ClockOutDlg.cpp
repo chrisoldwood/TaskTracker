@@ -53,15 +53,15 @@ CClockOutDlg::CClockOutDlg() : CDialog(IDD_CLOCK_OUT)
 
 void CClockOutDlg::OnInitDialog()
 {
-	ASSERT(App.ClockedIn());
-	ASSERT(App.CurrentSession().Get() != nullptr);
+	ASSERT(App.m_bClockedIn);
+	ASSERT(App.m_pCurrSession.Get() != nullptr);
 
 	// Get the time now.
 	CTime tNow;
 	tNow.Set();
 
 	// Initialise date and time controls.
-	m_dtDateTime = App.CurrentSession()->Start();
+	m_dtDateTime = App.m_pCurrSession->Start();
 	m_dtDateTime.Time(tNow);
 
 	m_dtpDateTime.SetDateTime(m_dtDateTime);
@@ -98,12 +98,44 @@ bool CClockOutDlg::OnOk()
 		m_dtDateTime = m_dtpDateTime.GetDateTime();
 
 	// Check clocking out later than clocking in.
-	if (m_dtDateTime < App.CurrentSession()->Start())
+	if (m_dtDateTime < App.m_pCurrSession->Start())
 	{
 		AlertMsg("You cannot clock out earlier than you clocked in.");
 		return false;
 	}
-	
+
+	// Check for session overlap?
+	if (App.m_bCheckOverlap)
+	{
+		// Template shorthands.
+		typedef CSessionList::const_iterator CIter;
+
+		CDateTime dtStart = App.m_pCurrSession->Start();
+
+		// Check all sessions...
+		for(CIter oIter = App.m_oSessionList.begin(); oIter != App.m_oSessionList.end(); ++oIter)
+		{
+			CSessionPtr pSession = *oIter;
+
+			// Overlaps another?
+			if ( (dtStart < pSession->Finish()) && (m_dtDateTime >= pSession->Start()) )
+			{
+				CString strDate    = pSession->Start().Date().ToString();
+				CString strStart   = pSession->Start().Time().ToString(CTime::FMT_WIN_SHORT);
+				CString strFinish  = pSession->Finish().Time().ToString(CTime::FMT_WIN_SHORT);
+				CString strTask    = pSession->Task();
+				CString strSession = CString::Fmt("%s  %s - %s  %s", strDate, strStart, strFinish, strTask);
+
+				// Query user for action.
+				if (QueryMsg("This session overlaps another:-\n\n%s\n\nDo you want to continue?", strSession) != IDYES)
+					return false;
+				else
+					break;
+			}
+		}
+
+	}
+
 	// Get task and location.
 	m_strTask = m_cbTask.Text();
 	m_strLocn = m_cbLocn.Text();
