@@ -13,6 +13,9 @@
 #define ID_FILE_EXIT                    103
 #define IDD_CLPWND_REPORT               112
 #define IDD_VIEW_REPORT                 113
+#define IDD_OPTIONS                     115
+#define IDD_EXPORT                      116
+#define IDD_IMPORT                      117
 #define ID_SESSION_POPUP                200
 #define ID_SESSION_CLOCK_IN             201
 #define ID_SESSION_SWITCH_TASKS         202
@@ -80,6 +83,10 @@
 #define IDC_IN_DATETIME                 1057
 #define IDC_LOCNS                       1059
 #define IDC_CHECK1                      1060
+#define IDC_MIN_TO_TRAY                 1060
+#define IDC_SESSION_HDR                 1061
+#define IDC_TOTAL_HDR                   1062
+#define IDC_LEN_FORMAT                  1063
 #define IDC_WEBSITE                     1083
 #define IDC_EMAIL                       1084
 #define IDC_VERSION                     1085
@@ -104,9 +111,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        115
+#define _APS_NEXT_RESOURCE_VALUE        118
 #define _APS_NEXT_COMMAND_VALUE         117
-#define _APS_NEXT_CONTROL_VALUE         1061
+#define _APS_NEXT_CONTROL_VALUE         1064
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif
