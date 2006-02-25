@@ -60,13 +60,13 @@ void CTaskCombo::OnCreate(const CRect&)
 	typedef CTaskList::const_iterator CIter;
 
 	// Add all tasks.
-	for(CIter oIter = App.TaskList().begin(); oIter != App.TaskList().end(); ++oIter)
+	for(CIter oIter = App.m_oTaskList.begin(); oIter != App.m_oTaskList.end(); ++oIter)
 		Add(*oIter);
 	
 	// Select last task, if one
-	if (App.LastTask() != "")
+	if (App.m_strLastTask != "")
 	{
-		int iItem = FindExact(App.LastTask());
+		int iItem = FindExact(App.m_strLastTask);
 		ASSERT(iItem != CB_ERR);
 		
 		CurSel(iItem);
