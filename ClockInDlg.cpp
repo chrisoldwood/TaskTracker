@@ -88,6 +88,36 @@ bool CClockInDlg::OnOk()
 	else
 		m_dtDateTime = m_dtpDateTime.GetDateTime();
 
+	// Check for session overlap?
+	if (App.m_bCheckOverlap)
+	{
+		// Template shorthands.
+		typedef CSessionList::const_iterator CIter;
+
+		// Check all sessions...
+		for(CIter oIter = App.m_oSessionList.begin(); oIter != App.m_oSessionList.end(); ++oIter)
+		{
+			CSessionPtr pSession = *oIter;
+
+			// Overlaps another?
+			if ( (m_dtDateTime >= pSession->Start()) && (m_dtDateTime < pSession->Finish()) )
+			{
+				CString strDate    = pSession->Start().Date().ToString();
+				CString strStart   = pSession->Start().Time().ToString(CTime::FMT_WIN_SHORT);
+				CString strFinish  = pSession->Finish().Time().ToString(CTime::FMT_WIN_SHORT);
+				CString strTask    = pSession->Task();
+				CString strSession = CString::Fmt("%s  %s - %s  %s", strDate, strStart, strFinish, strTask);
+
+				// Query user for action.
+				if (QueryMsg("This session will overlap another:-\n\n%s\n\nDo you want to continue?", strSession) != IDYES)
+					return false;
+				else
+					break;
+			}
+		}
+
+	}
+
 	// Get task and location.
 	m_strTask = m_cbTask.Text();
 	m_strLocn = m_cbLocn.Text();

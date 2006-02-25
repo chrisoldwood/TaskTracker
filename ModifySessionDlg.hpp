@@ -30,6 +30,7 @@ public:
 	//
 	// Members.
 	//
+	CSessionPtr m_pSession;
 	CDateTime	m_dtInDateTime;
 	CDateTime	m_dtOutDateTime;
 	CString		m_strTask;
