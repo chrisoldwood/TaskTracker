@@ -61,6 +61,17 @@ void CAppDlg::OnInitDialog()
 	// Get the current time.
 	m_dtCurrent.Set();
 
+	// Created underlined dialog font.
+	CLogFont oLogFont(Font().Handle());
+
+	oLogFont.lfUnderline = TRUE;
+
+	m_oHeaderFont.Create(oLogFont);
+
+	// Apply to section headers.
+	Control(IDC_SESSION_HDR).Font(m_oHeaderFont);
+	Control(IDC_TOTAL_HDR  ).Font(m_oHeaderFont);
+
 	// Show inital figures.
 	Update();
 }
@@ -133,16 +144,13 @@ void CAppDlg::Update()
 	ulong lCurrLen = 0;
 	
 	// Update current session, if one.
-	if (App.ClockedIn())
+	if (App.m_bClockedIn)
 	{
-		// Get the current session.
-		const CSessionPtr& pCurrSession = App.CurrentSession();
-
 		// Create a copy of the current session.
-		CSession m_CurrSession(*pCurrSession);
+		CSession m_CurrSession(*App.m_pCurrSession);
 		
 		// Set to finish now.
-		m_CurrSession.Finish(m_dtCurrent, pCurrSession->Task(), pCurrSession->Location());
+		m_CurrSession.Finish(m_dtCurrent, App.m_pCurrSession->Task(), App.m_pCurrSession->Location());
 		
 		// Update fields.
 		m_txtSessionDate.Text(m_CurrSession.Start().Date().ToString(CDate::FMT_WIN_SHORT));

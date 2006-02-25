@@ -48,7 +48,8 @@ protected:
 	CLabel		m_txtTotalWeek;
 	CLabel		m_txtTotalMonth;
 	CLabel		m_txtTotalTotal;
-		
+	CFont		m_oHeaderFont;
+
 	//
 	// Message processors.
 	//
