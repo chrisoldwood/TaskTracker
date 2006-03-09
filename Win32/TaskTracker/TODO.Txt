@@ -1,5 +1,3 @@
-- Add UI for turning off session overlap check.
-
 - XML format import/export.
 
 - Allow merging on import.
@@ -18,10 +16,6 @@
 
 - Allow session pruning using a range.
 
-- Warning option for overlapping sessions.
+- Report options: day only (not session), overall total, ignore empty days.
 
-- User configurable 1st day of the week.
-
-- Task renaming.
-
-- '*' when "Out" time is a different day.
+- Change report dialogs to use a common one.
