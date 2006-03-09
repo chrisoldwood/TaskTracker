@@ -59,6 +59,20 @@ typedef enum tagLenFormat
 
 /******************************************************************************
 ** 
+** Day ordering within a week.
+**
+*******************************************************************************
+*/
+
+typedef enum tagWeekOrder
+{
+	SatToFri,
+	SunToSat,
+	MonToSun,
+} WeekOrder;
+
+/******************************************************************************
+** 
 ** File errors.
 **
 *******************************************************************************
@@ -119,7 +133,8 @@ public:
 	//
 	// Misc methods.
 	//
-	void PeriodToDates(Period ePeriod, CDate& rFromDate, CDate& rToDate) const;
+	void  PeriodToDates(Period ePeriod, CDate& rFromDate, CDate& rToDate) const;
+	CDate GetWeekStart(const CDate& oDate) const;
 	
 	CString MinsToStr(ulong lMins);
 
@@ -153,6 +168,7 @@ public:
 	Grouping		m_eDefGrouping;
 	Period			m_eDefPeriod;
 	LenFormat		m_eLenFormat;
+	WeekOrder		m_eWeekOrder;
 	bool			m_bMinToTray;
 	CString			m_strReportFile;
 	CString			m_strExportFile;

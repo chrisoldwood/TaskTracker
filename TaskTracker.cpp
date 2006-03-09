@@ -75,6 +75,7 @@ CTaskTracker::CTaskTracker()
 	, m_pCurrSession(nullptr)
 	, m_bModified(false)
 	, m_eLenFormat(HoursMins)
+	, m_eWeekOrder(MonToSun)
 	, m_bMinToTray(false)
 	, m_bCheckOverlap(true)
 {
@@ -342,10 +343,9 @@ ulong CTaskTracker::TotalForWeek(const CDate& rDate) const
 	CDateTime	dtStart;
 	CDateTime	dtEnd;
 	CDate		Date = rDate;
-	int			iDay = rDate.DayOfWeek();
 
 	// Create week limits.
-	Date -= iDay;
+	Date  = GetWeekStart(Date);
 	dtStart.Date(Date);
 	Date += 7;
 	dtEnd.Date(Date);
@@ -636,7 +636,7 @@ void CTaskTracker::ReportData(CReport& rDevice, Grouping eGrouping, const CDate&
 			ASSERT_FALSE();
 			break;
 	}
-
+/*
 	// Reported okay?
 	if (bOkay)
 	{
@@ -645,7 +645,7 @@ void CTaskTracker::ReportData(CReport& rDevice, Grouping eGrouping, const CDate&
 
 		rDevice.SendText(strTotal);
 	}
-
+*/
 	// Cleanup the device.
 	rDevice.Term();
 }
@@ -751,7 +751,7 @@ bool CTaskTracker::ReportByWeek(CReport& rDevice, ulong& rlTotal, const CDateTim
 		int		iDay = Date.DayOfWeek();
 		
 		// Create week limits.
-		Date -= iDay;
+		Date  = GetWeekStart(Date);
 		dtStart.Date(Date);
 		Date += 6;
 		dtEnd.Date(Date);
@@ -977,11 +977,12 @@ bool CTaskTracker::ReportByTask(CReport& rDevice, ulong& rlTotal, const CDateTim
 			if (pSession->Task() == (*oIter))
 			{
 				// Output session.
+				CString strDay   = pSession->Start().Date().DayOfWeekStr(false);
 				CString strDate  = pSession->Start().Date().ToString(CDate::FMT_WIN_SHORT);
 				CString	strStart = pSession->Start().Time().ToString(CDate::FMT_WIN_SHORT);
 				CString	strEnd   = pSession->Finish().Time().ToString(CDate::FMT_WIN_SHORT);
 				CString strLen   = App.MinsToStr(pSession->Length());
-				CString strText  = CString::Fmt("%s from %s to %s for %s", strDate, strStart, strEnd, strLen);
+				CString strText  = CString::Fmt("%s %s from %s to %s for %s", strDay, strDate, strStart, strEnd, strLen);
 			
 				if (!rDevice.SendText(strText))
 					return false;
@@ -1038,10 +1039,11 @@ bool CTaskTracker::ReportDay(CReport& rDevice, const CDate& rDate, ulong& rlTota
 
 		++oIter;
 	}
-	
+
+	CString strDay  = rDate.DayOfWeekStr(false);
 	CString	strDate = rDate.ToString(CDate::FMT_WIN_SHORT);
 	CString strLen  = App.MinsToStr(rlTotal);
-	CString strText = CString::Fmt("%s (Total: %s)", strDate, strLen);
+	CString strText = CString::Fmt("%s %s (Total: %s)", strDay, strDate, strLen);
 
 	if (!rDevice.SendText(strText))
 		return false;
@@ -1111,6 +1113,7 @@ void CTaskTracker::LoadDefaults()
 {
 	// Load UI settings.
 	m_eLenFormat    = static_cast<LenFormat>(m_IniFile.ReadInt("Prefs", "LenFormat", m_eLenFormat));
+	m_eWeekOrder    = static_cast<WeekOrder>(m_IniFile.ReadInt("Prefs", "WeekOrder", m_eWeekOrder));
 	m_bMinToTray    = m_IniFile.ReadBool("Prefs", "MinToTray", m_bMinToTray);
 	m_bCheckOverlap = m_IniFile.ReadBool("Prefs", "CheckOverlap", m_bCheckOverlap);
 	m_rcReportDlg   = m_IniFile.ReadRect("Prefs", "ReportDlg", m_rcReportDlg);
@@ -1142,6 +1145,7 @@ void CTaskTracker::SaveDefaults()
 {
 	// Save UI settings.
 	m_IniFile.WriteInt ("Prefs", "LenFormat",    m_eLenFormat);
+	m_IniFile.WriteInt ("Prefs", "WeekOrder",    m_eWeekOrder);
 	m_IniFile.WriteBool("Prefs", "MinToTray",    m_bMinToTray);
 	m_IniFile.WriteBool("Prefs", "CheckOverlap", m_bCheckOverlap);
 	m_IniFile.WriteRect("Prefs", "ReportDlg",    m_rcReportDlg);
@@ -1200,10 +1204,9 @@ void CTaskTracker::PeriodToDates(Period ePeriod, CDate& rFromDate, CDate& rToDat
 		case ThisWeek:
 			{
 				CDate	Date = Today;
-				int 	iDay = Today.DayOfWeek();
 
 				// Adjust for week.
-				Date     -= iDay;
+				Date      = GetWeekStart(Date);
 				rFromDate = Date;
 				Date     += 6;
 				rToDate   = Date;
@@ -1230,13 +1233,13 @@ void CTaskTracker::PeriodToDates(Period ePeriod, CDate& rFromDate, CDate& rToDat
 		
 		case LastWeek:
 			{
-				// Go back 7 days.
 				CDate Date = Today;
+
+				// Go back 7 days.
 				Date -= 7;
-				int	iDay = Today.DayOfWeek();
 
 				// Adjust for week.
-				Date     -= iDay;
+				Date      = GetWeekStart(Date);
 				rFromDate = Date;
 				Date     += 6;
 				rToDate   = Date;
@@ -1271,6 +1274,36 @@ void CTaskTracker::PeriodToDates(Period ePeriod, CDate& rFromDate, CDate& rToDat
 			ASSERT_FALSE();
 			break;
 	}
+}
+
+/******************************************************************************
+** Method:		GetWeekStart()
+**
+** Description:	Calculates the date of the first day of the week for the date
+**				provided.
+**
+** Parameters:	oDate	A date within the week.
+**
+** Returns:		The date for the start of the week.
+**
+*******************************************************************************
+*/
+
+CDate CTaskTracker::GetWeekStart(const CDate& oDate) const
+{
+	CDate oStart = oDate;
+	int   nDay   = oStart.DayOfWeek();
+
+	// Find first day of the week.
+	switch (m_eWeekOrder)
+	{
+		case SatToFri:	oStart -= (nDay + 2) % 7;	break;
+		case SunToSat:	oStart -= (nDay + 1) % 7;	break;
+		case MonToSun:	oStart -= (nDay + 0) % 7;	break;
+		default:		ASSERT_FALSE();				break;
+	}
+
+	return oStart;
 }
 
 /******************************************************************************
