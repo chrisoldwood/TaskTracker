@@ -206,6 +206,31 @@ void CAppWnd::OnClose()
 }
 
 /******************************************************************************
+** Method:		ProcessMsg()
+**
+** Description:	Check for mouse movement over the main dialog area and remove
+**              any outstanding tooltip.
+**
+** Parameters:	pMsg	The message.
+**
+** Returns:		true or false.
+**
+*******************************************************************************
+*/
+
+bool CAppWnd::ProcessMsg(MSG& rMsg)
+{
+	// Mouse moved over dialog OR dialog control?
+	if ( (rMsg.message == WM_MOUSEMOVE)
+	  && ((rMsg.hwnd == m_AppDlg.Handle() || (::GetParent(rMsg.hwnd) == m_AppDlg.Handle()))) )
+	{
+		m_StatusBar.Hint("");
+	}
+
+	return false;
+}
+
+/******************************************************************************
 ** Method:		Restore()
 **
 ** Description:	Restore the window from the system tray or taskbar.
