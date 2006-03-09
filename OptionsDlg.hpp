@@ -26,7 +26,9 @@ private:
 	// Controls.
 	//
 	CCheckBox	m_ckMinToTray;		//!< Minimise to system tray checkbox.
+	CCheckBox	m_ckOverlap;		//!< Warn on overlap checkbox.
 	CComboBox	m_cbLenFormat;		//!< Session length format combo.
+	CComboBox	m_cbWeekOrder;		//!< Week order combo.
 
 	//
 	// Message handlers.
