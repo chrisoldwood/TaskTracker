@@ -119,6 +119,10 @@ void CSessionListView::Refresh()
 		CString strLocation  = pSession->Location();
 		CString strLength    = App.MinsToStr(pSession->Length());
 
+		// Add flag, if clocked-out on a different day.
+		if (pSession->Start().Date() != pSession->Finish().Date())
+			strEndTime += '*';
+
 		// Add the item.
 		int i = AppendItem("");
 
