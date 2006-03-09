@@ -72,6 +72,7 @@ protected:
 	virtual void OnResize(int iFlag, const CSize& rNewSize);
 	virtual bool OnQueryClose();
 	virtual void OnClose();
+	virtual bool ProcessMsg(MSG& rMsg);
 
 	//
 	// Internal methods.
