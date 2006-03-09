@@ -40,8 +40,10 @@ public:
 	//
 	// Member setting.
 	//
-	void Start (const CDateTime& dtStart,  const char* pszTask, const char* pszLocn);
+	void Start(const CDateTime& dtStart,  const char* pszTask, const char* pszLocn);
 	void Finish(const CDateTime& dtFinish, const char* pszTask, const char* pszLocn);
+	void Task(const char* pszTask);
+	void Location(const char* pszLocn);
 	
 protected:
 	//
@@ -101,6 +103,16 @@ inline void CSession::Finish(const CDateTime& dtFinish, const char* pszTask, con
 	m_dtFinish = dtFinish;
 	m_strTask  = pszTask;
 	m_strLocn  = pszLocn;
+}
+
+inline void CSession::Task(const char* pszTask)
+{
+	m_strTask = pszTask;
+}
+
+inline void CSession::Location(const char* pszLocn)
+{
+	m_strLocn = pszLocn;
 }
 
 #endif //SESSION_HPP
