@@ -53,6 +53,7 @@ protected:
 	void OnAdd();
 	void OnModify();
 	void OnDelete();
+	void OnRename();
 };
 
 /******************************************************************************

@@ -12,6 +12,7 @@
 #include "EditSessionDlg.hpp"
 #include "AddSessionDlg.hpp"
 #include "ModifySessionDlg.hpp"
+#include "RenameDlg.hpp"
 
 #ifdef _DEBUG
 // For memory leak detection.
@@ -44,6 +45,7 @@ CEditSessionDlg::CEditSessionDlg()
 		CMD_CTRLMSG(IDC_ADD,      BN_CLICKED, OnAdd)
 		CMD_CTRLMSG(IDC_MODIFY,   BN_CLICKED, OnModify)
 		CMD_CTRLMSG(IDC_DELETE,   BN_CLICKED, OnDelete)
+		CMD_CTRLMSG(IDC_RENAME,   BN_CLICKED, OnRename)
 		NFY_CTRLMSG(IDC_SESSIONS, NM_DBLCLK,  OnGridDblClick)
 	END_CTRLMSG_TABLE
 
@@ -52,6 +54,7 @@ CEditSessionDlg::CEditSessionDlg()
 		CTRLGRAV(IDC_ADD,      LEFT_EDGE,  BOTTOM_EDGE, LEFT_EDGE,  BOTTOM_EDGE)
 		CTRLGRAV(IDC_MODIFY,   LEFT_EDGE,  BOTTOM_EDGE, LEFT_EDGE,  BOTTOM_EDGE)
 		CTRLGRAV(IDC_DELETE,   LEFT_EDGE,  BOTTOM_EDGE, LEFT_EDGE,  BOTTOM_EDGE)
+		CTRLGRAV(IDC_RENAME,   LEFT_EDGE,  BOTTOM_EDGE, LEFT_EDGE,  BOTTOM_EDGE)
 		CTRLGRAV(IDOK,         RIGHT_EDGE, BOTTOM_EDGE, RIGHT_EDGE, BOTTOM_EDGE)
 	END_GRAVITY_TABLE
 }
@@ -246,7 +249,7 @@ LRESULT CEditSessionDlg::OnGridDblClick(NMHDR&)
 /******************************************************************************
 ** Method:		OnDelete()
 **
-** Description:	.
+** Description:	Delete the selected session.
 **
 ** Parameters:	None.
 **
@@ -292,4 +295,51 @@ void CEditSessionDlg::OnDelete()
     
 	// Update dirty flag.
 	App.m_bModified = true;
+}
+
+/******************************************************************************
+** Method:		OnRename()
+**
+** Description:	Rename a task.
+**
+** Parameters:	None.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CEditSessionDlg::OnRename()
+{
+	CRenameDlg Dlg;
+
+	// Query the user for the task to rename.
+	if (Dlg.RunModal(*this) == IDOK)
+	{
+		typedef CSessionList::iterator Iter;
+
+		// For all sessions...
+		for (Iter pIter = App.m_oSessionList.begin(); pIter != App.m_oSessionList.end(); ++pIter)
+		{
+			CSessionPtr pSession = *pIter;
+
+			// Rename task?
+			if (pSession->Task() == Dlg.m_strOldTask)
+				pSession->Task(Dlg.m_strNewTask);
+		}
+
+		// Add task to list if set.
+		if (Dlg.m_strNewTask != "")
+			App.m_oTaskList.Add(Dlg.m_strNewTask);
+
+		// Refresh session list, restoring the selection.
+		int i = m_lvSessions.Selection();
+
+		m_lvSessions.Refresh();
+		m_lvSessions.Select(i);
+		m_lvSessions.MakeItemVisible(i);
+
+		// Update dirty flag.
+		App.m_bModified = true;
+	}
 }
