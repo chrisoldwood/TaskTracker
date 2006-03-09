@@ -11,11 +11,6 @@
 #define ID_FILE_EXPORT                  101
 #define ID_FILE_IMPORT                  102
 #define ID_FILE_EXIT                    103
-#define IDD_CLPWND_REPORT               112
-#define IDD_VIEW_REPORT                 113
-#define IDD_OPTIONS                     115
-#define IDD_EXPORT                      116
-#define IDD_IMPORT                      117
 #define ID_SESSION_POPUP                200
 #define ID_SESSION_CLOCK_IN             201
 #define ID_SESSION_SWITCH_TASKS         202
@@ -44,7 +39,6 @@
 #define IDC_SESSION_TIME                1006
 #define IDC_DATE                        1007
 #define IDC_SESSION_LEN                 1008
-#define IDC_TIME                        1009
 #define IDC_SESSION_TASK                1010
 #define IDC_TO_DATE                     1011
 #define IDC_TASK                        1012
@@ -52,17 +46,14 @@
 #define IDC_LOCN                        1013
 #define IDC_PREV_TASK                   1014
 #define IDC_TOTAL_WEEK                  1015
-#define IDC_OUT_DATE                    1016
 #define IDC_NEXT_TASK                   1017
 #define IDC_TOTAL_MONTH                 1018
-#define IDC_OUT_TIME                    1019
 #define IDC_TOTAL_TOTAL                 1020
 #define IDC_SESSIONS                    1021
 #define IDC_ADD                         1022
 #define IDC_MODIFY                      1023
-#define IDC_IN_DATE                     1024
 #define IDC_DELETE                      1025
-#define IDC_IN_TIME                     1026
+#define IDC_RENAME                      1026
 #define IDC_ALL                         1027
 #define IDC_BEFORE                      1028
 #define IDC_PRINTER                     1029
@@ -82,11 +73,14 @@
 #define IDC_OUT_DATETIME                1056
 #define IDC_IN_DATETIME                 1057
 #define IDC_LOCNS                       1059
-#define IDC_CHECK1                      1060
 #define IDC_MIN_TO_TRAY                 1060
 #define IDC_SESSION_HDR                 1061
 #define IDC_TOTAL_HDR                   1062
 #define IDC_LEN_FORMAT                  1063
+#define IDC_OVERLAP                     1064
+#define IDC_WEEK_ORDER                  1065
+#define IDC_OLD_TASK                    1065
+#define IDC_NEW_TASK                    1066
 #define IDC_WEBSITE                     1083
 #define IDC_EMAIL                       1084
 #define IDC_VERSION                     1085
@@ -104,6 +98,12 @@
 #define IDD_PRINT_REPORT                5010
 #define IDD_PRUNE_TASKS                 5011
 #define IDD_PRUNE_LOCNS                 5012
+#define IDD_CLPWND_REPORT               5013
+#define IDD_VIEW_REPORT                 5014
+#define IDD_OPTIONS                     5015
+#define IDD_EXPORT                      5016
+#define IDD_IMPORT                      5017
+#define IDD_RENAME                      5018
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -111,9 +111,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        118
+#define _APS_NEXT_RESOURCE_VALUE        119
 #define _APS_NEXT_COMMAND_VALUE         117
-#define _APS_NEXT_CONTROL_VALUE         1064
+#define _APS_NEXT_CONTROL_VALUE         1067
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif
