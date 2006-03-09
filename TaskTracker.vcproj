@@ -593,6 +593,9 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\RenameDlg.cpp">
+			</File>
+			<File
 				RelativePath="Session.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
@@ -873,6 +876,9 @@
 			</File>
 			<File
 				RelativePath="PruneTasksDlg.hpp">
+			</File>
+			<File
+				RelativePath=".\RenameDlg.hpp">
 			</File>
 			<File
 				RelativePath="Report.hpp">
