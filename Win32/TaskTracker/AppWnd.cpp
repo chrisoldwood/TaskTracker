@@ -227,7 +227,7 @@ bool CAppWnd::ProcessMsg(MSG& rMsg)
 		m_StatusBar.Hint("");
 	}
 
-	return false;
+	return CDlgFrame::ProcessMsg(rMsg);
 }
 
 /******************************************************************************
