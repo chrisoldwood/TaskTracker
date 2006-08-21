@@ -73,8 +73,14 @@ void CClockOutDlg::OnInitDialog()
 	OnNow();
 
 	// Initialise task and location.
-	m_strTask = "";
-	m_strLocn = "";
+	m_strTask = App.m_pCurrSession->Task();
+	m_strLocn = App.m_pCurrSession->Location();
+
+	if (m_strTask != "")
+		m_cbTask.Select(m_strTask);
+
+	if (m_strLocn != "")
+		m_cbLocn.Select(m_strLocn);
 }
 
 /******************************************************************************
