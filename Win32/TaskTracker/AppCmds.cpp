@@ -183,21 +183,21 @@ void CAppCmds::OnFileImport()
 
 	try
 	{
-		CFile File;
-
-		// Free the existing data.
-		App.DeleteAllData();
+		CFile        oFile;
+		CSessionList lstSessions;
+		CTaskList    lstTasks;
+		CLocnList    lstLocns;
 
 		// Open the file.
-		File.Open(Dlg.m_strFileName, GENERIC_READ);
+		oFile.Open(Dlg.m_strFileName, GENERIC_READ);
 
 		int nLine = 1;
 
 		// For all lines
-		while (!File.IsEOF())
+		while (!oFile.IsEOF())
 		{
 			// Read a line.
-			CString strLine = File.ReadLine();
+			CString strLine = oFile.ReadLine();
 
 			// Count the number of fields.
 			int nFields = strLine.Count(',') + 1;
@@ -273,20 +273,61 @@ void CAppCmds::OnFileImport()
 			pSession->Start (dtStart, strTask, strLocation);
 			pSession->Finish(dtEnd,   strTask, strLocation);
 			
-			// Add to the collections.
-			App.m_oSessionList.Add(pSession);
+			// Add to the temporary collections.
+			lstSessions.Add(pSession);
 
 			if (strTask != "")
-				App.m_oTaskList.Add(strTask);
+				lstTasks.Add(strTask);
 
 			if (strLocation != "")
-				App.m_oLocnList.Add(strLocation);
+				lstLocns.Add(strLocation);
 
 			nLine++;
 		}
 
-		// Done.
-		File.Close();
+		// Cleanup.
+		oFile.Close();
+
+		// Replace existing data?
+		if (Dlg.m_eAction == CImportDlg::REPLACE)
+		{
+			// Replace by swapping the imported and current data lists.
+			App.m_oSessionList.swap(lstSessions);
+			App.m_oTaskList.swap(lstTasks);
+			App.m_oLocnList.swap(lstLocns);
+		}
+		// Merge into existing data?
+		else if (Dlg.m_eAction == CImportDlg::MERGE)
+		{
+			// Merge unique sessions only?
+			if (Dlg.m_bNoDuplicates)
+			{
+				for (CSessionList::iterator itSession = lstSessions.begin(); itSession != lstSessions.end(); ++itSession)
+				{
+					if (std::find(App.m_oSessionList.begin(), App.m_oSessionList.end(), *itSession) == App.m_oSessionList.end())
+						App.m_oSessionList.Add(*itSession);
+				}
+			}
+			// Merge all sessions.
+			else
+			{
+				for (CSessionList::iterator itSession = lstSessions.begin(); itSession != lstSessions.end(); ++itSession)
+					App.m_oSessionList.Add(*itSession);
+			}
+
+			// Merge Task list.
+			for (CTaskList::const_iterator itTask = lstTasks.begin(); itTask != lstTasks.end(); ++itTask)
+				App.m_oTaskList.Add(*itTask);
+
+			// Merge Location list.
+			for (CLocnList::const_iterator itLocn = lstLocns.begin(); itLocn != lstLocns.end(); ++itLocn)
+				App.m_oLocnList.Add(*itLocn);
+		}
+		// Shouldn't happen!
+		else
+		{
+			ASSERT_FALSE();
+		}
 
 		// Remember settings.
 		App.m_strImportFile = Dlg.m_strFileName;
@@ -461,7 +502,7 @@ void CAppCmds::OnReportWindow()
 	{
 		CBusyCursor BusyCursor;
 
-		// Report status.
+		// Update status.
 		App.m_AppWnd.m_StatusBar.Hint("Generating report...");
 
 		// Setup the memory stream to report to.
@@ -476,12 +517,20 @@ void CAppCmds::OnReportWindow()
 
 		TxtStream.Close();
 
-		// Report status.
+		// Update status.
 		App.m_AppWnd.m_StatusBar.Hint("Report generated");
 
-		// View it.
-		CViewReportDlg Dlg(TxtStream);
-		Dlg.RunModal(App.m_rMainWnd);
+		// View report, if not empty.
+		// NB: Empty report is just an EOS.
+		if (TxtStream.Size() > 1)
+		{
+			CViewReportDlg Dlg(TxtStream);
+			Dlg.RunModal(App.m_rMainWnd);
+		}
+		else
+		{
+			App.NotifyMsg("The report contained no entries.");
+		}
 	}
 }
 
@@ -507,7 +556,7 @@ void CAppCmds::OnReportClipboard()
 	{
 		CBusyCursor BusyCursor;
 
-		// Report status.
+		// Update status.
 		App.m_AppWnd.m_StatusBar.Hint("Generating report...");
 
 		// Setup the clipbaord stream.
@@ -519,9 +568,13 @@ void CAppCmds::OnReportClipboard()
 		// Do the report.
 		App.ReportData(Device, Dlg.m_eGrouping, Dlg.m_FromDate, Dlg.m_ToDate);
 
+		// NB: Empty report is just an EOS.
+		if (Clipboard.Size() <= 1)
+			App.NotifyMsg("The report contained no entries.");
+
 		Clipboard.Close();
 
-		// Report status.
+		// Update status.
 		App.m_AppWnd.m_StatusBar.Hint("Report generated");
 	}
 }
@@ -547,7 +600,7 @@ void CAppCmds::OnReportPrint()
 		CBusyCursor BusyCursor;
 		CPrinterDC	DC(App.m_oPrinter);
 
-		// Report status.
+		// Update status.
 		App.m_AppWnd.m_StatusBar.Hint("Generating report...");
 
 		// Setup the printer to print to.
@@ -556,7 +609,7 @@ void CAppCmds::OnReportPrint()
 		// Do the report.
 		App.ReportData(Device, Dlg.m_eGrouping, Dlg.m_FromDate, Dlg.m_ToDate);
 
-		// Report status.
+		// Update status.
 		App.m_AppWnd.m_StatusBar.Hint("Report generated");
 	}
 }
@@ -581,7 +634,7 @@ void CAppCmds::OnReportFile()
 	{
 		CBusyCursor BusyCursor;
 
-		// Report status.
+		// Update status.
 		App.m_AppWnd.m_StatusBar.Hint("Generating report...");
 
 		// Setup the file to report to.
@@ -590,7 +643,7 @@ void CAppCmds::OnReportFile()
 		// Do the report.
 		App.ReportData(Device, Dlg.m_eGrouping, Dlg.m_FromDate, Dlg.m_ToDate);
 
-		// Report status.
+		// Update status.
 		App.m_AppWnd.m_StatusBar.Hint("Report generated");
 	}
 }
