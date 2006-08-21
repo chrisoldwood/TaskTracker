@@ -1,21 +1,24 @@
-- XML format import/export.
-
-- Allow merging on import.
+Next Release
+============
 
 - Export a range of dates only.
 
-- Preferences dialog (Holidays).
-
-- Add Holidays option. Enter date range/time and Task name.
-
-- Other report formats, e.g. HTML & XML (File & Clipboard)
-
 - Save using .tmp file and add .bak file.
 
-- Allow font to be configured for window report.
+- Persist font configured for window report.
 
 - Allow session pruning using a range.
 
 - Report options: day only (not session), overall total, ignore empty days.
+
+
+Later Release
+=============
+
+- XML format import/export.
+
+- Add Holidays option. Enter date range/time and Task name.
+
+- Other report formats, e.g. HTML & XML (File & Clipboard)
 
 - Change report dialogs to use a common one.
