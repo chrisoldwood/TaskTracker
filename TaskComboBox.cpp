@@ -63,12 +63,12 @@ void CTaskCombo::OnCreate(const CRect&)
 	for(CIter oIter = App.m_oTaskList.begin(); oIter != App.m_oTaskList.end(); ++oIter)
 		Add(*oIter);
 	
-	// Select last task, if one
+	// Select last task, if still valid.
 	if (App.m_strLastTask != "")
 	{
 		int iItem = FindExact(App.m_strLastTask);
-		ASSERT(iItem != CB_ERR);
-		
-		CurSel(iItem);
+
+		if (iItem != CB_ERR)
+			CurSel(iItem);
 	}
 }

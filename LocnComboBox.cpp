@@ -63,12 +63,12 @@ void CLocnCombo::OnCreate(const CRect&)
 	for(CIter oIter = App.m_oLocnList.begin(); oIter != App.m_oLocnList.end(); ++oIter)
 		Add(*oIter);
 	
-	// Select last location, if one
+	// Select last location, if still valid.
 	if (App.m_strLastLocn != "")
 	{
 		int iItem = FindExact(App.m_strLastLocn);
-		ASSERT(iItem != CB_ERR);
-		
-		CurSel(iItem);
+
+		if (iItem != CB_ERR)
+			CurSel(iItem);
 	}
 }
