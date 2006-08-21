@@ -81,6 +81,10 @@
 #define IDC_WEEK_ORDER                  1065
 #define IDC_OLD_TASK                    1065
 #define IDC_NEW_TASK                    1066
+#define IDC_FONT                        1067
+#define IDC_REPLACE                     1068
+#define IDC_MERGE                       1069
+#define IDC_NO_DUPLICATES               1070
 #define IDC_WEBSITE                     1083
 #define IDC_EMAIL                       1084
 #define IDC_VERSION                     1085
@@ -113,7 +117,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        119
 #define _APS_NEXT_COMMAND_VALUE         117
-#define _APS_NEXT_CONTROL_VALUE         1067
+#define _APS_NEXT_CONTROL_VALUE         1071
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif
