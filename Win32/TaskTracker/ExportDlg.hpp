@@ -20,6 +20,8 @@ public:
 	// Members.
 	//
 	CPath	m_strFileName;			//!< The file name.
+	CDate	m_dFromDate;			//!< The export range start date.
+	CDate	m_dToDate;				//!< The export range end date.
 
 private:
 	//
@@ -30,6 +32,8 @@ private:
 	// Controls.
 	//
 	CPathEditBox	m_ebFileName;	//!< The file name edit box.
+	CDateTimePicker	m_dtpFromDate;	//!< The start date picker.
+	CDateTimePicker	m_dtpToDate;	//!< The end date picker.
 
 	//
 	// Message handlers.
