@@ -15,11 +15,20 @@ class CImportDlg : public CDialog
 public:
 	//! Default constructor.
 	CImportDlg();
-	
+
+	//! Import action.
+	enum Action
+	{
+		REPLACE,					//! Replace existing database.
+		MERGE,						//! Merge into database.
+	};
+
 	//
 	// Members.
 	//
 	CPath	m_strFileName;			//!< The file name.
+	Action	m_eAction;				//!< Import action.
+	bool	m_bNoDuplicates;		//!< Don't import duplicates.
 
 private:
 	//
@@ -29,7 +38,10 @@ private:
 	//
 	// Controls.
 	//
-	CPathEditBox	m_ebFileName;	//!< The file name edit box.
+	CPathEditBox	m_ebFileName;		//!< The file name edit box.
+	CRadioBtn		m_rbReplace;		//!< Replace database radio button.
+	CRadioBtn		m_rbMerge;			//!< Merge database radio button.
+	CCheckBox		m_ckNoDuplicates;	//!< No duplicates check box.
 
 	//
 	// Message handlers.
@@ -42,7 +54,13 @@ private:
 	virtual bool OnOk();
 
 	//! File Browse button handler.
-	void OnBrowse();
+	void OnBrowseClicked();
+
+	//! Replace button state handler.
+	void OnReplaceClicked();
+
+	//! Merge button state handler.
+	void OnMergeClicked();
 };
 
 #endif // IMPORTDLG_HPP
