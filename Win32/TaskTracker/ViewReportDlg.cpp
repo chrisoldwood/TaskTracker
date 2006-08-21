@@ -26,6 +26,7 @@
 CViewReportDlg::CViewReportDlg(CMemStream& rTxtStream) 
 	: CDialog(IDD_VIEW_REPORT)
 	, m_rTxtStream(rTxtStream)
+	, m_oFont(ANSI_FIXED_FONT)
 {
 	DEFINE_CTRL_TABLE
 		CTRL(IDC_REPORT, &m_ebReport)
@@ -33,8 +34,13 @@ CViewReportDlg::CViewReportDlg(CMemStream& rTxtStream)
 
 	DEFINE_GRAVITY_TABLE
 		CTRLGRAV(IDC_REPORT, LEFT_EDGE,  TOP_EDGE,    RIGHT_EDGE, BOTTOM_EDGE)
+		CTRLGRAV(IDC_FONT,   LEFT_EDGE,  BOTTOM_EDGE, LEFT_EDGE,  BOTTOM_EDGE)
 		CTRLGRAV(IDOK,       RIGHT_EDGE, BOTTOM_EDGE, RIGHT_EDGE, BOTTOM_EDGE)
 	END_GRAVITY_TABLE
+
+	DEFINE_CTRLMSG_TABLE
+		CMD_CTRLMSG(IDC_FONT, BN_CLICKED, OnFontClicked)
+	END_CTRLMSG_TABLE
 }
 
 /******************************************************************************
@@ -68,7 +74,7 @@ void CViewReportDlg::OnInitDialog()
 
 	// Copy to the control.
 	m_ebReport.Text(strReport);
-	m_ebReport.Font(CFont(ANSI_FIXED_FONT));
+	m_ebReport.Font(m_oFont);
 
 	// Resize dialog to previous size.
 	if (!App.m_rcReportDlg.Empty())
@@ -91,4 +97,23 @@ void CViewReportDlg::OnDestroy()
 {
 	// Remember its position.
 	App.m_rcReportDlg = Placement();
+}
+
+/******************************************************************************
+** Method:		OnFontClicked()
+**
+** Description:	Select a different font for the report.
+**
+** Parameters:	None.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CViewReportDlg::OnFontClicked()
+{
+	// Show common dialog.
+	if (m_oFont.Select(*this))
+		m_ebReport.Font(m_oFont);
 }

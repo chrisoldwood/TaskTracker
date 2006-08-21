@@ -33,12 +33,18 @@ protected:
 	//
 	CMemStream&	m_rTxtStream;
 	CEditBox	m_ebReport;
+	CFont		m_oFont;
 	
 	//
 	// Message processors.
 	//
 	virtual void OnInitDialog();
 	virtual void OnDestroy();
+
+	//
+	// Control message processors.
+	//
+	void OnFontClicked();
 };
 
 /******************************************************************************
