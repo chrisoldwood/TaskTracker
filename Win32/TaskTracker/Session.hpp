@@ -115,4 +115,17 @@ inline void CSession::Location(const char* pszLocn)
 	m_strLocn = pszLocn;
 }
 
+inline bool operator==(const CSessionPtr& lhs, const CSessionPtr& rhs)
+{
+	return   ( (lhs->Start()    == rhs->Start()   )
+			&& (lhs->Finish()   == rhs->Finish()  )
+			&& (lhs->Task()     == rhs->Task()    )
+			&& (lhs->Location() == rhs->Location()) );
+}
+
+inline bool operator!=(const CSessionPtr& lhs, const CSessionPtr& rhs)
+{
+	return !(lhs == rhs);
+}
+
 #endif //SESSION_HPP
