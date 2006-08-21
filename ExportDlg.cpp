@@ -19,7 +19,9 @@ CExportDlg::CExportDlg()
 	, m_strFileName(App.m_strExportFile)
 {
 	DEFINE_CTRL_TABLE
-		CTRL(IDC_FILENAME, &m_ebFileName)
+		CTRL(IDC_FILENAME,	&m_ebFileName)
+		CTRL(IDC_FROM_DATE,	&m_dtpFromDate)
+		CTRL(IDC_TO_DATE, 	&m_dtpToDate)
 	END_CTRL_TABLE
 
 	DEFINE_CTRLMSG_TABLE
@@ -35,6 +37,16 @@ void CExportDlg::OnInitDialog()
 	// Initialise controls.
 	if (!m_strFileName.Empty())
 		m_ebFileName.Text(m_strFileName);
+
+	m_dtpFromDate.Format(App.DatePickerFormat());
+	m_dtpToDate.Format(App.DatePickerFormat());
+
+	// Set dates to database limits.
+	if (!App.m_oSessionList.empty())
+	{
+		m_dtpFromDate.SetDate(App.m_oSessionList.front()->Start().Date());
+		m_dtpToDate.SetDate(App.m_oSessionList.back()->Start().Date());
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -52,6 +64,8 @@ bool CExportDlg::OnOk()
 
 	// Save control settings.
 	m_strFileName = m_ebFileName.Text();
+	m_dFromDate   = m_dtpFromDate.GetDate();
+	m_dToDate     = m_dtpToDate.GetDate();
 
 	return true;
 }
