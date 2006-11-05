@@ -331,6 +331,9 @@ void CAppCmds::OnFileImport()
 
 		// Remember settings.
 		App.m_strImportFile = Dlg.m_strFileName;
+
+		// Update state.
+		App.m_bModified = true;
 	}
 	catch(CFileException& rException)
 	{
