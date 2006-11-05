@@ -11,6 +11,16 @@
 #include "AppHeaders.hpp"
 
 /******************************************************************************
+**
+** Constants.
+**
+*******************************************************************************
+*/
+
+// Window class name.
+const char* CAppWnd::CLASS_NAME = "TaskTrackerAppWnd";
+
+/******************************************************************************
 ** Method:		Default constructor.
 **
 ** Description:	.
@@ -42,6 +52,48 @@ CAppWnd::CAppWnd()
 
 CAppWnd::~CAppWnd()
 {
+}
+
+/******************************************************************************
+** Method:		GetClassParams()
+**
+** Description:	Template method to get the window class data.
+**
+** Parameters:	rParams		The class structure to fill.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CAppWnd::GetClassParams(WNDCLASS& rParams)
+{
+	// Get base class settings.
+	CDlgFrame::GetClassParams(rParams);
+
+	// Override any settings.
+	rParams.lpszClassName = CLASS_NAME;
+}
+
+/******************************************************************************
+** Method:		GetCreateParams()
+**
+** Description:	Template method to get the window creation data.
+**
+** Parameters:	rParams		The create structure to fill.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CAppWnd::GetCreateParams(WNDCREATE& rParams)
+{
+	// Get base class settings.
+	CDlgFrame::GetCreateParams(rParams);
+
+	// Override any settings.
+	rParams.pszClassName = CLASS_NAME;
 }
 
 /******************************************************************************
@@ -99,6 +151,11 @@ void CAppWnd::OnResize(int iFlag, const CSize& rNewSize)
 	{
 		ShowTrayIcon(true);
 		Show(SW_HIDE);
+	}
+	// Window restored AND Tray Icon still visible?
+	else if ( (iFlag == SIZE_RESTORED) && (m_oTrayIcon.IsVisible()) )
+	{
+		ShowTrayIcon(false);
 	}
 
 	CDlgFrame::OnResize(iFlag, rNewSize);
@@ -249,7 +306,33 @@ void CAppWnd::Restore()
 	{
 		Show(SW_SHOWNORMAL);
 		::SetForegroundWindow(m_hWnd);
-
-		ShowTrayIcon(false);
 	}
+}
+
+/******************************************************************************
+** Method:		RestorePrevInstance()
+**
+** Description:	Look for a previous instance, and if found restore it so that
+**				only one instance is running.
+**
+** Parameters:	None.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+bool CAppWnd::RestorePrevInstance()
+{
+	HWND hPrevWnd = ::FindWindow(CLASS_NAME, NULL);
+
+	// First instance?
+	if (hPrevWnd == NULL)
+		return false;
+
+	// Restore it.
+	::ShowWindow(hPrevWnd, SW_RESTORE);
+	::SetForegroundWindow(hPrevWnd);
+
+	return true;
 }

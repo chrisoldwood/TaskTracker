@@ -34,6 +34,11 @@ public:
 	void ShowTrayIcon(bool bShow);
 
 	//
+	// Class methods.
+	//
+	static bool RestorePrevInstance();
+
+	//
 	// Members.
 	//
 	CAppDlg		m_AppDlg;
@@ -48,21 +53,28 @@ protected:
 	//
 	CAccel		m_Accel;
 
+	//
+	// Constants.
+	//
+
 	// Child window IDs.
-	enum
-	{
-		IDC_TOOL_BAR   = 100,
-		IDC_STATUS_BAR = 101
-	};
+	static const uint IDC_TOOL_BAR   = 100;
+	static const uint IDC_STATUS_BAR = 101;
 
 	// Tray icon IDs.
-	enum
-	{
-		TRAY_ICON_ID = 100,
-	};
+	static const uint TRAY_ICON_ID = 100;
 
 	// Tray icon message ID.
-	enum { WM_USER_TRAY_NOTIFY = WM_USER };
+	static const uint WM_USER_TRAY_NOTIFY = WM_USER;
+
+	// Window class name.
+	static const char* CLASS_NAME;
+
+	//
+	// Window creation template methods.
+	//
+	virtual void GetClassParams(WNDCLASS& rParams);
+	virtual void GetCreateParams(WNDCREATE& rParams);
 
 	//
 	// Message processors.
