@@ -111,6 +111,10 @@ CTaskTracker::~CTaskTracker()
 
 bool CTaskTracker::OnOpen()
 {
+	// Only allow a single instance to run.
+	if (CAppWnd::RestorePrevInstance())
+		return false;
+
 	// Set the app title.
 	m_strTitle = "Task Tracker";
 
