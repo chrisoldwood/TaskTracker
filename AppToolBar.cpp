@@ -39,7 +39,7 @@ CAppToolBar::CAppToolBar()
 		TBCTL(&m_PrintReportBtn,	ID_REPORT_PRINT)
 		TBCTL(&m_FileReportBtn,		ID_REPORT_FILE)
 		TBGAP()
-		TBCTL(&m_HelpBtn,			ID_HELP_ABOUT)
+		TBCTL(&m_HelpBtn,			ID_HELP_CONTENTS)
 	END_TOOLBAR
 }
 
