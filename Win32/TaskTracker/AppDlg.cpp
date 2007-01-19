@@ -119,7 +119,9 @@ void CAppDlg::OnTimer(uint /*iTimerID*/)
 	{
 		// Save current and update.
 		m_dtCurrent = dtCurrent;
+
 		Update();
+		App.m_AppWnd.UpdateTrayIconTip();
 	}
 }
 
@@ -141,24 +143,19 @@ void CAppDlg::Update()
 	m_txtCurrDate.Text(m_dtCurrent.Date().ToString(CDate::FMT_WIN_SHORT));
 	m_txtCurrTime.Text(m_dtCurrent.Time().ToString(CDate::FMT_WIN_LONG));
 
-	ulong lCurrLen = 0;
-	
 	// Update current session, if one.
 	if (App.m_bClockedIn)
 	{
-		// Create a copy of the current session.
-		CSession m_CurrSession(*App.m_pCurrSession);
-		
-		// Set to finish now.
-		m_CurrSession.Finish(m_dtCurrent, App.m_pCurrSession->Task(), App.m_pCurrSession->Location());
+		ASSERT(App.m_pCurrSession.Get() != nullptr);
+
+		// Create a session from clock-in time to now.
+		CSession oSession(App.m_pCurrSession->Start(), m_dtCurrent);
 		
 		// Update fields.
-		m_txtSessionDate.Text(m_CurrSession.Start().Date().ToString(CDate::FMT_WIN_SHORT));
-		m_txtSessionTime.Text(m_CurrSession.Start().Time().ToString(CTime::FMT_WIN_SHORT));
-		m_txtSessionTask.Text(m_CurrSession.Task());
-
-		lCurrLen = m_CurrSession.Length();
-		m_txtSessionLen.Text(App.MinsToStr(lCurrLen));
+		m_txtSessionDate.Text(oSession.Start().Date().ToString(CDate::FMT_WIN_SHORT));
+		m_txtSessionTime.Text(oSession.Start().Time().ToString(CTime::FMT_WIN_SHORT));
+		m_txtSessionTask.Text(App.m_pCurrSession->Task());
+		m_txtSessionLen.Text(App.MinsToStr(oSession.Length()));
 	}
 	else
 	{
