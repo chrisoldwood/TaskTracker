@@ -28,6 +28,7 @@
 #define ID_TOOLS_POPUP                  800
 #define ID_TOOLS_OPTIONS                801
 #define ID_HELP_POPUP                   900
+#define ID_HELP_CONTENTS                901
 #define ID_HELP_ABOUT                   902
 #define ID_TRAY_RESTORE                 1001
 #define IDC_CURRENT_TIME                1001
@@ -37,7 +38,6 @@
 #define IDC_SESSION_DATE                1004
 #define IDC_ON_AT                       1005
 #define IDC_SESSION_TIME                1006
-#define IDC_DATE                        1007
 #define IDC_SESSION_LEN                 1008
 #define IDC_SESSION_TASK                1010
 #define IDC_TO_DATE                     1011
@@ -55,7 +55,7 @@
 #define IDC_DELETE                      1025
 #define IDC_RENAME                      1026
 #define IDC_ALL                         1027
-#define IDC_BEFORE                      1028
+#define IDC_BETWEEN                     1028
 #define IDC_PRINTER                     1029
 #define IDC_PORT                        1030
 #define IDC_BROWSE                      1035
@@ -85,6 +85,9 @@
 #define IDC_REPLACE                     1068
 #define IDC_MERGE                       1069
 #define IDC_NO_DUPLICATES               1070
+#define IDC_SHOW_SESSIONS               1071
+#define IDC_SHOW_EMPTY                  1072
+#define IDC_SHOW_TOTAL                  1073
 #define IDC_WEBSITE                     1083
 #define IDC_EMAIL                       1084
 #define IDC_VERSION                     1085
@@ -117,7 +120,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        119
 #define _APS_NEXT_COMMAND_VALUE         117
-#define _APS_NEXT_CONTROL_VALUE         1071
+#define _APS_NEXT_CONTROL_VALUE         1074
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif
