@@ -14,83 +14,6 @@
 
 /******************************************************************************
 ** 
-** Orderings used when reporting.
-**
-*******************************************************************************
-*/
-
-typedef enum tagGrouping
-{
-	Ungrouped,
-	ByWeek,
-	ByMonth,
-	ByTask
-} Grouping;
-
-/******************************************************************************
-** 
-** Periods used when reporting.
-**
-*******************************************************************************
-*/
-
-typedef enum tagPeriod
-{
-	All,
-	ThisWeek,
-	ThisMonth,
-	LastWeek,
-	LastMonth,
-	Custom
-} Period;
-
-/******************************************************************************
-** 
-** Formats used for converting 'n' minutes to a string.
-**
-*******************************************************************************
-*/
-
-typedef enum tagLenFormat
-{
-	HoursMins,
-	HoursOnly,
-} LenFormat;
-
-/******************************************************************************
-** 
-** Day ordering within a week.
-**
-*******************************************************************************
-*/
-
-typedef enum tagWeekOrder
-{
-	SatToFri,
-	SunToSat,
-	MonToSun,
-} WeekOrder;
-
-/******************************************************************************
-** 
-** File errors.
-**
-*******************************************************************************
-*/
-
-typedef enum tagFileErr
-{
-	OpenErr,
-	CreateErr,
-	ReadOnlyErr,
-	ReadErr,
-	WriteErr,
-	FormatErr,
-	VersionErr
-} FileErr;
-
-/******************************************************************************
-** 
 ** The application class.
 **
 *******************************************************************************
@@ -122,7 +45,7 @@ public:
 	ulong TotalForMonth(const CDate& rDate) const;
 	ulong TotalOverall() const;
 
-	void ReportData(CReport& rDevice, Grouping eGrouping, const CDate& rFromDate, const CDate& rToDate) const;
+	void ReportData(CReportOptions& oOptions, const CDate& oFromDate, const CDate& oToDate) const;
 
 	//
 	// Serialisation.
@@ -167,6 +90,9 @@ public:
 	CIniFile		m_IniFile;
 	Grouping		m_eDefGrouping;
 	Period			m_eDefPeriod;
+	bool			m_bDefShowSessions;		//!< Report each session?
+	bool			m_bDefShowIfEmpty;		//!< Report aggregations that are empty?
+	bool			m_bDefShowTotal;		//!< Report the overall total?
 	LenFormat		m_eLenFormat;
 	WeekOrder		m_eWeekOrder;
 	bool			m_bMinToTray;
@@ -174,6 +100,7 @@ public:
 	CString			m_strExportFile;
 	CString			m_strImportFile;
 	CRect			m_rcReportDlg;
+	CString			m_strRptDlgFont;
 	CRect			m_rcEditDlg;
 	bool			m_bCheckOverlap;
 
@@ -181,6 +108,7 @@ public:
 	// Constants.
 	//
 	static const char* VERSION;
+	static const char* HELPFILE;
 
 protected:
 	//
@@ -195,12 +123,12 @@ protected:
 	void ReadData(CFile& rFile);
 	void WriteData(CFile& rFile);
 
-	bool ReportUngrouped(CReport& rDevice, ulong& rlTotal, const CDateTime& dtFrom, const CDateTime& dtTo) const;
-	bool ReportByWeek(CReport& rDevice, ulong& rlTotal, const CDateTime& dtFrom, const CDateTime& dtTo) const;
-	bool ReportByMonth(CReport& rDevice, ulong& rlTotal, const CDateTime& dtFrom, const CDateTime& dtTo) const;
-	bool ReportByTask(CReport& rDevice, ulong& rlTotal, const CDateTime& dtFrom, const CDateTime& dtTo) const;
-	bool ReportDay(CReport& rDevice, const CDate& rDate, ulong& rlTotal) const;
-	bool ReportSession(CReport& rDevice, const CSessionPtr& pSession) const;
+	bool ReportUngrouped(CReportOptions& oOptions, const CDateTime& dtFrom, const CDateTime& dtTo, ulong& rlSessions, ulong& rlTotalMins) const;
+	bool ReportByWeek(CReportOptions& oOptions, const CDateTime& dtFrom, const CDateTime& dtTo, ulong& rlSessions, ulong& rlTotalMins) const;
+	bool ReportByMonth(CReportOptions& oOptions, const CDateTime& dtFrom, const CDateTime& dtTo, ulong& rlSessions, ulong& rlTotalMins) const;
+	bool ReportByTask(CReportOptions& oOptions, const CDateTime& dtFrom, const CDateTime& dtTo, ulong& rlSessions, ulong& rlTotalMins) const;
+	bool ReportDay(CReportOptions& oOptions, const CDate& rDate, ulong& rlSessions, ulong& rlTotalMins) const;
+	bool ReportSession(CReportOptions& oOptions, const CSessionPtr& pSession) const;
 
 	void LoadDefaults();
 	void SaveDefaults();
