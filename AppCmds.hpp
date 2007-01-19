@@ -58,6 +58,7 @@ public:
 	void OnToolsOptions();
 
 	// Help menu.
+	void OnHelpContents();
 	void OnHelpAbout();
 
 	//

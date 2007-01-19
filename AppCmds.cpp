@@ -61,7 +61,8 @@ CAppCmds::CAppCmds()
 		CMD_ENTRY(ID_PRUNE_TASKS,			OnPruneTasks,			OnUIPruneTasks,			-1)
 		CMD_ENTRY(ID_PRUNE_LOCNS,			OnPruneLocations,		OnUIPruneLocations,		-1)
 		CMD_ENTRY(ID_TOOLS_OPTIONS,			OnToolsOptions,			nullptr,				-1)
-		CMD_ENTRY(ID_HELP_ABOUT,			OnHelpAbout,			nullptr,				10)
+		CMD_ENTRY(ID_HELP_CONTENTS,			OnHelpContents,			nullptr,				10)
+		CMD_ENTRY(ID_HELP_ABOUT,			OnHelpAbout,			nullptr,				-1)
 	END_CMD_TABLE
 }
 
@@ -95,6 +96,13 @@ CAppCmds::~CAppCmds()
 
 void CAppCmds::OnFileExport()
 {
+	// Nothing to export?
+	if (App.m_oSessionList.empty())
+	{
+		App.AlertMsg("There are no sessions to export.");
+		return;
+	}
+
 	CExportDlg Dlg;
 
 	// Get export settings.
@@ -106,18 +114,24 @@ void CAppCmds::OnFileExport()
 	  && (App.QueryMsg("The file already exists:\n\n%s\n\nDo you want to overwrite it?", Dlg.m_strFileName) != IDYES) )
 		return;
 
+	CBusyCursor oBusyCursor;
+
 	try
 	{
 		// Template shorthands.
-		typedef CSessionList::const_iterator CIter;
+		typedef CSessionList::iterator CIter;
 
-		CFile File;
+		CFile             oFile;
+		CDateTime         dtBegin(Dlg.m_dFromDate, CTime::Min());
+		CDateTime         dtEnd(Dlg.m_dToDate, CTime::Max());
+		CIsSessionInRange oRange(dtBegin, dtEnd);
+		CIter             oIter(App.m_oSessionList.begin());
 
 		// Open the file.
-		File.Create(Dlg.m_strFileName);
+		oFile.Create(Dlg.m_strFileName);
 
 		// For all sessions.
-		for(CIter oIter = App.m_oSessionList.begin(); oIter != App.m_oSessionList.end(); ++oIter)
+		while ((oIter = std::find_if(oIter, App.m_oSessionList.end(), oRange)) != App.m_oSessionList.end())
 		{
 			CString     strLine;
 			CSessionPtr pSession = *oIter;
@@ -145,11 +159,13 @@ void CAppCmds::OnFileExport()
 							pSession->Finish().ToString(CDate::FMT_ISO, CDate::FMT_ISO),
 							strTask, strLocn);
 
-			File.WriteLine(strLine);
+			oFile.WriteLine(strLine);
+
+			++oIter;
 		}
 
 		// Done.
-		File.Close();
+		oFile.Close();
 
 		// Remember settings.
 		App.m_strExportFile = Dlg.m_strFileName;
@@ -180,6 +196,8 @@ void CAppCmds::OnFileImport()
 	// Get export settings.
 	if (Dlg.RunModal(App.m_AppWnd) != IDOK)
 		return;
+
+	CBusyCursor oBusyCursor;
 
 	try
 	{
@@ -511,12 +529,20 @@ void CAppCmds::OnReportWindow()
 		// Setup the memory stream to report to.
 		CBuffer		oBuffer;
 		CMemStream	TxtStream(oBuffer);
-		CTextReport Device(TxtStream);
+
+		// Setup the report options.
+		CReportOptions oOptions;
+
+		oOptions.m_pDevice       = CReportPtr(new CTextReport(TxtStream));	
+		oOptions.m_eGrouping     = Dlg.m_eGrouping;
+		oOptions.m_bShowSessions = Dlg.m_bShowSessions;
+		oOptions.m_bShowIfEmpty  = Dlg.m_bShowIfEmpty;
+		oOptions.m_bShowTotal    = Dlg.m_bShowTotal;
 
 		TxtStream.Create();
 
 		// Do the report.
-		App.ReportData(Device, Dlg.m_eGrouping, Dlg.m_FromDate, Dlg.m_ToDate);
+		App.ReportData(oOptions, Dlg.m_FromDate, Dlg.m_ToDate);
 
 		TxtStream.Close();
 
@@ -564,12 +590,20 @@ void CAppCmds::OnReportClipboard()
 
 		// Setup the clipbaord stream.
 		CClipboard Clipboard;
-		CTextReport Device(Clipboard);
+
+		// Setup the report options.
+		CReportOptions oOptions;
+
+		oOptions.m_pDevice       = CReportPtr(new CTextReport(Clipboard));	
+		oOptions.m_eGrouping     = Dlg.m_eGrouping;
+		oOptions.m_bShowSessions = Dlg.m_bShowSessions;
+		oOptions.m_bShowIfEmpty  = Dlg.m_bShowIfEmpty;
+		oOptions.m_bShowTotal    = Dlg.m_bShowTotal;
 
 		Clipboard.Open(GENERIC_WRITE, CF_TEXT);
 
 		// Do the report.
-		App.ReportData(Device, Dlg.m_eGrouping, Dlg.m_FromDate, Dlg.m_ToDate);
+		App.ReportData(oOptions, Dlg.m_FromDate, Dlg.m_ToDate);
 
 		// NB: Empty report is just an EOS.
 		if (Clipboard.Size() <= 1)
@@ -606,11 +640,17 @@ void CAppCmds::OnReportPrint()
 		// Update status.
 		App.m_AppWnd.m_StatusBar.Hint("Generating report...");
 
-		// Setup the printer to print to.
-		CPrintReport Device(DC);
-		
+		// Setup the report options.
+		CReportOptions oOptions;
+
+		oOptions.m_pDevice       = CReportPtr(new CPrintReport(DC));	
+		oOptions.m_eGrouping     = Dlg.m_eGrouping;
+		oOptions.m_bShowSessions = Dlg.m_bShowSessions;
+		oOptions.m_bShowIfEmpty  = Dlg.m_bShowIfEmpty;
+		oOptions.m_bShowTotal    = Dlg.m_bShowTotal;
+
 		// Do the report.
-		App.ReportData(Device, Dlg.m_eGrouping, Dlg.m_FromDate, Dlg.m_ToDate);
+		App.ReportData(oOptions, Dlg.m_FromDate, Dlg.m_ToDate);
 
 		// Update status.
 		App.m_AppWnd.m_StatusBar.Hint("Report generated");
@@ -640,11 +680,17 @@ void CAppCmds::OnReportFile()
 		// Update status.
 		App.m_AppWnd.m_StatusBar.Hint("Generating report...");
 
-		// Setup the file to report to.
-		CFileReport Device(Dlg.m_strFileName);
-		
+		// Setup the report options.
+		CReportOptions oOptions;
+
+		oOptions.m_pDevice       = CReportPtr(new CFileReport(Dlg.m_strFileName));	
+		oOptions.m_eGrouping     = Dlg.m_eGrouping;
+		oOptions.m_bShowSessions = Dlg.m_bShowSessions;
+		oOptions.m_bShowIfEmpty  = Dlg.m_bShowIfEmpty;
+		oOptions.m_bShowTotal    = Dlg.m_bShowTotal;
+
 		// Do the report.
-		App.ReportData(Device, Dlg.m_eGrouping, Dlg.m_FromDate, Dlg.m_ToDate);
+		App.ReportData(oOptions, Dlg.m_FromDate, Dlg.m_ToDate);
 
 		// Update status.
 		App.m_AppWnd.m_StatusBar.Hint("Report generated");
@@ -665,6 +711,8 @@ void CAppCmds::OnReportFile()
 
 void CAppCmds::OnPruneSessions()
 {
+	ASSERT(!App.m_oSessionList.empty());
+
 	CPruneSessionsDlg Dlg;
 	
 	if (Dlg.RunModal(App.m_rMainWnd) == IDOK)
@@ -672,12 +720,14 @@ void CAppCmds::OnPruneSessions()
 		// Template shorthands.
 		typedef CSessionList::iterator CIter;
 
-		CIsSessionInRange oRange(CDateTime::Min(), CDateTime(Dlg.m_Date, CTime::Min()));
+		CDateTime         dtBegin(Dlg.m_dFromDate, CTime::Min());
+		CDateTime         dtEnd(Dlg.m_dToDate, CTime::Max());
+		CIsSessionInRange oRange(dtBegin, dtEnd);
 		CIter             oIter(App.m_oSessionList.begin());
 
 		// Delete all sessions within the period.
 		while ((oIter = std::find_if(oIter, App.m_oSessionList.end(), oRange)) != App.m_oSessionList.end())
-			App.m_oSessionList.erase(oIter++);
+			oIter = App.m_oSessionList.erase(oIter);
 
 		// Update dirty flag.
 		App.m_bModified = true;
@@ -771,6 +821,27 @@ void CAppCmds::OnToolsOptions()
 	COptionsDlg Dlg;
 
 	Dlg.RunModal(App.m_rMainWnd);
+}
+
+/******************************************************************************
+** Method:		OnHelpContents()
+**
+** Description:	Show the help file.
+**
+** Parameters:	None.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CAppCmds::OnHelpContents()
+{
+	CBusyCursor oBusyCursor;
+
+	CPath strHelpFile(CPath::ApplicationDir(), CTaskTracker::HELPFILE);
+
+	::ShellExecute(NULL, NULL, strHelpFile, NULL, NULL, SW_SHOW);
 }
 
 /******************************************************************************
