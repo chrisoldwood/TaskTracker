@@ -23,17 +23,19 @@
 *******************************************************************************
 */
 
-CPruneSessionsDlg::CPruneSessionsDlg() : CDialog(IDD_PRUNE_SESSIONS)
+CPruneSessionsDlg::CPruneSessionsDlg()
+	: CDialog(IDD_PRUNE_SESSIONS)
 {
 	DEFINE_CTRL_TABLE
-		CTRL(IDC_ALL, 		&m_rbAll)
-		CTRL(IDC_BEFORE,	&m_rbBefore)
-		CTRL(IDC_DATE, 		&m_dtpDate)
+		CTRL(IDC_ALL,       &m_rbAll)
+		CTRL(IDC_BETWEEN,   &m_rbBetween)
+		CTRL(IDC_FROM_DATE,	&m_dtpFromDate)
+		CTRL(IDC_TO_DATE, 	&m_dtpToDate)
 	END_CTRL_TABLE
 
 	DEFINE_CTRLMSG_TABLE
-		CMD_CTRLMSG(IDC_ALL, 	BN_CLICKED,	OnAll)
-		CMD_CTRLMSG(IDC_BEFORE,	BN_CLICKED,	OnBefore)
+		CMD_CTRLMSG(IDC_ALL,     BN_CLICKED, OnAll)
+		CMD_CTRLMSG(IDC_BETWEEN, BN_CLICKED, OnBetween)
 	END_CTRLMSG_TABLE
 }
 
@@ -51,14 +53,19 @@ CPruneSessionsDlg::CPruneSessionsDlg() : CDialog(IDD_PRUNE_SESSIONS)
 
 void CPruneSessionsDlg::OnInitDialog()
 {
-	// Initialise date and time fields.
-	m_Date.Set();
-	m_dtpDate.SetDate(m_Date);
-	m_dtpDate.Format(App.DatePickerFormat());
+	ASSERT(!App.m_oSessionList.empty());
+
+	// Initialise controls.
+	m_dtpFromDate.Format(App.DatePickerFormat());
+	m_dtpToDate.Format(App.DatePickerFormat());
+
+	// Set dates to database limits.
+	m_dtpFromDate.SetDate(App.m_oSessionList.front()->Start().Date());
+	m_dtpToDate.SetDate(App.m_oSessionList.back()->Start().Date());
 
 	// Initalise prune selection.
 	m_rbAll.Check(true);
-	m_rbBefore.Check(false);
+	m_rbBetween.Check(false);
 	OnAll();
 }
 
@@ -76,11 +83,26 @@ void CPruneSessionsDlg::OnInitDialog()
 
 bool CPruneSessionsDlg::OnOk()
 {
+	// Validate controls.
+	if ( (m_rbBetween.IsChecked()) && (m_dtpToDate.GetDate() < m_dtpFromDate.GetDate()) )
+	{
+		AlertMsg("The 'End' date must be later than the 'Start' date.");
+		m_dtpToDate.Focus();
+		return false;
+	}
+
 	// Delete all data?
 	if (m_rbAll.IsChecked())
-		m_Date = CDate::Max();
+	{
+		m_dFromDate = CDate::Min();
+		m_dToDate   = CDate::Max();
+	}
+	// Delete range.
 	else
-		m_Date = m_dtpDate.GetDate();
+	{
+		m_dFromDate = m_dtpFromDate.GetDate();
+		m_dToDate   = m_dtpToDate.GetDate();
+	}
 
 	return true;
 }
@@ -88,7 +110,7 @@ bool CPruneSessionsDlg::OnOk()
 /******************************************************************************
 ** Method:		OnAll()
 **
-** Description:	Disable the date field.
+** Description:	Disable the date fields.
 **
 ** Parameters:	None.
 **
@@ -99,13 +121,14 @@ bool CPruneSessionsDlg::OnOk()
 
 void CPruneSessionsDlg::OnAll()
 {
-	m_dtpDate.Enable(false);
+	m_dtpToDate.Enable(false);
+	m_dtpFromDate.Enable(false);
 }
 
 /******************************************************************************
-** Method:		OnBefore()
+** Method:		OnBetween()
 **
-** Description:	Enable the date field.
+** Description:	Enable the date fields.
 **
 ** Parameters:	None.
 **
@@ -114,7 +137,8 @@ void CPruneSessionsDlg::OnAll()
 *******************************************************************************
 */
 
-void CPruneSessionsDlg::OnBefore()
+void CPruneSessionsDlg::OnBetween()
 {
-	m_dtpDate.Enable(true);
+	m_dtpToDate.Enable(true);
+	m_dtpFromDate.Enable(true);
 }
