@@ -34,6 +34,8 @@ CExportDlg::CExportDlg()
 
 void CExportDlg::OnInitDialog()
 {
+	ASSERT(!App.m_oSessionList.empty());
+
 	// Initialise controls.
 	if (!m_strFileName.Empty())
 		m_ebFileName.Text(m_strFileName);
@@ -42,11 +44,8 @@ void CExportDlg::OnInitDialog()
 	m_dtpToDate.Format(App.DatePickerFormat());
 
 	// Set dates to database limits.
-	if (!App.m_oSessionList.empty())
-	{
-		m_dtpFromDate.SetDate(App.m_oSessionList.front()->Start().Date());
-		m_dtpToDate.SetDate(App.m_oSessionList.back()->Start().Date());
-	}
+	m_dtpFromDate.SetDate(App.m_oSessionList.front()->Start().Date());
+	m_dtpToDate.SetDate(App.m_oSessionList.back()->Start().Date());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -59,6 +58,13 @@ bool CExportDlg::OnOk()
 	{
 		AlertMsg("Please select a file name to export to.");
 		m_ebFileName.Focus();
+		return false;
+	}
+
+	if (m_dtpToDate.GetDate() < m_dtpFromDate.GetDate())
+	{
+		AlertMsg("The 'To' date must be later than the 'From' date.");
+		m_dtpToDate.Focus();
 		return false;
 	}
 
