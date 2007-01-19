@@ -34,6 +34,9 @@ CClpWndReportDlg::CClpWndReportDlg()
 		CTRL(IDC_PERIOD,		&m_cbPeriod)
 		CTRL(IDC_FROM_DATE,		&m_dtpFromDate)
 		CTRL(IDC_TO_DATE, 		&m_dtpToDate)
+		CTRL(IDC_SHOW_SESSIONS,	&m_ckShowSessions)
+		CTRL(IDC_SHOW_EMPTY,	&m_ckShowIfEmpty)
+		CTRL(IDC_SHOW_TOTAL,	&m_ckShowTotal)
 		CTRL(IDC_REMEMBER, 		&m_ckRemember)
 	END_CTRL_TABLE
 
@@ -86,6 +89,9 @@ void CClpWndReportDlg::OnInitDialog()
 	m_dtpToDate.Format(App.DatePickerFormat());
 
 	// Initialise other fields.
+	m_ckShowSessions.Check(App.m_bDefShowSessions);
+	m_ckShowIfEmpty.Check(App.m_bDefShowIfEmpty);
+	m_ckShowTotal.Check(App.m_bDefShowTotal);
 	m_ckRemember.Check(true);
 }
 
@@ -131,11 +137,19 @@ bool CClpWndReportDlg::OnOk()
 	else if (m_rbGroupByTask.IsChecked())
 		m_eGrouping = ByTask;
 
+	// Get other settings.
+	m_bShowSessions = m_ckShowSessions.IsChecked();
+	m_bShowIfEmpty  = m_ckShowIfEmpty.IsChecked();
+	m_bShowTotal    = m_ckShowTotal.IsChecked();
+
 	// Save prefs, if required.
 	if (m_ckRemember.IsChecked())
 	{
-		App.m_eDefGrouping = m_eGrouping;
-		App.m_eDefPeriod   = ePeriod;
+		App.m_eDefGrouping     = m_eGrouping;
+		App.m_eDefPeriod       = ePeriod;
+		App.m_bDefShowSessions = m_bShowSessions;
+		App.m_bDefShowIfEmpty  = m_bShowIfEmpty;
+		App.m_bDefShowTotal    = m_bShowTotal;
 	}
 
 	return true;
