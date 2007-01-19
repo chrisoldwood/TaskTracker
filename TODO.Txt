@@ -1,23 +1,15 @@
-Next Release
+This Release
 ============
 
-- Improve system tray icon tooltip, when clocked in.
 
-- Fix Session Editing dialog to not repaint so badly (in place updates instead of complete refresh).
+Next Release
+=============
 
-- Export a range of dates only.
+- Save in %AppData% folder.
+
+- Save column widths on sessions dialog.
 
 - Save using .tmp file and add .bak file.
-
-- Persist font configured for window report.
-
-- Allow session pruning using a range.
-
-- Report options: day only (not session), overall total, ignore empty days.
-
-
-Later Release
-=============
 
 - XML format import/export.
 
