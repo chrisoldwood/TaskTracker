@@ -32,6 +32,7 @@
 #include "Resource.h"
 
 // Core data classes.
+#include "AppTypes.hpp"
 #include "Session.hpp"
 
 // Collection classes.
@@ -49,6 +50,7 @@
 #include "PrintReport.hpp"
 #include "FileReport.hpp"
 #include "TextReport.hpp"
+#include "ReportOptions.hpp"
 
 // Main app classes.
 #include "AppCmds.hpp"
