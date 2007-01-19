@@ -13,7 +13,7 @@
 /******************************************************************************
 ** Method:		Constructor.
 **
-** Description:	.
+** Description:	Default constructor.
 **
 ** Parameters:	None.
 **
@@ -24,6 +24,33 @@
 
 CSession::CSession()
 {
+}
+
+/******************************************************************************
+** Method:		Constructor.
+**
+** Description:	Construction from full session details.
+**
+** Parameters:	dtStart		The start datetime.
+**				dtFinish	The end datetime.
+**				pszTask		The task name.
+**				pszLocn		The location name.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+CSession::CSession(const CDateTime& dtStart, const CDateTime& dtFinish,
+					const char* pszTask, const char* pszLocn)
+	: m_dtStart(dtStart)
+	, m_dtFinish(dtFinish)
+{
+	if (pszTask != nullptr)
+		m_strTask = pszTask;
+
+	if (pszLocn != nullptr)
+		m_strLocn = pszLocn;
 }
 
 /******************************************************************************
