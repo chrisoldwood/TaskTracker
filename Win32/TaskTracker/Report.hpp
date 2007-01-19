@@ -27,7 +27,9 @@ public:
 	//
 	virtual bool Init() = 0;
 	virtual bool Term() = 0;
-	
+
+	virtual ~CReport() = 0 {};
+
 	//
 	// Methods.
 	//
@@ -41,11 +43,7 @@ protected:
 	//
 };
 
-/******************************************************************************
-**
-** Implementation of inline functions.
-**
-*******************************************************************************
-*/
+//! CReport smart pointer type.
+typedef Core::SharedPtr<CReport> CReportPtr;
 
 #endif //REPORT_HPP
