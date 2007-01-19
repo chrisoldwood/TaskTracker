@@ -45,41 +45,43 @@ CSessionList::CSessionList()
 
 CSessionList::~CSessionList()
 {
-	RemoveAll();
 }
 
 /******************************************************************************
 ** Method:		Add()
 **
-** Description:	Add a session to the list sorted by time.
+** Description:	Add a session to the list which is sorted by time.
 **
 ** Parameters:	pNewSession		The new session.
 **
-** Returns:		Nothing.
+** Returns:		The position of insertion.
 **
 *******************************************************************************
 */
 
-void CSessionList::Add(CSessionPtr& pNewSession)
+uint CSessionList::Add(CSessionPtr& pNewSession)
 {
 	// Template shorthands.
 	typedef iterator CIter;
 
 	// For all sessions...
-	for(CIter oIter = begin(); oIter != end(); ++oIter)
+	for(CIter itSession = begin(); itSession != end(); ++itSession)
 	{
-		CSessionPtr pSession = *oIter;
+		CSessionPtr pSession = *itSession;
 
 		// New session starts earlier?
 		if (pNewSession->Start() < pSession->Start())
 		{
-			insert(oIter, pNewSession);
-			return;
+			CIter itPos = insert(itSession, pNewSession);
+
+			return std::distance(begin(), itPos);
 		}
     }
     
 	// List is empty or session belongs at end.
 	push_back(pNewSession);
+
+	return size()-1;
 }
 
 /******************************************************************************
@@ -94,53 +96,9 @@ void CSessionList::Add(CSessionPtr& pNewSession)
 *******************************************************************************
 */
 
-void CSessionList::Remove(CSessionPtr& pSession)
+void CSessionList::Remove(int nIndex)
 {
-	remove(pSession);
-}
-
-/******************************************************************************
-** Method:		RemoveAll()
-**
-** Description:	Remove all sessions from the list.
-**
-** Parameters:	None.
-**
-** Returns:		Nothing.
-**
-*******************************************************************************
-*/
-
-void CSessionList::RemoveAll()
-{
-	// Template shorthands.
-	typedef const_iterator CIter;
-
-	clear();
-}
-
-/******************************************************************************
-** Method:		IndexOf()
-**
-** Description:	Gets the index of the session in the list.
-**
-** Parameters:	pSession	The session to find.
-**
-** Returns:		The position.
-**
-*******************************************************************************
-*/
-
-int CSessionList::IndexOf(const CSessionPtr& pSession) const
-{
-	// Template shorthands.
-	typedef const_iterator CIter;
-
-	CIter oIter = std::find(begin(), end(), pSession);
-
-	ASSERT(oIter != end());
-
-	return std::distance(begin(), oIter);
+	erase(begin()+nIndex);
 }
 
 /******************************************************************************
@@ -162,6 +120,8 @@ void operator >>(CStream& rStream, CSessionList& oList)
 	
 	// Read count.
 	rStream >> iCount;
+
+	oList.reserve(iCount);
 
 	// Read sessions.
 	while(iCount--)
