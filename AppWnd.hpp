@@ -32,6 +32,7 @@ public:
 	// Methods.
 	//
 	void ShowTrayIcon(bool bShow);
+	void UpdateTrayIconTip();
 
 	//
 	// Class methods.
@@ -98,13 +99,5 @@ protected:
 **
 *******************************************************************************
 */
-
-inline void CAppWnd::ShowTrayIcon(bool bShow)
-{
-	if (bShow)
-		m_oTrayIcon.Add(*this, TRAY_ICON_ID, WM_USER_TRAY_NOTIFY, IDR_APPICON, "Task Tracker");
-	else
-		m_oTrayIcon.Remove();
-}
 
 #endif //APPWND_HPP
