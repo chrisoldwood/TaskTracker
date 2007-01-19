@@ -32,7 +32,8 @@ public:
 	//
 	// Methods.
 	//
-	void Refresh();
+	void AddSesion(int nItem, CSessionPtr& pSession);
+	void RemoveSession(int nItem);
 
 	CSessionPtr SelSession();
 
