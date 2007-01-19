@@ -124,7 +124,7 @@ bool CTextReport::SendHeading(const char* pszText)
 	
 	// Underline string.
 	for(int i = 0; i < iLen; i++)
-		m_rStream.Write("-", 1);
+		m_rStream.Write("=", 1);
 	
 	// Add CR/LF to underline.
 	SendLineBreak();

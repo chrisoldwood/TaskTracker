@@ -136,7 +136,7 @@ bool CFileReport::SendHeading(const char* pszText)
 	
 	// Underline string.
 	for(int i = 0; i < iLen; i++)
-		m_File.Write("-", 1);
+		m_File.Write("=", 1);
 	
 	// Add CR/LF to underline.
 	if (!SendLineBreak())
