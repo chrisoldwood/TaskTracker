@@ -33,10 +33,13 @@ public:
 	Grouping	m_eGrouping;
 	CDate		m_FromDate;
 	CDate		m_ToDate;
+	bool		m_bShowSessions;
+	bool		m_bShowIfEmpty;
+	bool		m_bShowTotal;
 
 protected:
 	//
-	// Members.
+	// Controls.
 	//
 	CLabel			m_txtPrinter;
 	CLabel			m_txtPort;
@@ -47,6 +50,9 @@ protected:
 	CComboBox		m_cbPeriod;
 	CDateTimePicker	m_dtpFromDate;
 	CDateTimePicker	m_dtpToDate;
+	CCheckBox		m_ckShowSessions;
+	CCheckBox		m_ckShowIfEmpty;
+	CCheckBox		m_ckShowTotal;
 	CCheckBox		m_ckRemember;
 	
 	//
