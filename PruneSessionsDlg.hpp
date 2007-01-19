@@ -30,15 +30,17 @@ public:
 	//
 	// Members.
 	//
-	CDate	m_Date;
+	CDate	m_dFromDate;		//!< The prune range start date.
+	CDate	m_dToDate;			//!< The prune range end date.
 
 protected:
 	//
 	// Members.
 	//
-	CRadioBtn		m_rbAll;
-	CRadioBtn		m_rbBefore;
-	CDateTimePicker	m_dtpDate;
+	CRadioBtn		m_rbAll;		//!< The prune all radio button.
+	CRadioBtn		m_rbBetween;	//!< The prune range radio button.
+	CDateTimePicker	m_dtpFromDate;	//!< The start date picker.
+	CDateTimePicker	m_dtpToDate;	//!< The end date picker.
 	
 	//
 	// Message processors.
@@ -50,7 +52,7 @@ protected:
 	// Control message processors.
 	//
 	void OnAll();
-	void OnBefore();
+	void OnBetween();
 };
 
 /******************************************************************************
