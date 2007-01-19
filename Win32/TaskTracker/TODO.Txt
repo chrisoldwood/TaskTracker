@@ -1,6 +1,7 @@
 This Release
 ============
 
+- Session list not refreshed after renaming.
 
 Next Release
 =============
