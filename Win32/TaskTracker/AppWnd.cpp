@@ -336,3 +336,67 @@ bool CAppWnd::RestorePrevInstance()
 
 	return true;
 }
+
+/******************************************************************************
+** Method:		ShowTrayIcon()
+**
+** Description:	Show or hide the tray icon.
+**
+** Parameters:	bShow	true or false.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CAppWnd::ShowTrayIcon(bool bShow)
+{
+	if (bShow)
+	{
+		m_oTrayIcon.Add(*this, TRAY_ICON_ID, WM_USER_TRAY_NOTIFY, IDR_APPICON);
+
+		UpdateTrayIconTip();
+	}
+	else
+	{
+		m_oTrayIcon.Remove();
+	}
+}
+
+/******************************************************************************
+** Method:		UpdateTrayIconTip()
+**
+** Description:	Update the tooltip shown by the tray icon, if it's visible.
+**
+** Parameters:	None.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CAppWnd::UpdateTrayIconTip()
+{
+	if (m_oTrayIcon.IsVisible())
+	{
+		// Start with app name.
+		CString strTip = App.m_strTitle;
+
+		// If clocked in, append details.
+		if (App.m_bClockedIn)
+		{
+			ASSERT(App.m_pCurrSession.Get() != nullptr);
+
+			// Create a session from clock-in time to now.
+			CSession oSession(App.m_pCurrSession->Start(), CDateTime::Current());
+
+			// Build the tooltip.
+			strTip += "\n";
+			strTip += "Time: " + App.m_pCurrSession->Start().Time().ToString(CDate::FMT_WIN_SHORT) + "\n";
+			strTip += "Task: " + App.m_pCurrSession->Task() + "\n";
+			strTip += "Len: "  + App.MinsToStr(oSession.Length());
+		}
+
+		m_oTrayIcon.ModifyToolTip(strTip);
+	}
+}
