@@ -33,11 +33,17 @@ CTaskTracker App;
 *******************************************************************************
 */
 
-// The current file version.
+// The current data file version.
 static const uint DAT_FILE_VERSION = 35;
 
 // The data filename.
 static const char* DAT_FILE_NAME = "TaskTrak.dat";
+
+// The currrent cfg file version.
+static const char* INI_FILE_VER_40 = "4.0";
+
+// The previous cfg file versions (none).
+static const char* INI_FILE_VER_35 = "";
 
 // The cfg filename.
 static const char* INI_FILE_NAME = "TaskTrak.ini";
@@ -50,10 +56,12 @@ static const char* INI_FILE_NAME = "TaskTrak.ini";
 */
 
 #ifdef _DEBUG
-const char* CTaskTracker::VERSION      = "v3.7 [Debug Alpha]";
+const char* CTaskTracker::VERSION = "v4.0 [Debug Beta]";
 #else
-const char* CTaskTracker::VERSION      = "v3.7 [Alpha]";
+const char* CTaskTracker::VERSION = "v4.0 [Beta]";
 #endif
+
+const char* CTaskTracker::HELPFILE = "TaskTrak.mht";
 
 /******************************************************************************
 ** Method:		Constructor
@@ -70,13 +78,19 @@ const char* CTaskTracker::VERSION      = "v3.7 [Alpha]";
 CTaskTracker::CTaskTracker()
 	: CApp(m_AppWnd, m_AppCmds)
 	, m_bClockedIn(false)
+	, m_pCurrSession(nullptr)
 	, m_strLastTask("")
 	, m_strLastLocn("")
-	, m_pCurrSession(nullptr)
 	, m_bModified(false)
+	, m_eDefGrouping(Ungrouped)
+	, m_eDefPeriod(All)
+	, m_bDefShowSessions(true)
+	, m_bDefShowIfEmpty(true)
+	, m_bDefShowTotal(true)
 	, m_eLenFormat(HoursMins)
 	, m_eWeekOrder(MonToSun)
 	, m_bMinToTray(false)
+	, m_strRptDlgFont("ANSI_FIXED_FONT")
 	, m_bCheckOverlap(true)
 {
 }
@@ -210,6 +224,7 @@ void CTaskTracker::ClockIn(const CDateTime& dtIn, const CString& strTask, const 
 	m_bModified   = true;
 
 	m_AppCmds.UpdateUI();
+	m_AppWnd.UpdateTrayIconTip();
 }
 
 /******************************************************************************
@@ -252,6 +267,7 @@ void CTaskTracker::ClockOut(const CDateTime& dtOut, const CString& strTask, cons
 	m_bModified   = true;
 
 	m_AppCmds.UpdateUI();
+	m_AppWnd.UpdateTrayIconTip();
 }
 
 /******************************************************************************
@@ -589,69 +605,70 @@ void CTaskTracker::WriteData(CFile& rFile)
 /******************************************************************************
 ** Method:		ReportData()
 **
-** Description:	Report data to a device.
+** Description:	Generate a report and output to a device.
 **
-** Parameters:	rDevice		The device to report to.
-**				eGrouping	The grouping of the data.
-**				rFromDate	The starting date.
-**				rToDate		The end date.
+** Parameters:	oOptions	The report options.
+**				oFromDate	The report start date.
+**				oToDate		The report end date.
 **
 ** Returns:		Nothing.
 **
 *******************************************************************************
 */
 
-void CTaskTracker::ReportData(CReport& rDevice, Grouping eGrouping, const CDate& rFromDate,
-						const CDate& rToDate) const
+void CTaskTracker::ReportData(CReportOptions& oOptions, const CDate& oFromDate,
+								const CDate& oToDate) const
 {
-	ulong		lTotal = 0;
-	bool		bOkay  = false;
-	CDateTime	dtFrom, dtTo;
+	ASSERT(oOptions.m_pDevice.Get() != nullptr);
+	ASSERT(oFromDate <= oToDate);
+
+	ulong lSessions  = 0;
+	ulong lTotalMins = 0;
+	bool  bOkay      = false;
 
 	// Initialise the device.
-	if (!rDevice.Init())
+	if (!oOptions.m_pDevice->Init())
 		return;
 
-	// Set up limits.
-	dtFrom.Date(rFromDate);
-	dtTo.Date(rToDate);
-	dtTo.Time(CTime(23, 59, 59));
+	// Set up datetime limits.
+	CDateTime dtFrom(oFromDate, CTime(0, 0, 0   ));
+	CDateTime dtTo  (oToDate,   CTime(23, 59, 59));
 
 	// Check grouping.
-	switch(eGrouping)
+	switch(oOptions.m_eGrouping)
 	{
 		case Ungrouped:
-			bOkay = ReportUngrouped(rDevice, lTotal, dtFrom, dtTo);
+			bOkay = ReportUngrouped(oOptions, dtFrom, dtTo, lSessions, lTotalMins);
 			break;
 			
 		case ByWeek:
-			bOkay = ReportByWeek(rDevice, lTotal, dtFrom, dtTo);
+			bOkay = ReportByWeek(oOptions, dtFrom, dtTo, lSessions, lTotalMins);
 			break;
 			
 		case ByMonth:
-			bOkay = ReportByMonth(rDevice, lTotal, dtFrom, dtTo);
+			bOkay = ReportByMonth(oOptions, dtFrom, dtTo, lSessions, lTotalMins);
 			break;
 			
 		case ByTask:
-			bOkay = ReportByTask(rDevice, lTotal, dtFrom, dtTo);
+			bOkay = ReportByTask(oOptions, dtFrom, dtTo, lSessions, lTotalMins);
 			break;
 			
 		default:
 			ASSERT_FALSE();
 			break;
 	}
-/*
-	// Reported okay?
-	if (bOkay)
+
+	// Display overall total?
+	if (oOptions.m_bShowTotal && bOkay)
 	{
 		// Output total.
-		CString strTotal = CString::Fmt("Total For All Sessions: %s", App.MinsToStr(lTotal));
+		CString strTotal = CString::Fmt("Total Hours: %s", App.MinsToStr(lTotalMins));
 
-		rDevice.SendText(strTotal);
+		oOptions.m_pDevice->SendText(strTotal);
 	}
-*/
+
 	// Cleanup the device.
-	rDevice.Term();
+	oOptions.m_pDevice->Term();
 }
 
 /******************************************************************************
@@ -659,30 +676,30 @@ void CTaskTracker::ReportData(CReport& rDevice, Grouping eGrouping, const CDate&
 **
 ** Description:	Report all data ungrouped.
 **
-** Parameters:	rDevice		The device to report to.
-**				rlTotal		The total time.
-**				dtFrom		The starting date.
-**				dtTo		The end date.
+** Parameters:	oOptions		The report options.
+**				dtFrom			The starting date.
+**				dtTo			The end date.
+**				rlSessions		The number of sessions in the group..
+**				rlTotalMins		The total time in minutes.
 **
 ** Returns:		true or false.
 **
 *******************************************************************************
 */
 
-bool CTaskTracker::ReportUngrouped(CReport& rDevice, ulong& rlTotal, const CDateTime& dtFrom,
-							const CDateTime& dtTo) const
+bool CTaskTracker::ReportUngrouped(CReportOptions& oOptions, const CDateTime& dtFrom,
+							const CDateTime& dtTo, ulong& rlSessions, ulong& rlTotalMins) const
 {
 	// Template shorthands.
 	typedef CSessionList::const_iterator CIter;
 
-    CDate DateDone;
-	ulong lDayTotal = 0;
-	
-	// Init total.
-	rlTotal = 0;
+	// Initialise totals.
+	rlSessions  = 0;
+	rlTotalMins = 0;
 
 	CIsSessionInRange oRange(dtFrom, dtTo);
 	CIter             oIter(m_oSessionList.begin());
+    CDate             DateDone;
 
 	// For all sessions in range...
 	while ((oIter = std::find_if(oIter, m_oSessionList.end(), oRange)) != m_oSessionList.end())
@@ -692,15 +709,18 @@ bool CTaskTracker::ReportUngrouped(CReport& rDevice, ulong& rlTotal, const CDate
 		// New day?
 		if (pSession->Start().Date() > DateDone)
 		{
+			ulong lDaySessions ;
+			ulong lDayTotal;
+	
 			// Report days' data.
-			if (!ReportDay(rDevice, pSession->Start().Date(), lDayTotal))
+			if (!ReportDay(oOptions, pSession->Start().Date(), lDaySessions, lDayTotal))
 				return false;
 				
-			if (!rDevice.SendLineBreak())
-				return false;
-			
 			DateDone = pSession->Start().Date();
-			rlTotal += lDayTotal;
+
+			// Update totals.
+			rlSessions  += lDaySessions;
+			rlTotalMins += lDayTotal;
 		}
 
 		++oIter;
@@ -714,18 +734,19 @@ bool CTaskTracker::ReportUngrouped(CReport& rDevice, ulong& rlTotal, const CDate
 **
 ** Description:	Report all data ordered by weeks.
 **
-** Parameters:	rDevice		The device to report to.
-**				rlTotal		The total time.
-**				dtFrom		The starting date.
-**				dtTo		The end date.
+** Parameters:	oOptions		The report options.
+**				dtFrom			The starting date.
+**				dtTo			The end date.
+**				rlSessions		The number of sessions in the group..
+**				rlTotalMins		The total time in minutes.
 **
 ** Returns:		true or false.
 **
 *******************************************************************************
 */
 
-bool CTaskTracker::ReportByWeek(CReport& rDevice, ulong& rlTotal, const CDateTime& dtFrom,
-						const CDateTime& dtTo) const
+bool CTaskTracker::ReportByWeek(CReportOptions& oOptions, const CDateTime& dtFrom,
+						const CDateTime& dtTo, ulong& rlSessions, ulong& rlTotalMins) const
 {
 	// Template shorthands.
 	typedef CSessionList::const_iterator CIter;
@@ -733,8 +754,9 @@ bool CTaskTracker::ReportByWeek(CReport& rDevice, ulong& rlTotal, const CDateTim
 	CDateTime dtStart;
 	CDateTime dtEnd;
 
-	// Init total.
-	rlTotal = 0;
+	// Initialise totals.
+	rlSessions  = 0;
+	rlTotalMins = 0;
 
 	CIsSessionInRange oRange(dtFrom, dtTo);
 	CIter             oIter(m_oSessionList.begin());
@@ -764,11 +786,13 @@ bool CTaskTracker::ReportByWeek(CReport& rDevice, ulong& rlTotal, const CDateTim
 		// Create enumerator for the week.
 		CIsSessionInRange oWeekRange(dtStart, dtEnd);
 		CIter             oWeekIter(m_oSessionList.begin());
-		ulong			  lWeekTotal = 0;
+		ulong             lWeekSessions = 0;
+		ulong			  lWeekTotal    = 0;
 
 		// Get total for the week.
 		while ((oWeekIter = std::find_if(oWeekIter, m_oSessionList.end(), oWeekRange)) != m_oSessionList.end())
 		{
+			lWeekSessions++;
 			lWeekTotal += (*oWeekIter)->Length();
 			++oWeekIter;
 		}
@@ -779,7 +803,10 @@ bool CTaskTracker::ReportByWeek(CReport& rDevice, ulong& rlTotal, const CDateTim
 		CString strLen       = App.MinsToStr(lWeekTotal);
 		CString strHeading   = CString::Fmt("Week: %s to %s (Total: %s)", strStartDate, strEndDate, strLen);
 
-		if (!rDevice.SendHeading(strHeading))
+		if (!oOptions.m_pDevice->SendHeading(strHeading))
+			return false;
+
+		if (!oOptions.m_pDevice->SendLineBreak())
 			return false;
 
 		// Get date for week start.
@@ -788,23 +815,21 @@ bool CTaskTracker::ReportByWeek(CReport& rDevice, ulong& rlTotal, const CDateTim
 		// For all days in the week.
 		for(iDay = 0; iDay < 7; iDay++, Date += 1)
 		{
+			ulong lDaySessions;
 			ulong lDayTotal;
 
 			// Report data for the day..
-			if (!ReportDay(rDevice, Date, lDayTotal))
-				return false;
-
-			// End of day.
-			if (!rDevice.SendLineBreak())
+			if (!ReportDay(oOptions, Date, lDaySessions, lDayTotal))
 				return false;
 		}
 		
 		// End of week.
-		if (!rDevice.SendLineBreak())
+		if (!oOptions.m_pDevice->SendLineBreak())
 			return false;
 		
-		// Update total.
-		rlTotal += lWeekTotal;
+		// Update totals.
+		rlSessions  += lWeekSessions;
+		rlTotalMins += lWeekTotal;
 
 		++oIter;
 	}
@@ -817,18 +842,19 @@ bool CTaskTracker::ReportByWeek(CReport& rDevice, ulong& rlTotal, const CDateTim
 **
 ** Description:	Report all data ordered by months.
 **
-** Parameters:	rDevice		The device to report to.
-**				rlTotal		The total time.
-**				dtFrom		The starting date.
-**				dtTo		The end date.
+** Parameters:	oOptions		The report options.
+**				dtFrom			The starting date.
+**				dtTo			The end date.
+**				rlSessions		The number of sessions in the group..
+**				rlTotalMins		The total time in minutes.
 **
 ** Returns:		true or false.
 **
 *******************************************************************************
 */
 
-bool CTaskTracker::ReportByMonth(CReport& rDevice, ulong& rlTotal, const CDateTime& dtFrom,
-							const CDateTime& dtTo) const
+bool CTaskTracker::ReportByMonth(CReportOptions& oOptions, const CDateTime& dtFrom,
+							const CDateTime& dtTo, ulong& rlSessions, ulong& rlTotalMins) const
 {
 	// Template shorthands.
 	typedef CSessionList::const_iterator CIter;
@@ -836,8 +862,9 @@ bool CTaskTracker::ReportByMonth(CReport& rDevice, ulong& rlTotal, const CDateTi
 	CDateTime dtStart;
 	CDateTime dtEnd;
 
-	// Init total.
-	rlTotal = 0;
+	// Initialise totals.
+	rlSessions  = 0;
+	rlTotalMins = 0;
 
 	CIsSessionInRange oRange(dtFrom, dtTo);
 	CIter             oIter(m_oSessionList.begin());
@@ -871,7 +898,8 @@ bool CTaskTracker::ReportByMonth(CReport& rDevice, ulong& rlTotal, const CDateTi
 		// Create enumerator for the month.
 		CIsSessionInRange oMonthRange(dtStart, dtEnd);
 		CIter             oMonthIter(m_oSessionList.begin());
-		ulong			  lMonthTotal = 0;
+		ulong             lMonthSessions = 0;
+		ulong			  lMonthTotal    = 0;
 		
 		// Get total for the month.
 		while ((oMonthIter = std::find_if(oMonthIter, m_oSessionList.end(), oMonthRange)) != m_oSessionList.end())
@@ -886,7 +914,10 @@ bool CTaskTracker::ReportByMonth(CReport& rDevice, ulong& rlTotal, const CDateTi
 		CString strLen       = App.MinsToStr(lMonthTotal);
 		CString strHeading   = CString::Fmt("Month: %s to %s (Total: %s)", strStartDate, strEndDate, strLen);
 
-		if (!rDevice.SendHeading(strHeading))
+		if (!oOptions.m_pDevice->SendHeading(strHeading))
+			return false;
+
+		if (!oOptions.m_pDevice->SendLineBreak())
 			return false;
 
 		// Get date for month start.
@@ -895,23 +926,21 @@ bool CTaskTracker::ReportByMonth(CReport& rDevice, ulong& rlTotal, const CDateTi
 		// For all days in the month.
 		for(int iDay = 0; iDay < iNumDays; iDay++, Date += 1)
 		{
+			ulong lDaySessions;
 			ulong lDayTotal;
 
 			// Report data for the day..
-			if (!ReportDay(rDevice, Date, lDayTotal))
-				return false;
-
-			// End of day.
-			if (!rDevice.SendLineBreak())
+			if (!ReportDay(oOptions, Date, lDaySessions, lDayTotal))
 				return false;
 		}
 		
-		// End of week.
-		if (!rDevice.SendLineBreak())
+		// End of month.
+		if (!oOptions.m_pDevice->SendLineBreak())
 			return false;
 		
 		// Update total.
-		rlTotal += lMonthTotal;
+		rlSessions  += lMonthSessions;
+		rlTotalMins += lMonthTotal;
 
 		++oIter;
 	}
@@ -924,32 +953,35 @@ bool CTaskTracker::ReportByMonth(CReport& rDevice, ulong& rlTotal, const CDateTi
 **
 ** Description:	Report all data by its task.
 **
-** Parameters:	rDevice		The device to report to.
-**				rlTotal		The total time.
-**				dtFrom		The starting date.
-**				dtTo		The end date.
+** Parameters:	oOptions		The report options.
+**				dtFrom			The starting date.
+**				dtTo			The end date.
+**				rlSessions		The number of sessions in the group..
+**				rlTotalMins		The total time in minutes.
 **
 ** Returns:		true or false.
 **
 *******************************************************************************
 */
 
-bool CTaskTracker::ReportByTask(CReport& rDevice, ulong& rlTotal, const CDateTime& dtFrom,
-						const CDateTime& dtTo) const
+bool CTaskTracker::ReportByTask(CReportOptions& oOptions, const CDateTime& dtFrom,
+						const CDateTime& dtTo, ulong& rlSessions, ulong& rlTotalMins) const
 {
 	// Template shorthands.
 	typedef CTaskList::const_iterator CTaskIter;
 	typedef CSessionList::const_iterator CSessIter;
 
-	// Initialise total.
-	rlTotal = 0;
+	// Initialise totals.
+	rlSessions  = 0;
+	rlTotalMins = 0;
 	
 	// For all tasks.
 	for(CTaskIter oIter = App.m_oTaskList.begin(); oIter != App.m_oTaskList.end(); ++oIter)
 	{
 		CSessIter         oTotalIter(m_oSessionList.begin());
 		CIsSessionInRange oTotalRange(dtFrom, dtTo);
-		ulong			  lTotal = 0;
+		ulong             lSessions = 0;
+		ulong			  lTotal    = 0;
 	
 		// Get length of all sessions for task.
 		while ((oTotalIter = std::find_if(oTotalIter, m_oSessionList.end(), oTotalRange)) != m_oSessionList.end())
@@ -957,47 +989,71 @@ bool CTaskTracker::ReportByTask(CReport& rDevice, ulong& rlTotal, const CDateTim
 			CSessionPtr pSession = *oTotalIter;
 
 			if (pSession->Task() == (*oIter))
+			{
+				lSessions++;
 				lTotal += pSession->Length();
+			}
 
 			++oTotalIter;
 		}
 		
 		// Update grand total.
-		rlTotal +=lTotal;
+		rlSessions  += lSessions;
+		rlTotalMins += lTotal;
 
-		// Output month heading.
-		CString strHeading = CString::Fmt("%s (Total: %s)", *oIter, App.MinsToStr(lTotal));
-
-		if (!rDevice.SendHeading(strHeading))
-			return false;
-
-		oTotalIter = m_oSessionList.begin();
-
-		// Output all sessions for task.
-		while ((oTotalIter = std::find_if(oTotalIter, m_oSessionList.end(), oTotalRange)) != m_oSessionList.end())
+		if ( (lSessions > 0) || (oOptions.m_bShowIfEmpty) )
 		{
-			CSessionPtr pSession = *oTotalIter;
+			// Output task heading.
+			CString strHeading = CString::Fmt("%s (Total: %s)", *oIter, App.MinsToStr(lTotal));
 
-			if (pSession->Task() == (*oIter))
+			// Heading style depends on whether sessions follow.
+			if (oOptions.m_bShowSessions)
 			{
-				// Output session.
-				CString strDay   = pSession->Start().Date().DayOfWeekStr(false);
-				CString strDate  = pSession->Start().Date().ToString(CDate::FMT_WIN_SHORT);
-				CString	strStart = pSession->Start().Time().ToString(CDate::FMT_WIN_SHORT);
-				CString	strEnd   = pSession->Finish().Time().ToString(CDate::FMT_WIN_SHORT);
-				CString strLen   = App.MinsToStr(pSession->Length());
-				CString strText  = CString::Fmt("%s %s from %s to %s for %s", strDay, strDate, strStart, strEnd, strLen);
-			
-				if (!rDevice.SendText(strText))
+				if (!oOptions.m_pDevice->SendHeading(strHeading))
+					return false;
+
+				if (!oOptions.m_pDevice->SendLineBreak())
+					return false;
+			}
+			else
+			{
+				if (!oOptions.m_pDevice->SendText(strHeading))
 					return false;
 			}
 
-			++oTotalIter;
-		}
+			// Write each session?
+			if (oOptions.m_bShowSessions)
+			{
+				oTotalIter = m_oSessionList.begin();
 
-		// End of task.
-		if (!rDevice.SendLineBreak())
-			return false;
+				// Output all sessions for task.
+				while ((oTotalIter = std::find_if(oTotalIter, m_oSessionList.end(), oTotalRange)) != m_oSessionList.end())
+				{
+					CSessionPtr pSession = *oTotalIter;
+
+					if (pSession->Task() == (*oIter))
+					{
+						// Output session.
+						CString strDay   = pSession->Start().Date().DayOfWeekStr(false);
+						CString strDate  = pSession->Start().Date().ToString(CDate::FMT_WIN_SHORT);
+						CString	strStart = pSession->Start().Time().ToString(CDate::FMT_WIN_SHORT);
+						CString	strEnd   = pSession->Finish().Time().ToString(CDate::FMT_WIN_SHORT);
+						CString strLen   = App.MinsToStr(pSession->Length());
+						CString strText  = CString::Fmt("%s %s from %s to %s for %s", strDay, strDate, strStart, strEnd, strLen);
+					
+						if (!oOptions.m_pDevice->SendText(strText))
+							return false;
+					}
+
+					++oTotalIter;
+				}
+
+				// End of task.
+				if ( (!oOptions.m_pDevice->SendLineBreak())
+				|| (!oOptions.m_pDevice->SendLineBreak()) )
+					return false;
+			}
+		}
 	}
 	
 	return true;
@@ -1008,16 +1064,18 @@ bool CTaskTracker::ReportByTask(CReport& rDevice, ulong& rlTotal, const CDateTim
 **
 ** Description:	Report all data for the day to the device.
 **
-** Parameters:	rDevice		The device to report to.
-**				rDate		The date of the day to report.
-**				rlTotal		The total time for all sessions on the day.
+** Parameters:	oOptions		The report options.
+**				rDate			The date of the day to report.
+**				rlSessions		The number of sessions on the day.
+**				rlTotalMins		The total time for all sessions on the day.
 **
 ** Returns:		true or false.
 **
 *******************************************************************************
 */
 
-bool CTaskTracker::ReportDay(CReport& rDevice, const CDate& rDate, ulong& rlTotal) const
+bool CTaskTracker::ReportDay(CReportOptions& oOptions, const CDate& rDate,
+								ulong& rlSessions, ulong& rlTotalMins) const
 {
 	// Template shorthands.
 	typedef CSessionList::const_iterator CIter;
@@ -1030,8 +1088,9 @@ bool CTaskTracker::ReportDay(CReport& rDevice, const CDate& rDate, ulong& rlTota
 	dtEnd.Date(rDate);
 	dtEnd.Time(CTime(23, 59, 59));
 
-	// Initialise total.
-	rlTotal = 0;
+	// Initialise totals.
+	rlSessions  = 0;
+	rlTotalMins = 0;
 
 	CIter             oIter(m_oSessionList.begin());
 	CIsSessionInRange oRange(dtStart, dtEnd);
@@ -1039,30 +1098,43 @@ bool CTaskTracker::ReportDay(CReport& rDevice, const CDate& rDate, ulong& rlTota
 	// Get length of all sessions on the day.
 	while ((oIter = std::find_if(oIter, m_oSessionList.end(), oRange)) != m_oSessionList.end())
 	{
-		rlTotal += (*oIter)->Length();
+		rlSessions++;
+		rlTotalMins += (*oIter)->Length();
 
 		++oIter;
 	}
 
-	CString strDay  = rDate.DayOfWeekStr(false);
-	CString	strDate = rDate.ToString(CDate::FMT_WIN_SHORT);
-	CString strLen  = App.MinsToStr(rlTotal);
-	CString strText = CString::Fmt("%s %s (Total: %s)", strDay, strDate, strLen);
-
-	if (!rDevice.SendText(strText))
-		return false;
-
-	oIter = m_oSessionList.begin();
-
-	// Report all sessions on the day.
-	while ((oIter = std::find_if(oIter, m_oSessionList.end(), oRange)) != m_oSessionList.end())
+	// Write sessions details, if requested.
+	if ( (rlSessions > 0) || (oOptions.m_bShowIfEmpty) )
 	{
-		if (!ReportSession(rDevice, *oIter))
+		CString strDay  = rDate.DayOfWeekStr(false);
+		CString	strDate = rDate.ToString(CDate::FMT_WIN_SHORT);
+		CString strLen  = App.MinsToStr(rlTotalMins);
+		CString strText = CString::Fmt("%s %s (Total: %s)", strDay, strDate, strLen);
+
+		if (!oOptions.m_pDevice->SendText(strText))
 			return false;
 
-		++oIter;
+		// Write each session?
+		if (oOptions.m_bShowSessions)
+		{
+			oIter = m_oSessionList.begin();
+
+			// Report all sessions on the day.
+			while ((oIter = std::find_if(oIter, m_oSessionList.end(), oRange)) != m_oSessionList.end())
+			{
+				if (!ReportSession(oOptions, *oIter))
+					return false;
+
+				++oIter;
+			}
+
+			// End of day.
+			if (!oOptions.m_pDevice->SendLineBreak())
+				return false;
+		}
 	}
-		
+
 	return true;
 }
 
@@ -1071,15 +1143,15 @@ bool CTaskTracker::ReportDay(CReport& rDevice, const CDate& rDate, ulong& rlTota
 **
 ** Description:	Report a session to the device.
 **
-** Parameters:	rDevice		The device to report to.
-**				pSession	The session to report.
+** Parameters:	oOptions		The report options.
+**				pSession		The session to report.
 **
 ** Returns:		true or false.
 **
 *******************************************************************************
 */
 
-bool CTaskTracker::ReportSession(CReport& rDevice, const CSessionPtr& pSession) const
+bool CTaskTracker::ReportSession(CReportOptions& oOptions, const CSessionPtr& pSession) const
 {
 	CString	strStart = pSession->Start().Time().ToString(CTime::FMT_WIN_SHORT);
 	CString	strEnd   = pSession->Finish().Time().ToString(CTime::FMT_WIN_SHORT);
@@ -1098,7 +1170,7 @@ bool CTaskTracker::ReportSession(CReport& rDevice, const CSessionPtr& pSession) 
 	if (strLocn != "")
 		strText += " at " + strLocn;
 
-	return rDevice.SendText(strText);
+	return oOptions.m_pDevice->SendText(strText);
 }
 
 /******************************************************************************
@@ -1115,18 +1187,30 @@ bool CTaskTracker::ReportSession(CReport& rDevice, const CSessionPtr& pSession) 
 
 void CTaskTracker::LoadDefaults()
 {
+	// Read the file version.
+	CString strVer = m_IniFile.ReadString("Version", "Version", INI_FILE_VER_35);
+
+	// Fix-up old .ini file settings.
+//	if (strVer != INI_FILE_VER_40)
+//	{
+//	}
+
 	// Load UI settings.
 	m_eLenFormat    = static_cast<LenFormat>(m_IniFile.ReadInt("Prefs", "LenFormat", m_eLenFormat));
 	m_eWeekOrder    = static_cast<WeekOrder>(m_IniFile.ReadInt("Prefs", "WeekOrder", m_eWeekOrder));
 	m_bMinToTray    = m_IniFile.ReadBool("Prefs", "MinToTray", m_bMinToTray);
 	m_bCheckOverlap = m_IniFile.ReadBool("Prefs", "CheckOverlap", m_bCheckOverlap);
 	m_rcReportDlg   = m_IniFile.ReadRect("Prefs", "ReportDlg", m_rcReportDlg);
+	m_strRptDlgFont = m_IniFile.ReadString("Prefs", "ReportDlgFont", m_strRptDlgFont);
 	m_rcEditDlg     = m_IniFile.ReadRect("Prefs", "EditDlg",   m_rcEditDlg);
 
 	// Load report settings.
-	m_eDefGrouping  = static_cast<Grouping>(m_IniFile.ReadInt("Prefs", "Grouping", Ungrouped));
-	m_eDefPeriod    = static_cast<Period>(m_IniFile.ReadInt("Prefs", "Period", All));
-	m_strReportFile = m_IniFile.ReadString("Prefs", "ReportFile", m_strReportFile);
+	m_eDefGrouping     = static_cast<Grouping>(m_IniFile.ReadInt("Prefs", "Grouping", m_eDefGrouping));
+	m_eDefPeriod       = static_cast<Period>(m_IniFile.ReadInt("Prefs", "Period", m_eDefPeriod));
+	m_bDefShowSessions = m_IniFile.ReadBool("Prefs", "ReportSessions", m_bDefShowSessions);
+	m_bDefShowIfEmpty  = m_IniFile.ReadBool("Prefs", "ReportIfEmpty", m_bDefShowIfEmpty);
+	m_bDefShowTotal    = m_IniFile.ReadBool("Prefs", "ReportTotal", m_bDefShowTotal);
+	m_strReportFile    = m_IniFile.ReadString("Prefs", "ReportFile", m_strReportFile);
 
 	// Load export/import settings.
 	m_strExportFile = m_IniFile.ReadString("Prefs", "ExportFile", m_strExportFile);
@@ -1147,17 +1231,28 @@ void CTaskTracker::LoadDefaults()
 
 void CTaskTracker::SaveDefaults()
 {
+	// Delete old settings, if old format file.
+	if (m_IniFile.ReadString("Version", "Version", INI_FILE_VER_35) == INI_FILE_VER_35)
+		m_IniFile.DeleteSection("Prefs");
+
+	// Write the file version.
+	m_IniFile.WriteString("Version", "Version", INI_FILE_VER_40);
+
 	// Save UI settings.
-	m_IniFile.WriteInt ("Prefs", "LenFormat",    m_eLenFormat);
-	m_IniFile.WriteInt ("Prefs", "WeekOrder",    m_eWeekOrder);
-	m_IniFile.WriteBool("Prefs", "MinToTray",    m_bMinToTray);
+	m_IniFile.WriteInt("Prefs", "LenFormat", m_eLenFormat);
+	m_IniFile.WriteInt("Prefs", "WeekOrder", m_eWeekOrder);
+	m_IniFile.WriteBool("Prefs", "MinToTray", m_bMinToTray);
 	m_IniFile.WriteBool("Prefs", "CheckOverlap", m_bCheckOverlap);
-	m_IniFile.WriteRect("Prefs", "ReportDlg",    m_rcReportDlg);
-	m_IniFile.WriteRect("Prefs", "EditDlg",      m_rcEditDlg);
+	m_IniFile.WriteRect("Prefs", "ReportDlg", m_rcReportDlg);
+	m_IniFile.WriteString("Prefs", "ReportDlgFont", m_strRptDlgFont);
+	m_IniFile.WriteRect("Prefs", "EditDlg", m_rcEditDlg);
 
 	// Save report settings.
-	m_IniFile.WriteInt   ("Prefs", "Grouping",   m_eDefGrouping);
-	m_IniFile.WriteInt   ("Prefs", "Period",     m_eDefPeriod);
+	m_IniFile.WriteInt("Prefs", "Grouping", m_eDefGrouping);
+	m_IniFile.WriteInt("Prefs", "Period", m_eDefPeriod);
+	m_IniFile.WriteBool("Prefs", "ReportSessions", m_bDefShowSessions);
+	m_IniFile.WriteBool("Prefs", "ReportIfEmpty", m_bDefShowIfEmpty);
+	m_IniFile.WriteBool("Prefs", "ReportTotal", m_bDefShowTotal);
 	m_IniFile.WriteString("Prefs", "ReportFile", m_strReportFile);
 
 	// Save export/import settings.
@@ -1360,7 +1455,7 @@ CString CTaskTracker::MinsToStr(ulong lMins)
 void CTaskTracker::DeleteAllData()
 {
 	// Reset collections.
-	m_oSessionList.RemoveAll();
+	m_oSessionList.clear();
 	m_oTaskList.RemoveAll();
 	m_oLocnList.RemoveAll();
 
