@@ -107,7 +107,7 @@ void CEditSessionDlg::OnDestroy()
 /******************************************************************************
 ** Method:		OnAdd()
 **
-** Description:	.
+** Description:	Add a new session to the database.
 **
 ** Parameters:	None.
 **
@@ -122,6 +122,9 @@ void CEditSessionDlg::OnAdd()
 	
 	if (Dlg.RunModal(*this) == IDOK)
 	{
+		// Type shorthands.
+		typedef CSessionList::iterator Iter;
+
 		// Create a new session.
 		CSessionPtr pNewSession = new CSession;
 		
@@ -141,15 +144,11 @@ void CEditSessionDlg::OnAdd()
 		App.m_strLastTask = Dlg.m_strTask;
 		App.m_strLastLocn = Dlg.m_strLocn;
 
-		// Add to sessionlist.
-		App.m_oSessionList.Add(pNewSession);
+		// Add to sessionlist and view.
+		uint nPos = App.m_oSessionList.Add(pNewSession);
 
-		int i = App.m_oSessionList.IndexOf(pNewSession);
-
-		// Refresh session list.
-		m_lvSessions.Refresh();
-		m_lvSessions.Select(i);
-		m_lvSessions.MakeItemVisible(i);
+		m_lvSessions.AddSesion(nPos, pNewSession);
+		m_lvSessions.Select(nPos);
 
     	// Enable delete and modify buttons.
 		m_bnModify.Enable();
@@ -163,7 +162,7 @@ void CEditSessionDlg::OnAdd()
 /******************************************************************************
 ** Method:		OnModify()
 **
-** Description:	.
+** Description:	Edit the currently selected session.
 **
 ** Parameters:	None.
 **
@@ -174,6 +173,8 @@ void CEditSessionDlg::OnAdd()
 
 void CEditSessionDlg::OnModify()
 {
+	ASSERT(m_lvSessions.Selection() != LB_ERR);
+
 	CModifySessionDlg Dlg;
 
 	// Get selected session.
@@ -195,7 +196,7 @@ void CEditSessionDlg::OnModify()
 		int iIdx = m_lvSessions.Selection();
 
 		// Remove session from list and view.
-		App.m_oSessionList.Remove(pSession);
+		App.m_oSessionList.Remove(iIdx);
 		m_lvSessions.DeleteItem(iIdx);
 
 		// Update session details.
@@ -210,15 +211,11 @@ void CEditSessionDlg::OnModify()
 		if (Dlg.m_strLocn != "")
 			App.m_oLocnList.Add(Dlg.m_strLocn);
 	
-		// Add to list.
-		App.m_oSessionList.Add(pSession);
-		
-		int i = App.m_oSessionList.IndexOf(pSession);
+		// Re-add to sessionlist and view.
+		uint nPos = App.m_oSessionList.Add(pSession);
 
-		// Refresh session list.
-		m_lvSessions.Refresh();
-		m_lvSessions.Select(i);
-		m_lvSessions.MakeItemVisible(i);
+		m_lvSessions.AddSesion(nPos, pSession);
+		m_lvSessions.Select(nPos);
 
 		// Update dirty flag.
 		App.m_bModified = true;
@@ -260,31 +257,30 @@ LRESULT CEditSessionDlg::OnGridDblClick(NMHDR&)
 
 void CEditSessionDlg::OnDelete()
 {
-	// Get current selection.
-	int iIdx = m_lvSessions.Selection();
-	ASSERT(iIdx != LB_ERR);
+	ASSERT(m_lvSessions.Selection() != LB_ERR);
 
-	// Get selected session.
+	// Get current selection.
+	int         iIdx     = m_lvSessions.Selection();
 	CSessionPtr pSession = m_lvSessions.SelSession();
 
 	ASSERT(pSession.Get() != nullptr);
 
-	// Delete session.
-	App.m_oSessionList.Remove(pSession);
-	
-	// Update listbox.
+	// Remove from collection and view.
+	App.m_oSessionList.Remove(iIdx);
 	m_lvSessions.DeleteItem(iIdx);
+
+	ASSERT(App.m_oSessionList.size() == (size_t)m_lvSessions.ItemCount());
 
 	// Change listbox selection.
 	int iNumItems = App.m_oSessionList.size();
 	
-    if (iNumItems)
+    if (iNumItems > 0)
     {
-    	// Select next item
+    	// Select nearest item
     	if (iIdx == iNumItems)
-    		m_lvSessions.Select(iIdx-1);
-    	else
-    		m_lvSessions.Select(iIdx);
+    		--iIdx;
+
+    	m_lvSessions.Select(iIdx);
     }
     else
     {
@@ -335,7 +331,7 @@ void CEditSessionDlg::OnRename()
 		// Refresh session list, restoring the selection.
 		int i = m_lvSessions.Selection();
 
-		m_lvSessions.Refresh();
+//		m_lvSessions.Refresh();
 		m_lvSessions.Select(i);
 		m_lvSessions.MakeItemVisible(i);
 
