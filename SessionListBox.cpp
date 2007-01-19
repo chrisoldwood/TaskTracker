@@ -67,6 +67,9 @@ CSessionListView::~CSessionListView()
 
 void CSessionListView::OnCreate(const CRect&)
 {
+	// Template shorthands.
+	typedef CSessionList::iterator Iter;
+
 	// Change style.
 	FullRowSelect(true);
 	GridLines(true);
@@ -75,8 +78,9 @@ void CSessionListView::OnCreate(const CRect&)
 	for (int i = 0; i < NUM_COLUMNS; i++)
 		InsertColumn(i, apszLabels[i], aiWidths[i]);
 
-	// Fill listbox.
-	Refresh();
+	// Populate the listview...
+	for(Iter oIter = App.m_oSessionList.begin(); oIter != App.m_oSessionList.end(); ++oIter)
+		AddSesion(ItemCount(), *oIter);
 	
 	// Select 1st item, if one.
 	if (ItemCount())
@@ -84,63 +88,69 @@ void CSessionListView::OnCreate(const CRect&)
 }
 
 /******************************************************************************
-** Method:		Refresh()
+** Method:		AddSesion()
 **
-** Description:	Refresh the list of sessions.
+** Description:	Adds the specified session to the view.
+**				NB: We store a pointer to the SharedPtr wrapper as the item
+**				data, so it must not be a temporary.
 **
-** Parameters:	None.
+** Parameters:	nItem	The index of the item to add.
+**				oIter	An SessionList iterator to the session.
 **
 ** Returns:		Nothing.
 **
 *******************************************************************************
 */
 
-void CSessionListView::Refresh()
+void CSessionListView::AddSesion(int nItem, CSessionPtr& pSession)
 {
-	// Template shorthands.
-	typedef CSessionList::const_iterator CIter;
+	CString strStartDay  = pSession->Start().Date().DayOfWeekStr(false);
+	CString	strStartDate = pSession->Start().Date().ToString(CDate::FMT_WIN_SHORT);
+	CString	strStartTime = pSession->Start().Time().ToString(CTime::FMT_WIN_SHORT);
+	CString	strEndTime   = pSession->Finish().Time().ToString(CTime::FMT_WIN_SHORT);
+	CString strTask      = pSession->Task();
+	CString strLocation  = pSession->Location();
+	CString strLength    = App.MinsToStr(pSession->Length());
 
-	// Save current selection.
-	int iSel = Selection();
+	// Add flag, if clocked-out on a different day.
+	if (pSession->Start().Date() != pSession->Finish().Date())
+		strEndTime += '*';
 
-	// Empty contents.
-	DeleteAllItems();
+	// Add the item.
+	int i = InsertItem(nItem, "");
 
-	// For all sessions...
-	for(CIter oIter = App.m_oSessionList.begin(); oIter != App.m_oSessionList.end(); ++oIter)
-	{
-		CSessionPtr pSession = *oIter;
-
-		CString strStartDay  = pSession->Start().Date().DayOfWeekStr(false);
-		CString	strStartDate = pSession->Start().Date().ToString(CDate::FMT_WIN_SHORT);
-		CString	strStartTime = pSession->Start().Time().ToString(CTime::FMT_WIN_SHORT);
-		CString	strEndTime   = pSession->Finish().Time().ToString(CTime::FMT_WIN_SHORT);
-		CString strTask      = pSession->Task();
-		CString strLocation  = pSession->Location();
-		CString strLength    = App.MinsToStr(pSession->Length());
-
-		// Add flag, if clocked-out on a different day.
-		if (pSession->Start().Date() != pSession->Finish().Date())
-			strEndTime += '*';
-
-		// Add the item.
-		int i = AppendItem("");
-
-		ItemText(i, 0, strStartDay);
-		ItemText(i, 1, strStartDate);
-		ItemText(i, 2, strStartTime);
-		ItemText(i, 3, strEndTime);
-		ItemText(i, 4, strLength);
-		ItemText(i, 5, strTask);
-		ItemText(i, 6, strLocation);
-		ItemPtr (i,    &(*oIter));
-    }
-
-	RestoreSel(iSel);
+	ItemText(i, 0, strStartDay);
+	ItemText(i, 1, strStartDate);
+	ItemText(i, 2, strStartTime);
+	ItemText(i, 3, strEndTime);
+	ItemText(i, 4, strLength);
+	ItemText(i, 5, strTask);
+	ItemText(i, 6, strLocation);
+	ItemPtr (i,    &pSession);
 }
 
 /******************************************************************************
-** Method:		SelSession.
+** Method:		RemoveSession()
+**
+** Description:	Removes the specified item from the view.
+**
+** Parameters:	nItem	The index of the item to remove.
+**
+** Returns:		Nothing.
+**
+*******************************************************************************
+*/
+
+void CSessionListView::RemoveSession(int nItem)
+{
+	DeleteItem(nItem);
+
+	// Move selection.
+	Select((nItem < ItemCount()) ? nItem : nItem-1);
+}
+
+/******************************************************************************
+** Method:		SelSession()
 **
 ** Description:	Gets the currently selected session.
 **
@@ -154,10 +164,11 @@ void CSessionListView::Refresh()
 CSessionPtr CSessionListView::SelSession()
 {
 	CSessionPtr pSession;
+	int         nIndex = Selection();
 
 	// Is a selected session?
-	if (IsSelection())
-		pSession = *static_cast<CSessionPtr*>(ItemPtr(Selection()));
+	if (nIndex != LB_ERR)
+		pSession = App.m_oSessionList[nIndex];
 
 	return pSession;
 }
