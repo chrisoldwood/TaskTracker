@@ -79,6 +79,10 @@ void CViewReportDlg::OnInitDialog()
 	// Resize dialog to previous size.
 	if (!App.m_rcReportDlg.Empty())
 		Move(App.m_rcReportDlg);
+
+	// Use a custom font, if configured.
+	if (CFont::Parse(App.m_strRptDlgFont, m_oFont))
+		m_ebReport.Font(m_oFont);
 }
 
 /******************************************************************************
@@ -115,5 +119,11 @@ void CViewReportDlg::OnFontClicked()
 {
 	// Show common dialog.
 	if (m_oFont.Select(*this))
+	{
+		// Update control.
 		m_ebReport.Font(m_oFont);
+
+		// Remeber font.
+		App.m_strRptDlgFont = m_oFont.Format(CLogFont::FMT_SHORT);
+	}
 }
