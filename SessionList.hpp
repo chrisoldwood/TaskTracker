@@ -14,14 +14,15 @@
 
 /******************************************************************************
 ** 
-** This class is used to hold the list of sessions.
+** This class is used to hold the list of sessions. The list is stored in a
+** sorted order, by start time.
 **
 ** NB: This class used to derive from CPtrList.
 **
 *******************************************************************************
 */
 
-class CSessionList : public std::list<CSessionPtr>
+class CSessionList : public std::vector<CSessionPtr>
 {
 public:
 	//
@@ -33,11 +34,8 @@ public:
 	//
 	// Methods.
 	//
-	void Add(CSessionPtr& pSession);
-	void Remove(CSessionPtr& pSession);
-	void RemoveAll();
-
-	int IndexOf(const CSessionPtr& pSession) const;
+	uint Add(CSessionPtr& pSession);
+	void Remove(int nIndex);
 
 private:
 	//
@@ -80,6 +78,7 @@ inline CIsSessionInRange::CIsSessionInRange(const CDateTime& dtStart, const CDat
 	: m_dtStart(dtStart)
 	, m_dtEnd(dtEnd)
 {
+	ASSERT(m_dtStart <= m_dtEnd);
 }
 
 inline bool CIsSessionInRange::operator()(const CSessionPtr& pSession)
