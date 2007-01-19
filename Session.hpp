@@ -26,6 +26,7 @@ public:
 	// Constructors/Destructor.
 	//
 	CSession();
+	CSession(const CDateTime& dtStart, const CDateTime& dtFinish, const char* pszTask = nullptr, const char* pszLocn = nullptr);
 	~CSession();
 
 	//
