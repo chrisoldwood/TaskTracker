@@ -5,7 +5,9 @@
 <meta name="author" content="Chris Oldwood">
 <style>
 <!--
-body	{ font-family: Verdana, Arial; font-size: 10pt}
+body	{ font-family: Verdana, Arial; font-size: 10pt }
+th		{ font-family: Verdana, Arial; font-size: 10pt }
+td		{ font-family: Verdana, Arial; font-size: 10pt; align: left }
 --></style>
 </head>
 
@@ -16,34 +18,290 @@ body	{ font-family: Verdana, Arial; font-size: 10pt}
 <a name="Introduction"></a>
 <h5>Introduction</h5>
 
-<a name="MainMenu"></a>
-<h5>Main Menu</h5>
+<p>
+TaskTracker is a simple application that can be used to help store and report
+the hours that you spend on various tasks throughout the day. I wrote it when
+I started freelancing as I needed to track my hours carefully for invoicing.
+Even when I returned to permanent employment for a few years I continued to use
+it as I found it useful to know how much time was spent on development, support,
+documentation etc.
+</p><p>
+The application revolves around the notion of a session, which is the time spent
+on a single task. You begin a session when you "Clock In" and end a session
+when you "Clock Out". There is no limit to the number of sessions you can create
+throughout the day, and a session can span multiple days. As well as associating
+a short name for the tasks, you can also specify the name of the location, which
+is useful if you work at multiple sites.
+</p><p>
+At some point you will want to know how your time has been spent, and to achieve
+this you can create a report. Most reports are focused around common periods
+such as a week or month to aid filling in timesheets or invoices. There is also
+a Task centric report for tracking overall time on each task.
+</p><p>
+My use has varied over the years, mostly depending on the level of reporting
+requested by my clients. In some cases I have only been required to submit a
+simple timesheet on a monthly basis with the number of hours per day. Other
+times I have been required to present a weekly timesheet, with a breakdown of
+how much time has been spent on individual tasks.
+</p>
+
+<hr>
+
+<a name="MainView"></a>
+<h5>The Main View &amp; Menu</h5>
+
+<p>
+The main view of TaskTracker has 3 panels. The top one shows the current date
+&amp; time, the bottom left shows the details of the current session, and the
+right one is a quick summary of the hours to date over the common reporting
+periods. The toolbar contains buttons to access the most common features and
+is grouped according to the menu structure - File, Session, Report and Help.
+</p><p>
+<img src="MainView.gif" align="top">
+</p><p>
+The following table shows the menu tree and provides links to the relevant sections.
+</p>
+
+<table border=0>
+<tr>
+	<th>File   </th>
+	<th>Session</th>
+	<th>Report </th>
+	<th>Prune  </th>
+	<th>Tools  </th>
+	<th>Help   </th>
+</tr><tr>
+	<td><a href="ImportExport">Export  </a></td>
+	<td><a href="ClockInOut"  >Clock In</a></td>
+	<td><a href="Reports"     >Window  </a></td>
+	<td><a href="PruneData"   >Sessions</a></td>
+	<td><a href="Settings"    >Options </a></td>
+	<td><a href=""            >Contents</a></td>
+</tr><tr>
+	<td><a href="ImportExport">Import      </a></td>
+	<td><a href="ClockInOut"  >Switch Tasks</a></td>
+	<td><a href="Reports"     >Clipboard   </a></td>
+	<td><a href="PruneData"   >Tasks       </a></td>
+	<td></td>
+	<td><a href=""            >About       </a></td>
+</tr><tr>
+	<td><a href=""          >Exit     </a></td>
+	<td><a href="ClockInOut">Clock Out</a></td>
+	<td><a href="Reports"   >Print    </a></td>
+	<td><a href="PruneData" >Locations</a></td>
+	<td></td>
+	<td></td>
+</tr><tr>
+	<td></td>
+	<td><a href="ClockInOut">Edit</a></td>
+	<td><a href="Reports"   >File</a></td>
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
+</table>
+
+<a name="ClockInOut"></a>
+<h5>Clocking In &amp; Out</h5>
+
+<p>
+The main metaphor (hopefully obvious from the icon) used in TaskTracker is that
+of punching (or clocking) in and out at the ends of a <i>shift</i>. You may in
+fact work exactly in this way, but it also caters for people who either wish to
+classify their tasks in finer detail, or work on very short tasks, or spend their
+day switching between different tasks. There is no limit to the number of
+sessions that can be associated with a day.
+</p><p>
+To clock in and out you use the "Session | Clock In..." and "Session | Clock Out..."
+menu commands, or use the toolbar buttons, or the shortcut keys Ctrl+I and Ctrl+O.
+These will present you with a dialog into which you can enter the details of the
+session. A session consists of a start and end date and time, a name for the task
+and a name for the location where it was performed. The dialog defaults to using
+the current date &amp; time, and previously entered task name and location. If
+required you can clock in or out either in the past (if you forgot) or in the
+future. TaskTracker also maintains a list of all the task and location names you
+enter so you can save typing by picking previous ones using the combo boxes.
+</p><p>
+<img src="ClockInDialog.gif" align="top">
+<img src="SwitchTasksDialog.gif" align="top">
+<img src="ClockOutDialog.gif" align="top">
+</p><p>
+If you find yourself switching tasks quite frequently you can save time by using
+the "Session | Switch Tasks..." command (Ctrl+S) which only requires you to
+enter the task completed and task about to be started and assumes that the dates
+and times should be adjacent.
+</p><p>
+You may find that over time you are either not around to enter your task details,
+or are that you need to adjust the timings, names or locations of some sessions.
+This can be done with the "Sessions | Edit..." command (Ctrl+E). This displays
+a dialog with all the sessions entered (except for the current one) order by the
+start date.
+</p><p>
+<img src="EditSessionsDialog.gif" align="top">
+<img src="ModifySessionDialog.gif" align="top">
+<img src="RenameTasksDialog.gif" align="top">
+</p><p>
+Through this dialog you can add, edit and remove whole sessions. There is also
+a button to allow you to rename a task (this changes the name of the task on
+<i>all</i> sessions that match).
+</p>
+
+<a name="Reports"></a>
+<h5>Generating a Report</h5>
+
+<p>
+At some point you are probably going to want to generate a summary of the hours
+that you have spent, either during the week, or on some tasks. Task Tracker
+allows you to create a few simple reports based either around a period in time
+or the tasks you have entered, and you can display this on screen (Ctrl+W),
+print it (Ctrl+P) or send it to the clipboard (Ctrl+C) or a file (Ctrl+F) using
+the various report commands under the "Report" sub menu.
+</p><p>
+<img src="ReportDialog.gif" align="top">
+</p><p>
+All the dialogs for creating a report have the same basic layout. There are a
+number of options specific the destination (e.g. filename or printer) and then
+some common "Parameters" that define the data that will be included.
+</p><p>
+The first of these is the <b>Grouping</b>. This defines how the session data
+will be aggregated. If you are completing a timesheet you would probably use the
+<i>By week</i> or <i>By month</i> option as you would want to group the sessions
+into weeks or months, with an appropriate total. You may be required to list what
+tasks you have been doing and how long you spent on each one, in which case the
+<i>By task</i> report will sum according to each task name.<br><br>
+The grouping just defines the overall shape of the report, whereas the <b>Period</b>
+narrows the range of dates down to just the set you are interested in; with some
+pre-define options already available, such as <i>This Week</i> and <i>Last
+Month</i>.<br><br>
+Under the period, there are a few additional options that allow you to control
+how much detail is generated. If you need the finest level of detail, check
+<b>Report session details</b> as this will produce one line per sessions with
+the start and end dates &amp; times and both the task name and location included.
+By default the report will not include days (or tasks) for which there is no
+entry, e.g. Saturdays and Sundays, by you can force them to be included by
+checking <b>Report empty groups</b>. Finally, if you are generating a report that
+covers more than one <i>grouping</i> and you need a final total then tick the
+<b>Report overall total</b> box.<br><br>
+There is one additional setting at the bottom left which is ticked by default
+as it assumes that these are the default settings. This is exactly what I want
+most of the time, but occasionally I like to generate an ad-hoc report and don't
+want my defaults changed, in which case I untick it.
+</p>
+
+<a name="ImportExport"></a>
+<h5>Importing & Exporting Data</h5>
+
+<p>
+The data is stored in a custom format binary file. However you can still export
+data (either as a means of backing it up or because you want to use the data
+externally in a tool like Excel) by using the "File | Export..." command
+(Ctrl+X). Just enter the filename and select the date range (which defaults to
+the entire database) and it will produce a CSV (Comma Separated Values) format
+file, with 4 fields per row:- the start and end datetimes (in ISO format), the
+task name and the location name.
+</p><p>
+<img src="ExportDialog.gif" align="top">
+<img src="ImportDialog.gif" align="top">
+</p><p>
+Alternatively you may wish to import data from another source (or restore data
+from a backup). This is done by using the "File | Import..." command (Ctrl+M).
+You specify the name of a CSV file, in the same format as TaskTracker exports,
+and choose whether you want to replace the entire database with what you are
+importing (e.g. a full restore) or merging the data into the database - with
+the ability to include or discard duplicate sessions.
+</p>
+
+<a name="PruneData"></a>
+<h5>Pruning Data</h5>
+
+<p>
+TaskTracker keeps track of the name of every task and location that you use.
+This can mean that the task and location combo boxes can become heavily
+populated. You are also responsible for deleting sessions that you are no longer
+interested in. The "Prune" menu contains commands to allow you to trim the
+excess data.
+</p><p>
+<img src="PruneSessionsDialog.gif" align="top">
+<img src="PruneTasksDialog.gif" align="top">
+<img src="PruneLocationsDialog.gif" align="top">
+</p><p>
+The first is "Prune | Sessions..." which is a faster way to remove multiple
+contiguous sessions than selecting them one-by-one in the "Edit | Sessions..."
+dialog and pressing Delete. You can either delete the entire database, or
+remove a subset by specifying a date range.
+</p><p>
+The other two pruning commands "Prune | Tasks..." and "Prune | Locations" both
+behave the same way. They present you with a list of items that are no longer
+used (i.e. there are sessions that have that task name or location), you can
+select one or more items and press Ok to delete them.
+</p>
+
+<a name="Settings"></a>
+<h5>Application Settings</h5>
+
+<p>
+There are a number of configuration settings for TaskTracker that can be changed
+through the "Tools | Options..." dialog.
+</p><p>
+<img src="SettingsDialog.gif" align="top">
+</p><p>
+The first setting "Minimise to system tray" changes TaskTracker so that it does
+not appear in the taskbar when minimised. It instead appears in the system tray
+area and provides a menu (via a right-click) to for clocking in &amp; out etc. I
+find this less intrusive that starting and stopping TaskTracker each time I
+switch tasks.
+</p><p>
+The "Warn if sessions overlap" checkbox controls whether TaskTracker will warn
+you (with a message box) if you try and enter a session that overlaps another.
+This can happen quite easily if you are manually adjusting sessions in the
+"Edit" dialog.
+</p><p>
+The "Session length format" determines how the length of sessions is displayed
+both on screen and in a report. By default it's set to "Hours & Minutes", so an
+hour and a half would be "1 h 30 m". Alternatively you can select "Hours Only"
+which displays them as a decimal, e.g. "1.5 h"
+</p><p>
+The final setting is used to describe the preferred order of the week. Some
+clients treat a working week from Monday to Sunday and others from Saturday to
+Friday. Changing this will align your report with their practice.
+</p>
+
+<hr>
 
 <a name="Warranty"></a>
 <h5>License & Warranty</h5>
 
+<p>
 This application is freeware - you get what you pay for nothing more, nothing less.
+</p>
 
 <a name="SourceCode"></a>
 <h5>Source Code</h5>
 
+<p>
 The full source code (C++) is available from my web site listed below.
+</p>
 
 <a name="Credits"></a>
 <h5>Credits</h5>
 
-Rusty Briggs for testing it in a non GMT timezone.
+<p>
+Rusty Briggs for testing it in a non GMT time zone.
+</p>
 
 <a name="Contact"></a>
 <h5>Contact Details</h5>
 
+<p>
+The "Help | About" dialog also contains my contact details. Please check the web
+site for updates.
+</p><p>
 Email: <a href="mailto://gort@cix.co.uk">gort@cix.co.uk</a><br>
 Web: <a href="http://www.cix.co.uk/~gort">www.cix.co.uk/~gort</a><br>
-<p></p>
+</p><p>
 Chris Oldwood<br>
-18th January 2007<br>
-
-<hr>
+2nd February 2007<br>
+</p>
 
 </body>
 
