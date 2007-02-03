@@ -1,7 +1,10 @@
 This Release
 ============
 
-- Session list not refreshed after renaming.
+- Finish HelpFile and check spelling.
+
+- Web page screenshot.
+
 
 Next Release
 =============
