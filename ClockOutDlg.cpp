@@ -146,7 +146,7 @@ bool CClockOutDlg::OnOk()
 	m_strTask = m_cbTask.Text();
 	m_strLocn = m_cbLocn.Text();
 
-	// Strip seconds.
+	// Strip seconds as we only store HH:MM:00
 	m_dtDateTime -= CDateTimeSpan(m_dtDateTime.Time().Secs());
 
 	return true;

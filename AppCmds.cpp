@@ -443,7 +443,7 @@ void CAppCmds::OnSessionSwitchTasks()
 	{
 		dtCurrent.Set();
 
-		// Strip seconds.
+		// Strip seconds as we only store HH:MM:00
 		dtCurrent -= CDateTimeSpan(dtCurrent.Time().Secs());
 	
 		App.ClockOut(dtCurrent, Dlg.m_strPrevTask, strLocn);

@@ -140,7 +140,7 @@ bool CModifySessionDlg::OnOk()
 	m_strTask = m_cbTask.Text();
 	m_strLocn = m_cbLocn.Text();
 
-	// Strip seconds.
+	// Strip seconds as we only store HH:MM:00
 	m_dtInDateTime  -= CDateTimeSpan(m_dtInDateTime.Time().Secs());
 	m_dtOutDateTime -= CDateTimeSpan(m_dtOutDateTime.Time().Secs());
 
