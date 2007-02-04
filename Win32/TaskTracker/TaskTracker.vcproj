@@ -44,7 +44,7 @@
 				WarningLevel="4"
 				WarnAsError="TRUE"
 				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="4"
+				DebugInformationFormat="3"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -115,6 +115,7 @@
 				WarningLevel="4"
 				WarnAsError="TRUE"
 				SuppressStartupBanner="TRUE"
+				DebugInformationFormat="3"
 				CompileAs="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
@@ -123,6 +124,7 @@
 				OutputFile="Release/TaskTrak.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
+				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\Release/TaskTrak.pdb"
 				SubSystem="2"
 				TargetMachine="1"/>
@@ -936,6 +938,30 @@
 		<Filter
 			Name="HelpFile"
 			Filter="">
+			<File
+				RelativePath=".\HelpFile\ExportDialog.GIF">
+			</File>
+			<File
+				RelativePath=".\HelpFile\ImportDialog.GIF">
+			</File>
+			<File
+				RelativePath=".\HelpFile\MainView.GIF">
+			</File>
+			<File
+				RelativePath=".\HelpFile\PruneLocationsDialog.GIF">
+			</File>
+			<File
+				RelativePath=".\HelpFile\PruneSessionsDialog.GIF">
+			</File>
+			<File
+				RelativePath=".\HelpFile\PruneTasksDialog.GIF">
+			</File>
+			<File
+				RelativePath=".\HelpFile\ReportDialog.GIF">
+			</File>
+			<File
+				RelativePath=".\HelpFile\SettingsDialog.GIF">
+			</File>
 			<File
 				RelativePath=".\HelpFile\TaskTracker.html">
 			</File>
