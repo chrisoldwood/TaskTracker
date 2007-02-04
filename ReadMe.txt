@@ -1,7 +1,9 @@
 TaskTracker v4.0
 ================
 
-1) Installation.
+
+1: Installation
+---------------
 
 Run setup.exe.
 
@@ -10,19 +12,25 @@ or
 Copy the files TaskTrak.* to a folder.
 
 
-2) Uninstallation.
+2: Uninstallation
+-----------------
 
 Delete the files TaskTrak.*.
 
 
-3) Manual/Help/Contact Info etc.
+3: Help/Manual
+--------------
 
-The HelpFile is TaskTrak.mht.
+There is a HelpFile - TaskTrak.mht.
 
-EMail: gort@cix.co.uk
+
+4: Contact Details
+------------------
+
+Email: gort@cix.co.uk
 Web:   http://www.cix.co.uk/~gort
 
 
 Chris Oldwood 
 
-18th January 2007
+2nd February 2007
