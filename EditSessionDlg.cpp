@@ -147,8 +147,9 @@ void CEditSessionDlg::OnAdd()
 		// Add to sessionlist and view.
 		uint nPos = App.m_oSessionList.Add(pNewSession);
 
-		m_lvSessions.AddSesion(nPos, pNewSession);
+		m_lvSessions.AddSession(nPos, pNewSession);
 		m_lvSessions.Select(nPos);
+		m_lvSessions.MakeItemVisible(nPos);
 
     	// Enable delete and modify buttons.
 		m_bnModify.Enable();
@@ -214,8 +215,9 @@ void CEditSessionDlg::OnModify()
 		// Re-add to sessionlist and view.
 		uint nPos = App.m_oSessionList.Add(pSession);
 
-		m_lvSessions.AddSesion(nPos, pSession);
+		m_lvSessions.AddSession(nPos, pSession);
 		m_lvSessions.Select(nPos);
+		m_lvSessions.MakeItemVisible(nPos);
 
 		// Update dirty flag.
 		App.m_bModified = true;
@@ -328,12 +330,8 @@ void CEditSessionDlg::OnRename()
 		if (Dlg.m_strNewTask != "")
 			App.m_oTaskList.Add(Dlg.m_strNewTask);
 
-		// Refresh session list, restoring the selection.
-		int i = m_lvSessions.Selection();
-
-//		m_lvSessions.Refresh();
-		m_lvSessions.Select(i);
-		m_lvSessions.MakeItemVisible(i);
+		// Update UI.
+		m_lvSessions.RefreshSessions();
 
 		// Update dirty flag.
 		App.m_bModified = true;
