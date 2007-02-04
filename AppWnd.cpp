@@ -390,11 +390,17 @@ void CAppWnd::UpdateTrayIconTip()
 			// Create a session from clock-in time to now.
 			CSession oSession(App.m_pCurrSession->Start(), CDateTime::Current());
 
+			// We only have room for 64 chars total, so trim the task name to 15.
+			CString strTask = App.m_pCurrSession->Task();
+
+			if (strTask.Length() > 15)
+				strTask = strTask.Left(12) + "...";
+			
 			// Build the tooltip.
 			strTip += "\n";
 			strTip += "Time: " + App.m_pCurrSession->Start().Time().ToString(CDate::FMT_WIN_SHORT) + "\n";
-			strTip += "Task: " + App.m_pCurrSession->Task() + "\n";
-			strTip += "Len: "  + App.MinsToStr(oSession.Length());
+			strTip += "Task: " + strTask + "\n";
+			strTip += "Len:  " + App.MinsToStr(oSession.Length());
 		}
 
 		m_oTrayIcon.ModifyToolTip(strTip);
