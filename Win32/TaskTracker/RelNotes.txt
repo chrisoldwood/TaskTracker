@@ -1,6 +1,19 @@
 Version 4.0
 ===========
 
+- Fixed datetime code so that it handles timezones correctly.
+- Fixed display code so that it uses the locale for formatting dates, times and numbers.
+- Added support for minimising to the system tray.
+- Added new reporting options to reduce the level of detail generated.
+- Added ability to set the week ordering and session length display format.
+- Added more control over importing and exporting data.
+- Tarted up the UI slightly by switching the dialog font and modernising the toolbar.
+- Added ability to rename a task.
+- Added support for specifying a custom font in the Window Report dialog.
+- Fixed the application so that only a single instance can run.
+- Added a manual and installer.
+- Ported to VC++ 7.1 and refactored code to use the STL.
+
 
 Version 3.6
 ===========
@@ -20,10 +33,10 @@ Version 3.5
 Versions 1.0-3.0
 ================
 
-- WIN16 version.
+- WIN16 versions.
 
 
 Chris Oldwood 
-(gort@cix.co.uk)
+[gort@cix.co.uk]
 
-18th January 2007
+2nd February 2007
