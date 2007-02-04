@@ -32,14 +32,26 @@ public:
 	//
 	// Methods.
 	//
-	void AddSesion(int nItem, CSessionPtr& pSession);
+	void AddSession(int nItem, const CSessionPtr& pSession);
 	void RemoveSession(int nItem);
+	void RefreshSessions();
 
 	CSessionPtr SelSession();
 
 protected:
-	// Constants.
-	enum { NUM_COLUMNS = 7 };
+	// Column names.
+	enum
+	{
+		DAY_COLUMN	= 0,
+		DATE_COLUMN	= 1,
+		IN_COLUMN	= 2,
+		OUT_COLUMN	= 3,
+		LEN_COLUMN	= 4,
+		TASK_COLUMN	= 5,
+		LOCN_COLUMN	= 6,
+
+		NUM_COLUMNS = 7,
+	};
 
 	// Column data.
 	static const char*	apszLabels[];
@@ -49,6 +61,11 @@ protected:
 	// Message processors.
 	//
 	virtual void OnCreate(const CRect& rcClient);
+
+	//
+	// Internal methods.
+	//
+	void RefreshSession(int nItem, const CSession* pSession);
 };
 
 /******************************************************************************
