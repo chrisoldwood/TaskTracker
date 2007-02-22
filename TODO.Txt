@@ -1,10 +1,6 @@
 This Release
 ============
 
-- Finish HelpFile and check spelling.
-
-- Web page screenshot.
-
 
 Next Release
 =============
