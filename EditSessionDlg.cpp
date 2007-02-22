@@ -33,6 +33,7 @@
 
 CEditSessionDlg::CEditSessionDlg()
 	: CDialog(IDD_EDIT_SESSIONS)
+	, m_bModified(false)
 {
 	DEFINE_CTRL_TABLE
 		CTRL(IDC_SESSIONS,	&m_lvSessions)
@@ -156,7 +157,7 @@ void CEditSessionDlg::OnAdd()
 		m_bnDelete.Enable();
 		
 		// Update dirty flag.
-		App.m_bModified = true;
+		m_bModified = true;
 	}
 }
 
@@ -220,7 +221,7 @@ void CEditSessionDlg::OnModify()
 		m_lvSessions.MakeItemVisible(nPos);
 
 		// Update dirty flag.
-		App.m_bModified = true;
+		m_bModified = true;
 	}
 }
 
@@ -292,7 +293,7 @@ void CEditSessionDlg::OnDelete()
     }
     
 	// Update dirty flag.
-	App.m_bModified = true;
+	m_bModified = true;
 }
 
 /******************************************************************************
@@ -334,6 +335,6 @@ void CEditSessionDlg::OnRename()
 		m_lvSessions.RefreshSessions();
 
 		// Update dirty flag.
-		App.m_bModified = true;
+		m_bModified = true;
 	}
 }
