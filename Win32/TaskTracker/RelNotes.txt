@@ -11,8 +11,9 @@ Version 4.0
 - Added ability to rename a task.
 - Added support for specifying a custom font in the Window Report dialog.
 - Fixed the application so that only a single instance can run.
+- Enabled automatic saving of changes every 5 minutes.
 - Added a manual and installer.
-- Ported to VC++ 7.1 and refactored code to use the STL.
+- Ported to VC++ 7.1 and refactored some code to use the STL.
 
 
 Version 3.6
