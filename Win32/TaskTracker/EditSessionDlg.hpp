@@ -30,6 +30,7 @@ public:
 	//
 	// Members.
 	//
+	bool m_bModified;
 
 protected:
 	//
