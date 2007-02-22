@@ -482,6 +482,8 @@ void CAppCmds::OnSessionClockOut()
 ** Method:		OnSessionEdit()
 **
 ** Description:	Show the edit sessions dialog.
+**				NB: We only update the modified flag once here to try and avoid
+**				the backup code firing whilst in the middle of edits.
 **
 ** Parameters:	None.
 **
@@ -495,6 +497,10 @@ void CAppCmds::OnSessionEdit()
 	CEditSessionDlg	Dlg;
 	
 	Dlg.RunModal(App.m_rMainWnd);
+
+	// Update application state.
+	if (Dlg.m_bModified)
+		App.m_bModified = Dlg.m_bModified;
 
 	// Update UI.
 	UpdateUI();
