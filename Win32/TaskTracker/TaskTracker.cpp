@@ -133,8 +133,7 @@ bool CTaskTracker::OnOpen()
 	m_strTitle = "Task Tracker";
 
 	// Create .ini file path.
-	m_IniFile.m_strPath  = CPath::ApplicationDir();
-	m_IniFile.m_strPath += INI_FILE_NAME;
+	m_IniFile.m_strPath  = CPath::ApplicationDir() / INI_FILE_NAME;
 
 	// Load settings.
 	LoadDefaults();
@@ -442,8 +441,7 @@ bool CTaskTracker::LoadData()
 	CPath AppFilePath;
 
 	// Setup up path.
-	AppFilePath  = CPath::ApplicationDir();
-	AppFilePath += DAT_FILE_NAME;
+	AppFilePath = CPath::ApplicationDir() / DAT_FILE_NAME;
 
 	// Data file exists yet?
 	if (!AppFilePath.Exists())
@@ -540,8 +538,7 @@ bool CTaskTracker::SaveData()
 	CPath AppFilePath;
 
 	// Setup up path.
-	AppFilePath  = CPath::ApplicationDir();
-	AppFilePath += DAT_FILE_NAME;
+	AppFilePath = CPath::ApplicationDir() / DAT_FILE_NAME;
 
 	try
 	{
@@ -560,6 +557,9 @@ bool CTaskTracker::SaveData()
 
 		// Done.
 		AppFile.Close();
+
+		// Reset state.
+		m_bModified = false;
 	}
 	catch(CFileException& rException)
 	{
