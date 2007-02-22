@@ -149,7 +149,11 @@ void CAppWnd::OnResize(int iFlag, const CSize& rNewSize)
 	// Window minimised AND "Minimise To Tray" set?
 	if ( (iFlag == SIZE_MINIMIZED) && (App.m_bMinToTray) )
 	{
-		ShowTrayIcon(true);
+		// Check state first, in case we are recursing
+		// due to the ShowWindow() call that follows.
+		if (!m_oTrayIcon.IsVisible())
+			ShowTrayIcon(true);
+
 		Show(SW_HIDE);
 	}
 	// Window restored AND Tray Icon still visible?
@@ -398,9 +402,9 @@ void CAppWnd::UpdateTrayIconTip()
 			
 			// Build the tooltip.
 			strTip += "\n";
-			strTip += "Time: " + App.m_pCurrSession->Start().Time().ToString(CDate::FMT_WIN_SHORT) + "\n";
-			strTip += "Task: " + strTask + "\n";
-			strTip += "Len:  " + App.MinsToStr(oSession.Length());
+			strTip += "Time: "  + App.m_pCurrSession->Start().Time().ToString(CDate::FMT_WIN_SHORT) + "\n";
+			strTip += "Task: "  + strTask + "\n";
+			strTip += "Len:   " + App.MinsToStr(oSession.Length());
 		}
 
 		m_oTrayIcon.ModifyToolTip(strTip);
