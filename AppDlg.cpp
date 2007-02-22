@@ -10,8 +10,21 @@
 
 #include "AppHeaders.hpp"
 
-#define TIMER_ID	10
-#define TIMEOUT 	1000
+/******************************************************************************
+**
+** Constants.
+**
+*******************************************************************************
+*/
+
+//! The ID of the background timer.
+static const uint TIMER_ID = 10;
+
+//! The frequency of the background timer (ms).
+static const uint TIMEOUT  = 1000;
+
+//! The frequency of database backups (ms).
+static const DWORD BACKUP_FREQ = 5*60*1000;
 
 /******************************************************************************
 ** Method:		Default constructor.
@@ -25,7 +38,9 @@
 *******************************************************************************
 */
 
-CAppDlg::CAppDlg() : CMainDlg(IDD_MAIN)
+CAppDlg::CAppDlg()
+	: CMainDlg(IDD_MAIN)
+	, m_dwLastBackup(::GetTickCount())
 {
 	DEFINE_CTRL_TABLE
 		CTRL(IDC_CURRENT_DATE, &m_txtCurrDate)
@@ -122,6 +137,25 @@ void CAppDlg::OnTimer(uint /*iTimerID*/)
 
 		Update();
 		App.m_AppWnd.UpdateTrayIconTip();
+	}
+
+	DWORD dwNow = ::GetTickCount();
+
+	// Time to save a backup?
+	if (dwNow > (m_dwLastBackup + BACKUP_FREQ)) 
+	{
+		// Reentrancy guard, in case of an error.
+		static bool g_bGuard = false;
+
+		// Anything to save AND not re-entered?
+		if ( (App.m_bModified) && (g_bGuard == false) )
+		{
+			CAutoBool l(&g_bGuard);
+
+			App.SaveData();
+		}
+
+		m_dwLastBackup = dwNow;
 	}
 }
 

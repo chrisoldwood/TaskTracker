@@ -38,6 +38,12 @@ protected:
 	// Members.
 	//
 	CDateTime	m_dtCurrent;
+	CFont		m_oHeaderFont;
+	DWORD		m_dwLastBackup;
+
+	//
+	// Controls.
+	//
 	CLabel		m_txtCurrDate;
 	CLabel		m_txtCurrTime;
 	CLabel		m_txtSessionDate;
@@ -48,7 +54,6 @@ protected:
 	CLabel		m_txtTotalWeek;
 	CLabel		m_txtTotalMonth;
 	CLabel		m_txtTotalTotal;
-	CFont		m_oHeaderFont;
 
 	//
 	// Message processors.
