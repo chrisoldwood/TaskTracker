@@ -1,6 +1,7 @@
 This Release
 ============
 
+- Check if .ini file changes are saved when logging off (e.g. Report filename).
 
 Next Release
 =============
