@@ -56,9 +56,9 @@ static const char* INI_FILE_NAME = "TaskTrak.ini";
 */
 
 #ifdef _DEBUG
-const char* CTaskTracker::VERSION = "v4.0 [Debug Beta]";
+const char* CTaskTracker::VERSION = "v4.0 [Debug]";
 #else
-const char* CTaskTracker::VERSION = "v4.0 [Beta]";
+const char* CTaskTracker::VERSION = "v4.0";
 #endif
 
 const char* CTaskTracker::HELPFILE = "TaskTrak.mht";

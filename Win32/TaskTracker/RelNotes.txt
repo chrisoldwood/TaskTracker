@@ -40,4 +40,4 @@ Versions 1.0-3.0
 Chris Oldwood 
 [gort@cix.co.uk]
 
-2nd February 2007
+26th March 2007
