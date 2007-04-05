@@ -3,6 +3,9 @@ This Release
 
 - Check if .ini file changes are saved when logging off (e.g. Report filename).
 
+- Change to use %APPDATA%\TaskTracker folder, but allow an override on the CLI.
+
+
 Next Release
 =============
 
