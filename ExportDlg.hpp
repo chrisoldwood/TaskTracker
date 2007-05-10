@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
-//! \author Chris Oldwood
 //! \file   EXPORTDLG.HPP
 //! \brief  The CExportDlg class declaration.
+//! \author Chris Oldwood
 
 // Check for previous inclusion
 #ifndef EXPORTDLG_HPP

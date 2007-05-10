@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
-//! \author Chris Oldwood
 //! \file   EXPORTDLG.CPP
 //! \brief  The CExportDlg class definition.
+//! \author Chris Oldwood
 
 #include "AppHeaders.hpp"
 #include "ExportDlg.hpp"
