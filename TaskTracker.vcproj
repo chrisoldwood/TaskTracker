@@ -3,10 +3,11 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="TaskTracker"
-	SccProjectName="&quot;$/Win32/TaskTracker&quot;, RAAAAAAA"
-	SccAuxPath=""
-	SccLocalPath="."
-	SccProvider="MSSCCI:Microsoft Visual SourceSafe">
+	ProjectGUID="{70182C65-5012-4764-BE51-9F53DEB29004}"
+	SccProjectName="SAK"
+	SccAuxPath="SAK"
+	SccLocalPath="SAK"
+	SccProvider="SAK">
 	<Platforms>
 		<Platform
 			Name="Win32"/>
@@ -23,7 +24,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\Lib;..\Wcl"
+				AdditionalIncludeDirectories="../Lib"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -75,7 +76,7 @@
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG"
 				Culture="2057"
-				AdditionalIncludeDirectories="..\Wcl"/>
+				AdditionalIncludeDirectories="../Lib"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
@@ -99,7 +100,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\Lib;..\Wcl"
+				AdditionalIncludeDirectories="../Lib"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				StringPooling="TRUE"
 				RuntimeLibrary="0"
@@ -146,7 +147,7 @@
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG"
 				Culture="2057"
-				AdditionalIncludeDirectories="..\Wcl"/>
+				AdditionalIncludeDirectories="../Lib"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
@@ -966,6 +967,9 @@
 				RelativePath=".\HelpFile\TaskTracker.html">
 			</File>
 		</Filter>
+		<File
+			RelativePath=".\Doxygen.cfg">
+		</File>
 		<File
 			RelativePath="ReadMe.txt">
 		</File>
