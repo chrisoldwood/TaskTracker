@@ -19,8 +19,8 @@
 *******************************************************************************
 */
 
-#include <Core/Common.hpp>	// Core library headers.
-#include "wcl.hpp"			// Windows C++ library.
+#include <Core/Common.hpp>		// Core library common headers.
+#include <WCL/wcl.hpp>			// Windows C++ library.
 
 /******************************************************************************
 **
