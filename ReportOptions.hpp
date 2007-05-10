@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
-//! \author Chris Oldwood
 //! \file   REPORTOPTIONS.HPP
 //! \brief  The CReportOptions class declaration.
+//! \author Chris Oldwood
 
 // Check for previous inclusion
 #ifndef REPORTOPTIONS_HPP

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
-//! \author Chris Oldwood
 //! \file   OPTIONSDLG.HPP
 //! \brief  The COptionsDlg class declaration.
+//! \author Chris Oldwood
 
 // Check for previous inclusion
 #ifndef OPTIONSDLG_HPP

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
-//! \author Chris Oldwood
 //! \file   RENAMEDLG.HPP
 //! \brief  The CRenameDlg class declaration.
+//! \author Chris Oldwood
 
 // Check for previous inclusion
 #ifndef RENAMEDLG_HPP

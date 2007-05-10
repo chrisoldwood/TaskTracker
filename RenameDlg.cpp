@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
-//! \author Chris Oldwood
 //! \file   RENAMEDLG.CPP
 //! \brief  The CRenameDlg class definition.
+//! \author Chris Oldwood
 
 #include "AppHeaders.hpp"
 #include "RenameDlg.hpp"

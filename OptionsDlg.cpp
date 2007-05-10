@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
-//! \author Chris Oldwood
 //! \file   OPTIONSDLG.CPP
 //! \brief  The COptionsDlg class definition.
+//! \author Chris Oldwood
 
 #include "AppHeaders.hpp"
 #include "OptionsDlg.hpp"

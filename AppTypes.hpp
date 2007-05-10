@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
-//! \author Chris Oldwood
 //! \file   APPTYPES.HPP
 //! \brief  The primitive application types.
+//! \author Chris Oldwood
 
 // Check for previous inclusion
 #ifndef APPTYPES_HPP

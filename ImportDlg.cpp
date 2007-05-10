@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
-//! \author Chris Oldwood
 //! \file   IMPORTDLG.CPP
 //! \brief  The CImportDlg class definition.
+//! \author Chris Oldwood
 
 #include "AppHeaders.hpp"
 #include "ImportDlg.hpp"

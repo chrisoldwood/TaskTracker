@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
-//! \author Chris Oldwood
 //! \file   IMPORTDLG.HPP
 //! \brief  The CImportDlg class declaration.
+//! \author Chris Oldwood
 
 // Check for previous inclusion
 #ifndef IMPORTDLG_HPP
