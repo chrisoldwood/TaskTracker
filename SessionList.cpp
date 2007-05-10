@@ -126,7 +126,7 @@ void operator >>(CStream& rStream, CSessionList& oList)
 	// Read sessions.
 	while(iCount--)
 	{
-		CSession* pSession = new CSession;
+		CSessionPtr pSession(new CSession);
 
 		rStream >> *pSession;
 			

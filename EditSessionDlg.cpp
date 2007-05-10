@@ -127,7 +127,7 @@ void CEditSessionDlg::OnAdd()
 		typedef CSessionList::iterator Iter;
 
 		// Create a new session.
-		CSessionPtr pNewSession = new CSession;
+		CSessionPtr pNewSession(new CSession);
 		
 		// Initialise.
 		pNewSession->Start (Dlg.m_dtInDateTime,  Dlg.m_strTask, Dlg.m_strLocn);

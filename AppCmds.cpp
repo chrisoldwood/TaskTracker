@@ -286,7 +286,7 @@ void CAppCmds::OnFileImport()
 			}
 
 			// Allocate a new session and initialise.
-			CSessionPtr pSession = new CSession;
+			CSessionPtr pSession(new CSession);
 
 			pSession->Start (dtStart, strTask, strLocation);
 			pSession->Finish(dtEnd,   strTask, strLocation);

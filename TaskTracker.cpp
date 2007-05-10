@@ -203,7 +203,7 @@ bool CTaskTracker::OnClose()
 void CTaskTracker::ClockIn(const CDateTime& dtIn, const CString& strTask, const CString& strLocn)
 {
 	// Create a new session.
-	m_pCurrSession = new CSession;
+	m_pCurrSession = CSessionPtr(new CSession);
 
 	// Initialise.
 	m_pCurrSession->Start(dtIn, strTask, strLocn);
@@ -502,7 +502,7 @@ void CTaskTracker::ReadData(CFile& rFile)
 
 	if (m_bClockedIn)
 	{
-		m_pCurrSession = new CSession;
+		m_pCurrSession = CSessionPtr(new CSession);
 
 		// Read current session.
 		rFile >> *m_pCurrSession;
