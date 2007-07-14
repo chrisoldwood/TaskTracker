@@ -22,7 +22,7 @@
 *******************************************************************************
 */
 
-CTextReport::CTextReport(CStream& rStream)
+CTextReport::CTextReport(WCL::IOutputStream& rStream)
 	: m_rStream(rStream)
 {
 }

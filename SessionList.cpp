@@ -114,7 +114,7 @@ void CSessionList::Remove(int nIndex)
 *******************************************************************************
 */
 
-void operator >>(CStream& rStream, CSessionList& oList)
+void operator >>(WCL::IInputStream& rStream, CSessionList& oList)
 {
 	int16 iCount;
 	
@@ -147,7 +147,7 @@ void operator >>(CStream& rStream, CSessionList& oList)
 *******************************************************************************
 */
 
-void operator <<(CStream& rStream, const CSessionList& oList)
+void operator <<(WCL::IOutputStream& rStream, const CSessionList& oList)
 {
 	// Template shorthands.
 	typedef CSessionList::const_iterator CIter;

@@ -58,8 +58,8 @@ protected:
 	//
 	// File I/O.
 	//
-	friend void operator >>(CStream& rStream, CSession& oSession);
-	friend void operator <<(CStream& rStream, const CSession& oSession);
+	friend void operator >>(WCL::IInputStream&  rStream, CSession& oSession);
+	friend void operator <<(WCL::IOutputStream& rStream, const CSession& oSession);
 };
 
 // Smart pointer type.

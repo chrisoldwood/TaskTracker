@@ -117,7 +117,7 @@ void CTaskList::RemoveAll()
 *******************************************************************************
 */
 
-void operator >>(CStream& rStream, CTaskList& oList)
+void operator >>(WCL::IInputStream& rStream, CTaskList& oList)
 {
 	int16 iCount;
 	
@@ -148,7 +148,7 @@ void operator >>(CStream& rStream, CTaskList& oList)
 *******************************************************************************
 */
 
-void operator <<(CStream& rStream, const CTaskList& oList)
+void operator <<(WCL::IOutputStream& rStream, const CTaskList& oList)
 {
 	// Template shorthands.
 	typedef CTaskList::const_iterator CIter;

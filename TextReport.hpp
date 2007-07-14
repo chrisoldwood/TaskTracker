@@ -25,7 +25,7 @@ public:
 	//
 	// Constructors/Destructor.
 	//
-	CTextReport(CStream& rStream);
+	CTextReport(WCL::IOutputStream& rStream);
 	~CTextReport();
 
 	virtual bool Init();
@@ -42,7 +42,7 @@ protected:
 	//
 	// Members.
 	//
-	CStream&	m_rStream;	// The stream to write data to.
+	WCL::IOutputStream&	m_rStream;	// The stream to write data to.
 };
 
 /******************************************************************************

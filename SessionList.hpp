@@ -41,8 +41,8 @@ private:
 	//
 	// File I/O.
 	//
-	friend void operator >>(CStream& rStream, CSessionList& oList);
-	friend void operator <<(CStream& rStream, const CSessionList& oList);
+	friend void operator >>(WCL::IInputStream&  rStream, CSessionList& oList);
+	friend void operator <<(WCL::IOutputStream& rStream, const CSessionList& oList);
 };
 
 /******************************************************************************

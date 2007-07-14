@@ -117,7 +117,7 @@ void CLocnList::RemoveAll()
 *******************************************************************************
 */
 
-void operator >>(CStream& rStream, CLocnList& oList)
+void operator >>(WCL::IInputStream& rStream, CLocnList& oList)
 {
 	int16 iCount;
 	
@@ -148,7 +148,7 @@ void operator >>(CStream& rStream, CLocnList& oList)
 *******************************************************************************
 */
 
-void operator <<(CStream& rStream, const CLocnList& oList)
+void operator <<(WCL::IOutputStream& rStream, const CLocnList& oList)
 {
 	// Template shorthands.
 	typedef CLocnList::const_iterator CIter;

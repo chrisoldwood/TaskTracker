@@ -104,7 +104,7 @@ ulong CSession::Length() const
 *******************************************************************************
 */
 
-void operator >>(CStream& rStream, CSession& oSession)
+void operator >>(WCL::IInputStream& rStream, CSession& oSession)
 {
 	rStream >> oSession.m_dtStart;
 	rStream >> oSession.m_dtFinish;
@@ -125,7 +125,7 @@ void operator >>(CStream& rStream, CSession& oSession)
 *******************************************************************************
 */
 
-void operator <<(CStream& rStream, const CSession& oSession)
+void operator <<(WCL::IOutputStream& rStream, const CSession& oSession)
 {
 	rStream << oSession.m_dtStart;
 	rStream << oSession.m_dtFinish;
