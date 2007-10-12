@@ -31,7 +31,7 @@
 				SmallerTypeCheck="TRUE"
 				RuntimeLibrary="1"
 				BufferSecurityCheck="TRUE"
-				EnableFunctionLevelLinking="TRUE"
+				EnableFunctionLevelLinking="FALSE"
 				ForceConformanceInForLoopScope="TRUE"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="2"
@@ -99,12 +99,12 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				InlineFunctionExpansion="1"
+				InlineFunctionExpansion="0"
 				AdditionalIncludeDirectories="../Lib"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				StringPooling="TRUE"
 				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="TRUE"
+				EnableFunctionLevelLinking="FALSE"
 				ForceConformanceInForLoopScope="TRUE"
 				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="2"
@@ -161,6 +161,12 @@
 		</Configuration>
 	</Configurations>
 	<References>
+		<ProjectReference
+			ReferencedProjectIdentifier="{790BC113-52FB-4565-8968-79B8B011C520}"
+			Name="Core"/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{9B0335B6-93BE-4604-8497-27431874D758}"
+			Name="Wcl"/>
 	</References>
 	<Files>
 		<Filter
@@ -260,9 +266,6 @@
 				RelativePath="TaskTracker.cpp">
 			</File>
 			<File
-				RelativePath="TaskTracker.rc">
-			</File>
-			<File
 				RelativePath="TextReport.cpp">
 			</File>
 			<File
@@ -357,9 +360,6 @@
 				RelativePath=".\ReportOptions.hpp">
 			</File>
 			<File
-				RelativePath="Resource.h">
-			</File>
-			<File
 				RelativePath="Session.hpp">
 			</File>
 			<File
@@ -391,7 +391,13 @@
 			Name="Resource Files"
 			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
 			<File
+				RelativePath="Resource.h">
+			</File>
+			<File
 				RelativePath="TaskTracker.ico">
+			</File>
+			<File
+				RelativePath="TaskTracker.rc">
 			</File>
 			<File
 				RelativePath="TaskTracker.rcv">
