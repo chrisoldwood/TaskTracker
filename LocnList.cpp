@@ -9,6 +9,7 @@
 */
 
 #include "AppHeaders.hpp"
+#include <algorithm>
 
 /******************************************************************************
 ** Method:		Constructor.

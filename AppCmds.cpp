@@ -24,6 +24,7 @@
 #include "OptionsDlg.hpp"
 #include "ExportDlg.hpp"
 #include "ImportDlg.hpp"
+#include <algorithm>
 
 #ifdef _DEBUG
 // For memory leak detection.

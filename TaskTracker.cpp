@@ -10,6 +10,7 @@
 
 #include "AppHeaders.hpp"
 #include <stdio.h>
+#include <algorithm>
 
 #ifdef _DEBUG
 // For memory leak detection.
