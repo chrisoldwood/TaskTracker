@@ -1,62 +1,29 @@
-/******************************************************************************
-** (C) Chris Oldwood
-**
-** MODULE:		APPHEADERS.HPP
-** COMPONENT:	The Application.
-** DESCRIPTION:	Wrapper to include all the main application headers.
-**
-*******************************************************************************
-*/
+////////////////////////////////////////////////////////////////////////////////
+//! \file   Common.hpp
+//! \brief  Wrapper include file for the most common header files.
+//! \author Chris Oldwood
 
 // Check for previous inclusion
-#ifndef APPHEADERS_HPP
-#define APPHEADERS_HPP
+#ifndef APP_COMMON_HPP
+#define APP_COMMON_HPP
 
-/******************************************************************************
-**
-** System headers.
-**
-*******************************************************************************
-*/
+#if _MSC_VER > 1000
+#pragma once
+#endif
+
+////////////////////////////////////////////////////////////////////////////////
+// Application documentation.
+//
+
+////////////////////////////////////////////////////////////////////////////////
+// System headers.
 
 #include <Core/Common.hpp>		// Core library common headers.
-#include <WCL/wcl.hpp>			// Windows C++ library.
+#include <WCL/Common.hpp>		// Windows C++ library common headers.
 
-/******************************************************************************
-**
-** Application specific headers.
-**
-*******************************************************************************
-*/
+////////////////////////////////////////////////////////////////////////////////
+// Application common headers.
 
 #include "Resource.h"
 
-// Core data classes.
-#include "AppTypes.hpp"
-#include "Session.hpp"
-
-// Collection classes.
-#include "SessionList.hpp"
-#include "TaskList.hpp"
-#include "LocnList.hpp"
-
-// GUI classes.
-#include "SessionListBox.hpp"
-#include "TaskComboBox.hpp"
-#include "LocnComboBox.hpp"
-
-// Report classes.
-#include "Report.hpp"
-#include "PrintReport.hpp"
-#include "FileReport.hpp"
-#include "TextReport.hpp"
-#include "ReportOptions.hpp"
-
-// Main app classes.
-#include "AppCmds.hpp"
-#include "AppToolBar.hpp"
-#include "AppDlg.hpp"
-#include "AppWnd.hpp"
-#include "TaskTracker.hpp"
-
-#endif //APPHEADERS_HPP
+#endif // APP_COMMON_HPP
