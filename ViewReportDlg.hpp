@@ -12,6 +12,15 @@
 #ifndef VIEWREPORTDLG_HPP
 #define VIEWREPORTDLG_HPP
 
+#if _MSC_VER > 1000
+#pragma once
+#endif
+
+#include <WCL/CommonUI.hpp>
+
+// Forward declarations.
+class CMemStream;
+
 /******************************************************************************
 ** 
 ** This is the dialog that display the results of a report.

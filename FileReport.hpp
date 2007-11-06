@@ -12,6 +12,14 @@
 #ifndef FILEREPORT_HPP
 #define FILEREPORT_HPP
 
+#if _MSC_VER > 1000
+#pragma once
+#endif
+
+#include "Report.hpp"
+#include <WCL/Path.hpp>
+#include <WCL/File.hpp>
+
 /******************************************************************************
 ** 
 ** This is a CReport derived class, used to report to a file.

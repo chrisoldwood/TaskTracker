@@ -8,14 +8,14 @@
 *******************************************************************************
 */
 
-#include "AppHeaders.hpp"
+#include "Common.hpp"
+#include "Tasktracker.hpp"
 #include <stdio.h>
 #include <algorithm>
-
-#ifdef _DEBUG
-// For memory leak detection.
-#define new DBGCRT_NEW
-#endif
+#include <WCL/BusyCursor.hpp>
+#include <WCL/File.hpp>
+#include <WCL/FileException.hpp>
+#include "ReportOptions.hpp"
 
 /******************************************************************************
 **

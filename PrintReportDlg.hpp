@@ -12,6 +12,14 @@
 #ifndef PRINTREPORTDLG_HPP
 #define PRINTREPORTDLG_HPP
 
+#if _MSC_VER > 1000
+#pragma once
+#endif
+
+#include <WCL/CommonUI.hpp>
+#include "AppTypes.hpp"
+#include <WCL/Date.hpp>
+
 /******************************************************************************
 ** 
 ** This dialog is used when the user reports to a printer.

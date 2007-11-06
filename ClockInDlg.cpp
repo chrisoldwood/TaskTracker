@@ -8,8 +8,9 @@
 *******************************************************************************
 */
 
-#include "AppHeaders.hpp"
+#include "Common.hpp"
 #include "ClockInDlg.hpp"
+#include "TaskTracker.hpp"
 
 /******************************************************************************
 ** Method:		Default constructor.

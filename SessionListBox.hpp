@@ -12,6 +12,13 @@
 #ifndef SESSNLB_HPP
 #define SESSNLB_HPP
 
+#if _MSC_VER > 1000
+#pragma once
+#endif
+
+#include <WCL/ListView.hpp>
+#include "Session.hpp"
+
 /******************************************************************************
 ** 
 ** This is a list view used to display the list of sessions.

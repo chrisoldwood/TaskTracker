@@ -12,6 +12,10 @@
 #ifndef REPORT_HPP
 #define REPORT_HPP
 
+#if _MSC_VER > 1000
+#pragma once
+#endif
+
 /******************************************************************************
 ** 
 ** This is an abstract class used for the device to report to.

@@ -8,7 +8,11 @@
 *******************************************************************************
 */
 
-#include "AppHeaders.hpp"
+#include "Common.hpp"
+#include "AppWnd.hpp"
+#include "TaskTracker.hpp"
+#include <WCL/Cursor.hpp>
+#include <WCL/BusyCursor.hpp>
 
 /******************************************************************************
 **

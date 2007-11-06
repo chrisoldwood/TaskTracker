@@ -11,6 +11,8 @@
 #pragma once
 #endif
 
+#include "Report.hpp"
+
 ////////////////////////////////////////////////////////////////////////////////
 //! The data class used to pass the options when generating a report.
 

@@ -3,13 +3,8 @@
 //! \brief  The CRenameDlg class definition.
 //! \author Chris Oldwood
 
-#include "AppHeaders.hpp"
+#include "Common.hpp"
 #include "RenameDlg.hpp"
-
-#ifdef _DEBUG
-// For memory leak detection.
-#define new DBGCRT_NEW
-#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 //! Default constructor.

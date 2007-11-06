@@ -12,6 +12,12 @@
 #ifndef PRSESDLG_HPP
 #define PRSESDLG_HPP
 
+#if _MSC_VER > 1000
+#pragma once
+#endif
+
+#include <WCL/CommonUI.hpp>
+
 /******************************************************************************
 ** 
 ** This dialog is used when the user prunes sessions.

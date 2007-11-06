@@ -12,6 +12,13 @@
 #ifndef PRINTREPORT_HPP
 #define PRINTREPORT_HPP
 
+#if _MSC_VER > 1000
+#pragma once
+#endif
+
+#include "Report.hpp"
+#include <WCL/PrinterDC.hpp>
+
 /******************************************************************************
 ** 
 ** This is a CReport derived class, used to report to a printer.

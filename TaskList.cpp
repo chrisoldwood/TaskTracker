@@ -8,8 +8,11 @@
 *******************************************************************************
 */
 
-#include "AppHeaders.hpp"
+#include "Common.hpp"
+#include "TaskList.hpp"
 #include <algorithm>
+#include <WCL/IInputStream.hpp>
+#include <WCL/IOutputStream.hpp>
 
 /******************************************************************************
 ** Method:		Constructor.

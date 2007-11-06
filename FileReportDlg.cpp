@@ -8,8 +8,9 @@
 *******************************************************************************
 */
 
-#include "AppHeaders.hpp"
+#include "Common.hpp"
 #include "FileReportDlg.hpp"
+#include "TaskTracker.hpp"
 
 /******************************************************************************
 ** Method:		Default constructor.

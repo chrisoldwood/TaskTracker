@@ -12,6 +12,24 @@
 #ifndef TASKTRACKER_HPP
 #define TASKTRACKER_HPP
 
+#if _MSC_VER > 1000
+#pragma once
+#endif
+
+#include <WCL/App.hpp>
+#include "AppWnd.hpp"
+#include "AppCmds.hpp"
+#include "AppTypes.hpp"
+#include <WCL/Printer.hpp>
+#include <WCL/IniFile.hpp>
+#include "SessionList.hpp"
+#include "TaskList.hpp"
+#include "LocnList.hpp"
+
+// Forward declarations.
+class CReportOptions;
+class CFile;
+
 /******************************************************************************
 ** 
 ** The application class.

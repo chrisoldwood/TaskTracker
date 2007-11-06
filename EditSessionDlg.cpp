@@ -8,16 +8,12 @@
 *******************************************************************************
 */
 
-#include "AppHeaders.hpp"
+#include "Common.hpp"
 #include "EditSessionDlg.hpp"
 #include "AddSessionDlg.hpp"
 #include "ModifySessionDlg.hpp"
 #include "RenameDlg.hpp"
-
-#ifdef _DEBUG
-// For memory leak detection.
-#define new DBGCRT_NEW
-#endif
+#include "TaskTracker.hpp"
 
 /******************************************************************************
 ** Method:		Default constructor.

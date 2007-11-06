@@ -8,8 +8,11 @@
 *******************************************************************************
 */
 
-#include "AppHeaders.hpp"
+#include "Common.hpp"
+#include "FileReport.hpp"
 #include <stdio.h>
+#include <WCL/FileException.hpp>
+#include "TaskTracker.hpp"
 
 /******************************************************************************
 ** Method:		Constructor.

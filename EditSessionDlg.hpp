@@ -12,6 +12,13 @@
 #ifndef EDTSNDLG_HPP
 #define EDTSNDLG_HPP
 
+#if _MSC_VER > 1000
+#pragma once
+#endif
+
+#include <WCL/CommonUI.hpp>
+#include "SessionListBox.hpp"
+
 /******************************************************************************
 ** 
 ** This dialog is used to add, modify and delete sessions.

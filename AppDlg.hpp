@@ -12,6 +12,14 @@
 #ifndef APPDLG_HPP
 #define APPDLG_HPP
 
+#if _MSC_VER > 1000
+#pragma once
+#endif
+
+#include <WCL/MainDlg.hpp>
+#include <WCL/DateTime.hpp>
+#include <WCL/Label.hpp>
+
 /******************************************************************************
 ** 
 ** This is the main application dialog. It displays a summary of the tasks

@@ -8,7 +8,10 @@
 *******************************************************************************
 */
 
-#include "AppHeaders.hpp"
+#include "Common.hpp"
+#include "LocnList.hpp"
+#include <WCL/IInputStream.hpp>
+#include <WCL/IOutputStream.hpp>
 #include <algorithm>
 
 /******************************************************************************

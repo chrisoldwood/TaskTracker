@@ -12,6 +12,13 @@
 #ifndef CLPWNDREPORTDLG_HPP
 #define CLPWNDREPORTDLG_HPP
 
+#if _MSC_VER > 1000
+#pragma once
+#endif
+
+#include <WCL/CommonUI.hpp>
+#include "AppTypes.hpp"
+
 /******************************************************************************
 ** 
 ** This dialog is used when the user reports data to a file.

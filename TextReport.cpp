@@ -8,7 +8,9 @@
 *******************************************************************************
 */
 
-#include "AppHeaders.hpp"
+#include "Common.hpp"
+#include "TextReport.hpp"
+#include <WCL/IOutputStream.hpp>
 
 /******************************************************************************
 ** Method:		Constructor.

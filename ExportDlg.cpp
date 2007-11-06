@@ -3,13 +3,9 @@
 //! \brief  The CExportDlg class definition.
 //! \author Chris Oldwood
 
-#include "AppHeaders.hpp"
+#include "Common.hpp"
 #include "ExportDlg.hpp"
-
-#ifdef _DEBUG
-// For memory leak detection.
-#define new DBGCRT_NEW
-#endif
+#include "TaskTracker.hpp"
 
 ////////////////////////////////////////////////////////////////////////////////
 //! Default constructor.

@@ -8,8 +8,9 @@
 *******************************************************************************
 */
 
-#include "AppHeaders.hpp"
+#include "Common.hpp"
 #include "PruneSessionsDlg.hpp"
+#include "TaskTracker.hpp"
 
 /******************************************************************************
 ** Method:		Default constructor.

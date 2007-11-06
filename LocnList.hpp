@@ -12,6 +12,10 @@
 #ifndef LOCNLIST_HPP
 #define LOCNLIST_HPP
 
+#if _MSC_VER > 1000
+#pragma once
+#endif
+
 /******************************************************************************
 ** 
 ** This class is used to hold a list of locations previously used.

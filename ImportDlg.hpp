@@ -7,6 +7,14 @@
 #ifndef IMPORTDLG_HPP
 #define IMPORTDLG_HPP
 
+#if _MSC_VER > 1000
+#pragma once
+#endif
+
+#include <WCL/CommonUI.hpp>
+#include <WCL/Path.hpp>
+#include <WCL/PathEditBox.hpp>
+
 ////////////////////////////////////////////////////////////////////////////////
 //! The database import dialog.
 

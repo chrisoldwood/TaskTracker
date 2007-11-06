@@ -8,7 +8,9 @@
 *******************************************************************************
 */
 
-#include "AppHeaders.hpp"
+#include "Common.hpp"
+#include "TaskComboBox.hpp"
+#include "TaskTracker.hpp"
 
 /******************************************************************************
 ** Method:		Constructor.

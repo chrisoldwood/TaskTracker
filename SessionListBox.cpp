@@ -8,7 +8,9 @@
 *******************************************************************************
 */
 
-#include "AppHeaders.hpp"
+#include "Common.hpp"
+#include "SessionListBox.hpp"
+#include "TaskTracker.hpp"
 #include <stdio.h>
 
 /******************************************************************************

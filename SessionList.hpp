@@ -12,6 +12,12 @@
 #ifndef SESSLIST_HPP
 #define SESSLIST_HPP
 
+#if _MSC_VER > 1000
+#pragma once
+#endif
+
+#include "Session.hpp"
+
 /******************************************************************************
 ** 
 ** This class is used to hold the list of sessions. The list is stored in a

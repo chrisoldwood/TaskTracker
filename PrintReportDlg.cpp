@@ -8,8 +8,10 @@
 *******************************************************************************
 */
 
-#include "AppHeaders.hpp"
+#include "Common.hpp"
 #include "PrintReportDlg.hpp"
+#include "TaskTracker.hpp"
+#include <WCL/BusyCursor.hpp>
 
 /******************************************************************************
 ** Method:		Default constructor.

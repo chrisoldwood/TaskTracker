@@ -12,6 +12,12 @@
 #ifndef SESSION_HPP
 #define SESSION_HPP
 
+#if _MSC_VER > 1000
+#pragma once
+#endif
+
+#include <WCL/DateTime.hpp>
+
 /******************************************************************************
 ** 
 ** This class represents a period of time spent on a task.

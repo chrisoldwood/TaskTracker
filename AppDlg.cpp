@@ -8,7 +8,10 @@
 *******************************************************************************
 */
 
-#include "AppHeaders.hpp"
+#include "Common.hpp"
+#include "AppDlg.hpp"
+#include "TaskTracker.hpp"
+#include <WCL/AutoBool.hpp>
 
 /******************************************************************************
 **

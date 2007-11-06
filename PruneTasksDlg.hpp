@@ -12,6 +12,13 @@
 #ifndef PRTSKDLG_HPP
 #define PRTSKDLG_HPP
 
+#if _MSC_VER > 1000
+#pragma once
+#endif
+
+#include <WCL/CommonUI.hpp>
+#include "TaskList.hpp"
+
 /******************************************************************************
 ** 
 ** This dialog is used when the user prunes tasks.

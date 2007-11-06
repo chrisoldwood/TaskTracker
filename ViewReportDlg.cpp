@@ -8,8 +8,10 @@
 *******************************************************************************
 */
 
-#include "AppHeaders.hpp"
+#include "Common.hpp"
 #include "ViewReportDlg.hpp"
+#include <WCL/MemStream.hpp>
+#include "TaskTracker.hpp"
 
 /******************************************************************************
 ** Method:		Default constructor.

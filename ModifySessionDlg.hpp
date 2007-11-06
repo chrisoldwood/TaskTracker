@@ -12,6 +12,15 @@
 #ifndef MODSNDLG_HPP
 #define MODSNDLG_HPP
 
+#if _MSC_VER > 1000
+#pragma once
+#endif
+
+#include <WCL/CommonUI.hpp>
+#include "Session.hpp"
+#include "TaskComboBox.hpp"
+#include "LocnComboBox.hpp"
+
 /******************************************************************************
 ** 
 ** This dialog is used when the user adds a new session.

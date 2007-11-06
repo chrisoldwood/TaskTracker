@@ -12,6 +12,15 @@
 #ifndef FILEREPORTDLG_HPP
 #define FILEREPORTDLG_HPP
 
+#if _MSC_VER > 1000
+#pragma once
+#endif
+
+#include <WCL/CommonUI.hpp>
+#include <WCL/Path.hpp>
+#include <WCL/PathEditBox.hpp>
+#include "AppTypes.hpp"
+
 /******************************************************************************
 ** 
 ** This dialog is used when the user reports data to a file.

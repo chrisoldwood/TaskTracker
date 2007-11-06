@@ -12,6 +12,10 @@
 #ifndef TASKLIST_HPP
 #define TASKLIST_HPP
 
+#if _MSC_VER > 1000
+#pragma once
+#endif
+
 /******************************************************************************
 ** 
 ** This class is used to hold a list of tasks previously used.

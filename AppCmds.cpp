@@ -8,7 +8,9 @@
 *******************************************************************************
 */
 
-#include "AppHeaders.hpp"
+#include "Common.hpp"
+#include "AppCmds.hpp"
+#include "TaskTracker.hpp"
 #include "AboutDlg.hpp"
 #include "ClockInDlg.hpp"
 #include "ClockOutDlg.hpp"
@@ -25,11 +27,17 @@
 #include "ExportDlg.hpp"
 #include "ImportDlg.hpp"
 #include <algorithm>
-
-#ifdef _DEBUG
-// For memory leak detection.
-#define new DBGCRT_NEW
-#endif
+#include <WCL/BusyCursor.hpp>
+#include <WCL/File.hpp>
+#include <WCL/FileException.hpp>
+#include <WCL/Buffer.hpp>
+#include <WCL/MemStream.hpp>
+#include <WCL/Clipboard.hpp>
+#include <WCL/PrinterDC.hpp>
+#include "ReportOptions.hpp"
+#include "TextReport.hpp"
+#include "PrintReport.hpp"
+#include "FileReport.hpp"
 
 /******************************************************************************
 ** Method:		Constructor.

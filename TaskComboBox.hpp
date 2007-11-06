@@ -12,6 +12,12 @@
 #ifndef TSKCOMBO_HPP
 #define TSKCOMBO_HPP
 
+#if _MSC_VER > 1000
+#pragma once
+#endif
+
+#include <WCL/ComboBox.hpp>
+
 /******************************************************************************
 ** 
 ** This is a combo box used to display the list of previous tasks.
