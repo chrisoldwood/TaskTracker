@@ -41,7 +41,7 @@ CViewReportDlg::CViewReportDlg(CMemStream& rTxtStream)
 	END_GRAVITY_TABLE
 
 	DEFINE_CTRLMSG_TABLE
-		CMD_CTRLMSG(IDC_FONT, BN_CLICKED, OnFontClicked)
+		CMD_CTRLMSG(IDC_FONT, BN_CLICKED, &CViewReportDlg::OnFontClicked)
 	END_CTRLMSG_TABLE
 }
 
