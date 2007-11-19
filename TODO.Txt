@@ -22,3 +22,5 @@ Next Release
 - Other report formats, e.g. HTML & XML (File & Clipboard)
 
 - Change report dialogs to use a common one.
+
+- Fix up serializtion of time_t when moving to VC++ 8.0.
