@@ -130,11 +130,11 @@ void CEditSessionDlg::OnAdd()
 		pNewSession->Finish(Dlg.m_dtOutDateTime, Dlg.m_strTask, Dlg.m_strLocn);
 	
 		// Add task to list if set.
-		if (Dlg.m_strTask != "")
+		if (Dlg.m_strTask != TXT(""))
 			App.m_oTaskList.Add(Dlg.m_strTask);
 	
 		// Add Location to list if set.
-		if (Dlg.m_strLocn != "")
+		if (Dlg.m_strLocn != TXT(""))
 			App.m_oLocnList.Add(Dlg.m_strLocn);
 	
 		// Remember task and location used.
@@ -202,11 +202,11 @@ void CEditSessionDlg::OnModify()
 		pSession->Finish(Dlg.m_dtOutDateTime, Dlg.m_strTask, Dlg.m_strLocn);
 	
 		// Add task to list if set.
-		if (Dlg.m_strTask != "")
+		if (Dlg.m_strTask != TXT(""))
 			App.m_oTaskList.Add(Dlg.m_strTask);
 	
 		// Add Location to list if set.
-		if (Dlg.m_strLocn != "")
+		if (Dlg.m_strLocn != TXT(""))
 			App.m_oLocnList.Add(Dlg.m_strLocn);
 	
 		// Re-add to sessionlist and view.
@@ -324,7 +324,7 @@ void CEditSessionDlg::OnRename()
 		}
 
 		// Add task to list if set.
-		if (Dlg.m_strNewTask != "")
+		if (Dlg.m_strNewTask != TXT(""))
 			App.m_oTaskList.Add(Dlg.m_strNewTask);
 
 		// Update UI.

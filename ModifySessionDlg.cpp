@@ -59,7 +59,7 @@ void CModifySessionDlg::OnInitDialog()
 	int nLocnIdx = -1;
 
 	// Initialise task.
-	if (m_strTask != "")
+	if (m_strTask != TXT(""))
 	{
 		nTaskIdx = m_cbTask.FindExact(m_strTask);
 
@@ -67,7 +67,7 @@ void CModifySessionDlg::OnInitDialog()
 	}
 
 	// Initialise task.
-	if (m_strLocn != "")
+	if (m_strLocn != TXT(""))
 	{
 		nLocnIdx = m_cbLocn.FindExact(m_strLocn);
 
@@ -99,7 +99,7 @@ bool CModifySessionDlg::OnOk()
 	// Check clocking out later then clocking in.
 	if (m_dtOutDateTime < m_dtInDateTime)
 	{
-		AlertMsg("You cannot clock out ealier than you clocked in.");
+		AlertMsg(TXT("You cannot clock out ealier than you clocked in."));
 		return false;
 	}
 
@@ -125,10 +125,10 @@ bool CModifySessionDlg::OnOk()
 				CString strStart   = pSession->Start().Time().ToString(CTime::FMT_WIN_SHORT);
 				CString strFinish  = pSession->Finish().Time().ToString(CTime::FMT_WIN_SHORT);
 				CString strTask    = pSession->Task();
-				CString strSession = CString::Fmt("%s  %s - %s  %s", strDate, strStart, strFinish, strTask);
+				CString strSession = CString::Fmt(TXT("%s  %s - %s  %s"), strDate, strStart, strFinish, strTask);
 
 				// Query user for action.
-				if (QueryMsg("This session overlaps another:-\n\n%s\n\nDo you want to continue?", strSession) != IDYES)
+				if (QueryMsg(TXT("This session overlaps another:-\n\n%s\n\nDo you want to continue?"), strSession) != IDYES)
 					return false;
 				else
 					break;

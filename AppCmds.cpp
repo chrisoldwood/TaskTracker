@@ -108,7 +108,7 @@ void CAppCmds::OnFileExport()
 	// Nothing to export?
 	if (App.m_oSessionList.empty())
 	{
-		App.AlertMsg("There are no sessions to export.");
+		App.AlertMsg(TXT("There are no sessions to export."));
 		return;
 	}
 
@@ -120,7 +120,7 @@ void CAppCmds::OnFileExport()
 
 	// Warn user if file exists.
 	if ( (Dlg.m_strFileName.Exists())
-	  && (App.QueryMsg("The file already exists:\n\n%s\n\nDo you want to overwrite it?", Dlg.m_strFileName) != IDYES) )
+	  && (App.QueryMsg(TXT("The file already exists:\n\n%s\n\nDo you want to overwrite it?"), Dlg.m_strFileName) != IDYES) )
 		return;
 
 	CBusyCursor oBusyCursor;
@@ -163,12 +163,12 @@ void CAppCmds::OnFileExport()
 				strLocn.Delete(nPos);
 
 			// Format as Start,End,Task,Location
-			strLine.Format("\"%s\",\"%s\",\"%s\",\"%s\"", 
+			strLine.Format(TXT("\"%s\",\"%s\",\"%s\",\"%s\""), 
 							pSession->Start().ToString(CDate::FMT_ISO, CDate::FMT_ISO),
 							pSession->Finish().ToString(CDate::FMT_ISO, CDate::FMT_ISO),
 							strTask, strLocn);
 
-			oFile.WriteLine(strLine);
+			oFile.WriteLine(strLine, ANSI_TEXT);
 
 			++oIter;
 		}
@@ -182,7 +182,7 @@ void CAppCmds::OnFileExport()
 	catch(CFileException& rException)
 	{
 		// Notify user.
-		App.m_AppWnd.AlertMsg(rException.ErrorText());
+		App.m_AppWnd.AlertMsg(TXT("%s"), rException.ErrorText());
 	}
 }
 
@@ -224,7 +224,7 @@ void CAppCmds::OnFileImport()
 		while (!oFile.IsEOF())
 		{
 			// Read a line.
-			CString strLine = oFile.ReadLine();
+			CString strLine = oFile.ReadLine(ANSI_TEXT);
 
 			// Count the number of fields.
 			int nFields = strLine.Count(',') + 1;
@@ -233,9 +233,9 @@ void CAppCmds::OnFileImport()
 			if (nFields != 4)
 			{
 				// Notify user.
-				App.m_AppWnd.AlertMsg("Invalid number of fields in line: %d\n\n"
-									  "Found %d fields. Expected 4 [Start, End, Task, Location]\n\n"
-									  "%s",
+				App.m_AppWnd.AlertMsg(TXT("Invalid number of fields in line: %d\n\n")
+									  TXT("Found %d fields. Expected 4 [Start, End, Task, Location]\n\n")
+									  TXT("%s"),
 									  nLine, nFields, strLine);
 				break;
 			}
@@ -274,7 +274,7 @@ void CAppCmds::OnFileImport()
 			if (!dtStart.FromString(strStartDateTime))
 			{
 				// Notify user.
-				App.m_AppWnd.AlertMsg("Invalid 'Start' date/time format on line: %d\n\n%s", nLine, strLine);
+				App.m_AppWnd.AlertMsg(TXT("Invalid 'Start' date/time format on line: %d\n\n%s"), nLine, strLine);
 				break;
 			}
 
@@ -282,7 +282,7 @@ void CAppCmds::OnFileImport()
 			if (!dtEnd.FromString(strEndDateTime))
 			{
 				// Notify user.
-				App.m_AppWnd.AlertMsg("Invalid 'End' date/time format on line: %d\n\n%s", nLine, strLine);
+				App.m_AppWnd.AlertMsg(TXT("Invalid 'End' date/time format on line: %d\n\n%s"), nLine, strLine);
 				break;
 			}
 
@@ -290,7 +290,7 @@ void CAppCmds::OnFileImport()
 			if (dtEnd < dtStart)
 			{
 				// Notify user.
-				App.m_AppWnd.AlertMsg("'End' date/time precedes 'Start' date/time on line: %d\n\n%s", nLine, strLine);
+				App.m_AppWnd.AlertMsg(TXT("'End' date/time precedes 'Start' date/time on line: %d\n\n%s"), nLine, strLine);
 				break;
 			}
 
@@ -303,10 +303,10 @@ void CAppCmds::OnFileImport()
 			// Add to the temporary collections.
 			lstSessions.Add(pSession);
 
-			if (strTask != "")
+			if (strTask != TXT(""))
 				lstTasks.Add(strTask);
 
-			if (strLocation != "")
+			if (strLocation != TXT(""))
 				lstLocns.Add(strLocation);
 
 			nLine++;
@@ -365,7 +365,7 @@ void CAppCmds::OnFileImport()
 	catch(CFileException& rException)
 	{
 		// Notify user.
-		App.m_AppWnd.AlertMsg(rException.ErrorText());
+		App.m_AppWnd.AlertMsg(TXT("%s"), rException.ErrorText());
 	}
 
 	// Update UI.
@@ -436,8 +436,8 @@ void CAppCmds::OnSessionSwitchTasks()
 	// Check we haven't clocked in later than now.
 	if (dtCurrent < App.m_pCurrSession->Start())
 	{
-		const char* pszMsg = "You cannot switch tasks because the time\n"
-							 "you clocked in is later than the time now.";
+		const tchar* pszMsg = TXT("You cannot switch tasks because the time\n")
+							  TXT("you clocked in is later than the time now.");
 
 		App.AlertMsg(pszMsg);
 		return;
@@ -532,14 +532,14 @@ void CAppCmds::OnReportWindow()
 {
 	CClpWndReportDlg Dlg;
 
-	Dlg.m_strTitle = "Report In Window";
+	Dlg.m_strTitle = TXT("Report In Window");
 
 	if (Dlg.RunModal(App.m_rMainWnd) == IDOK)
 	{
 		CBusyCursor BusyCursor;
 
 		// Update status.
-		App.m_AppWnd.m_StatusBar.Hint("Generating report...");
+		App.m_AppWnd.m_StatusBar.Hint(TXT("Generating report..."));
 
 		// Setup the memory stream to report to.
 		CBuffer		oBuffer;
@@ -562,7 +562,7 @@ void CAppCmds::OnReportWindow()
 		TxtStream.Close();
 
 		// Update status.
-		App.m_AppWnd.m_StatusBar.Hint("Report generated");
+		App.m_AppWnd.m_StatusBar.Hint(TXT("Report generated"));
 
 		// View report, if not empty.
 		// NB: Empty report is just an EOS.
@@ -573,7 +573,7 @@ void CAppCmds::OnReportWindow()
 		}
 		else
 		{
-			App.NotifyMsg("The report contained no entries.");
+			App.NotifyMsg(TXT("The report contained no entries."));
 		}
 	}
 }
@@ -594,14 +594,14 @@ void CAppCmds::OnReportClipboard()
 {
 	CClpWndReportDlg Dlg;
 
-	Dlg.m_strTitle = "Report To Clipboard";
+	Dlg.m_strTitle = TXT("Report To Clipboard");
 
 	if (Dlg.RunModal(App.m_rMainWnd) == IDOK)
 	{
 		CBusyCursor BusyCursor;
 
 		// Update status.
-		App.m_AppWnd.m_StatusBar.Hint("Generating report...");
+		App.m_AppWnd.m_StatusBar.Hint(TXT("Generating report..."));
 
 		// Setup the clipbaord stream.
 		CClipboard Clipboard;
@@ -622,12 +622,12 @@ void CAppCmds::OnReportClipboard()
 
 		// NB: Empty report is just an EOS.
 		if (Clipboard.Size() <= 1)
-			App.NotifyMsg("The report contained no entries.");
+			App.NotifyMsg(TXT("The report contained no entries."));
 
 		Clipboard.Close();
 
 		// Update status.
-		App.m_AppWnd.m_StatusBar.Hint("Report generated");
+		App.m_AppWnd.m_StatusBar.Hint(TXT("Report generated"));
 	}
 }
 
@@ -653,7 +653,7 @@ void CAppCmds::OnReportPrint()
 		CPrinterDC	DC(App.m_oPrinter);
 
 		// Update status.
-		App.m_AppWnd.m_StatusBar.Hint("Generating report...");
+		App.m_AppWnd.m_StatusBar.Hint(TXT("Generating report..."));
 
 		// Setup the report options.
 		CReportOptions oOptions;
@@ -668,7 +668,7 @@ void CAppCmds::OnReportPrint()
 		App.ReportData(oOptions, Dlg.m_FromDate, Dlg.m_ToDate);
 
 		// Update status.
-		App.m_AppWnd.m_StatusBar.Hint("Report generated");
+		App.m_AppWnd.m_StatusBar.Hint(TXT("Report generated"));
 	}
 }
 
@@ -693,7 +693,7 @@ void CAppCmds::OnReportFile()
 		CBusyCursor BusyCursor;
 
 		// Update status.
-		App.m_AppWnd.m_StatusBar.Hint("Generating report...");
+		App.m_AppWnd.m_StatusBar.Hint(TXT("Generating report..."));
 
 		// Setup the report options.
 		CReportOptions oOptions;
@@ -708,7 +708,7 @@ void CAppCmds::OnReportFile()
 		App.ReportData(oOptions, Dlg.m_FromDate, Dlg.m_ToDate);
 
 		// Update status.
-		App.m_AppWnd.m_StatusBar.Hint("Report generated");
+		App.m_AppWnd.m_StatusBar.Hint(TXT("Report generated"));
 	}
 }
 

@@ -26,8 +26,7 @@ CRenameDlg::CRenameDlg()
 
 void CRenameDlg::OnInitDialog()
 {
-	// Remove selection from new task name combo.
-	m_cbNewTask.CurSel(CB_ERR);
+	m_cbNewTask.RemoveSelection();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

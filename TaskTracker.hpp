@@ -79,9 +79,9 @@ public:
 	
 	CString MinsToStr(ulong lMins);
 
-	static const char* DatePickerFormat();
-	static const char* TimePickerFormat();
-	static const char* DateTimePickerFormat();
+	static const tchar* DatePickerFormat();
+	static const tchar* TimePickerFormat();
+	static const tchar* DateTimePickerFormat();
 
 	//
 	// UI members
@@ -125,8 +125,8 @@ public:
 	//
 	// Constants.
 	//
-	static const char* VERSION;
-	static const char* HELPFILE;
+	static const tchar* VERSION;
+	static const tchar* HELPFILE;
 
 protected:
 	//

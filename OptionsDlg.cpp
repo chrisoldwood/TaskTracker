@@ -27,13 +27,13 @@ COptionsDlg::COptionsDlg()
 void COptionsDlg::OnInitDialog()
 {
 	// Populate length formats combo.
-	m_cbLenFormat.Add("Hours & Minutes");
-	m_cbLenFormat.Add("Hours Only");
+	m_cbLenFormat.Add(TXT("Hours & Minutes"));
+	m_cbLenFormat.Add(TXT("Hours Only"));
 
 	// Populate week order combo.
-	m_cbWeekOrder.Add(CDate::DayOfWeekName(5) + " - " + CDate::DayOfWeekName(4));
-	m_cbWeekOrder.Add(CDate::DayOfWeekName(6) + " - " + CDate::DayOfWeekName(5));
-	m_cbWeekOrder.Add(CDate::DayOfWeekName(0) + " - " + CDate::DayOfWeekName(6));
+	m_cbWeekOrder.Add(CDate::DayOfWeekName(5) + TXT(" - ") + CDate::DayOfWeekName(4));
+	m_cbWeekOrder.Add(CDate::DayOfWeekName(6) + TXT(" - ") + CDate::DayOfWeekName(5));
+	m_cbWeekOrder.Add(CDate::DayOfWeekName(0) + TXT(" - ") + CDate::DayOfWeekName(6));
 
 	// Initialise controls.
 	m_ckMinToTray.Check(App.m_bMinToTray);

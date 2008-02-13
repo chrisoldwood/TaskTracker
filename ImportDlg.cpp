@@ -57,7 +57,7 @@ bool CImportDlg::OnOk()
 	// Validate controls.
 	if (m_ebFileName.TextLength() == 0)
 	{
-		AlertMsg("Please select a file to import from.");
+		AlertMsg(TXT("Please select a file to import from."));
 		m_ebFileName.Focus();
 		return false;
 	}
@@ -76,9 +76,9 @@ bool CImportDlg::OnOk()
 void CImportDlg::OnBrowseClicked()
 {
 	// File extensions.
-	static char szExts[] = {	"Data Files (*.CSV)\0*.CSV\0"
-								"All Files (*.*)\0*.*\0"
-								"\0\0"							};
+	static tchar szExts[] = {	TXT("Data Files (*.CSV)\0*.CSV\0")
+								TXT("All Files (*.*)\0*.*\0")
+								TXT("\0\0")							};
 
 	// If set, start in previous folder.
 	CPath strDefFolder = CPath::ApplicationDir();
@@ -87,7 +87,7 @@ void CImportDlg::OnBrowseClicked()
 		strDefFolder = m_strFileName.Directory();
 
 	// Select a filename into the edit box.
-	if (m_strFileName.Select(*this, CPath::OpenFile, szExts, "CSV", strDefFolder))
+	if (m_strFileName.Select(*this, CPath::OpenFile, szExts, TXT("CSV"), strDefFolder))
 		m_ebFileName.Text(m_strFileName);
 }
 

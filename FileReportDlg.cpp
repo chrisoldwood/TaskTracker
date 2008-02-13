@@ -77,12 +77,12 @@ void CFileReportDlg::OnInitDialog()
 	}
 	
 	// Fill period list.
-	m_cbPeriod.Add("All");
-	m_cbPeriod.Add("This Week");
-	m_cbPeriod.Add("This Month");
-	m_cbPeriod.Add("Last Week");
-	m_cbPeriod.Add("Last Month");
-	m_cbPeriod.Add("Custom...");
+	m_cbPeriod.Add(TXT("All"));
+	m_cbPeriod.Add(TXT("This Week"));
+	m_cbPeriod.Add(TXT("This Month"));
+	m_cbPeriod.Add(TXT("Last Week"));
+	m_cbPeriod.Add(TXT("Last Month"));
+	m_cbPeriod.Add(TXT("Custom..."));
 	
 	// Select default.
 	m_cbPeriod.CurSel(App.m_eDefPeriod);
@@ -117,7 +117,7 @@ bool CFileReportDlg::OnOk()
 	// Validate file name.
 	if (m_ebFileName.TextLength() == 0)
 	{
-		AlertMsg("Please select the report file name.");
+		AlertMsg(TXT("Please select the report file name."));
 		m_ebFileName.Focus();
 		return false;
 	}
@@ -135,7 +135,7 @@ bool CFileReportDlg::OnOk()
 		// Check from date is before to date.
 		if (m_FromDate > m_ToDate)
 		{
-			AlertMsg("'From' date must be before 'To' date.");
+			AlertMsg(TXT("'From' date must be before 'To' date."));
 			return false;
 		}
 	}
@@ -187,12 +187,12 @@ bool CFileReportDlg::OnOk()
 void CFileReportDlg::OnBrowse()
 {
 	// File extensions.
-	static char szExts[] = {	"Text Files (*.TXT)\0*.TXT\0"
-								"All Files (*.*)\0*.*\0"
-								"\0\0"							};
+	static tchar szExts[] = {	TXT("Text Files (*.TXT)\0*.TXT\0")
+								TXT("All Files (*.*)\0*.*\0")
+								TXT("\0\0")							};
 
 	// Select a filename.
-	if (m_strFileName.Select(*this, CPath::SaveFile, szExts, "TXT"))
+	if (m_strFileName.Select(*this, CPath::SaveFile, szExts, TXT("TXT")))
 	{
 		// Update the dialog.
 		m_ebFileName.Text(m_strFileName);

@@ -85,7 +85,7 @@ void CPruneLocnsDlg::OnInitDialog()
 	// Nothing to delete?
 	if (m_lbLocns.Count() == 0)
 	{
-		NotifyMsg("There are no locations that can be deleted.");
+		NotifyMsg(TXT("There are no locations that can be deleted."));
 		EndDialog();
 	}
 }

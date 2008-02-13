@@ -87,7 +87,7 @@ bool CPruneSessionsDlg::OnOk()
 	// Validate controls.
 	if ( (m_rbBetween.IsChecked()) && (m_dtpToDate.GetDate() < m_dtpFromDate.GetDate()) )
 	{
-		AlertMsg("The 'End' date must be later than the 'Start' date.");
+		AlertMsg(TXT("The 'End' date must be later than the 'Start' date."));
 		m_dtpToDate.Focus();
 		return false;
 	}

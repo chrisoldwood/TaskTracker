@@ -65,8 +65,8 @@ void CClockInDlg::OnInitDialog()
 	OnNow();
 	
 	// Initialise task and location.
-	m_strTask = "";
-	m_strLocn = "";
+	m_strTask = TXT("");
+	m_strLocn = TXT("");
 }
 
 /******************************************************************************
@@ -107,10 +107,10 @@ bool CClockInDlg::OnOk()
 				CString strStart   = pSession->Start().Time().ToString(CTime::FMT_WIN_SHORT);
 				CString strFinish  = pSession->Finish().Time().ToString(CTime::FMT_WIN_SHORT);
 				CString strTask    = pSession->Task();
-				CString strSession = CString::Fmt("%s  %s - %s  %s", strDate, strStart, strFinish, strTask);
+				CString strSession = CString::Fmt(TXT("%s  %s - %s  %s"), strDate, strStart, strFinish, strTask);
 
 				// Query user for action.
-				if (QueryMsg("This session will overlap another:-\n\n%s\n\nDo you want to continue?", strSession) != IDYES)
+				if (QueryMsg(TXT("This session will overlap another:-\n\n%s\n\nDo you want to continue?"), strSession) != IDYES)
 					return false;
 				else
 					break;

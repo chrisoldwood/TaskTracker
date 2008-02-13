@@ -79,12 +79,12 @@ void CPrintReportDlg::OnInitDialog()
 	}
 	
 	// Fill period list.
-	m_cbPeriod.Add("All");
-	m_cbPeriod.Add("This Week");
-	m_cbPeriod.Add("This Month");
-	m_cbPeriod.Add("Last Week");
-	m_cbPeriod.Add("Last Month");
-	m_cbPeriod.Add("Custom...");
+	m_cbPeriod.Add(TXT("All"));
+	m_cbPeriod.Add(TXT("This Week"));
+	m_cbPeriod.Add(TXT("This Month"));
+	m_cbPeriod.Add(TXT("Last Week"));
+	m_cbPeriod.Add(TXT("Last Month"));
+	m_cbPeriod.Add(TXT("Custom..."));
 	
 	// Select default.
 	m_cbPeriod.CurSel(App.m_eDefPeriod);
@@ -117,11 +117,11 @@ void CPrintReportDlg::OnInitDialog()
 bool CPrintReportDlg::OnOk()
 {
 	// Check printer selection.
-	if ( (App.m_oPrinter.m_strName   == "")
-	  || (App.m_oPrinter.m_strDriver == "") 
-	  || (App.m_oPrinter.m_strPort   == "") )
+	if ( (App.m_oPrinter.m_strName   == TXT(""))
+	  || (App.m_oPrinter.m_strDriver == TXT("")) 
+	  || (App.m_oPrinter.m_strPort   == TXT("")) )
 	{
-		AlertMsg("You must select a printer.");
+		AlertMsg(TXT("You must select a printer."));
 		return false;
 	}
 
@@ -138,7 +138,7 @@ bool CPrintReportDlg::OnOk()
 		// Check from date is before to date.
 		if (m_FromDate > m_ToDate)
 		{
-			AlertMsg("'From' date must be before 'To' date.");
+			AlertMsg(TXT("'From' date must be before 'To' date."));
 			return false;
 		}
 	}

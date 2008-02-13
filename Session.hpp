@@ -32,7 +32,7 @@ public:
 	// Constructors/Destructor.
 	//
 	CSession();
-	CSession(const CDateTime& dtStart, const CDateTime& dtFinish, const char* pszTask = nullptr, const char* pszLocn = nullptr);
+	CSession(const CDateTime& dtStart, const CDateTime& dtFinish, const tchar* pszTask = nullptr, const tchar* pszLocn = nullptr);
 	~CSession();
 
 	//
@@ -47,10 +47,10 @@ public:
 	//
 	// Member setting.
 	//
-	void Start(const CDateTime& dtStart,  const char* pszTask, const char* pszLocn);
-	void Finish(const CDateTime& dtFinish, const char* pszTask, const char* pszLocn);
-	void Task(const char* pszTask);
-	void Location(const char* pszLocn);
+	void Start(const CDateTime& dtStart,  const tchar* pszTask, const tchar* pszLocn);
+	void Finish(const CDateTime& dtFinish, const tchar* pszTask, const tchar* pszLocn);
+	void Task(const tchar* pszTask);
+	void Location(const tchar* pszLocn);
 	
 protected:
 	//
@@ -98,26 +98,26 @@ inline const CString& CSession::Location() const
 	return m_strLocn;
 }
 
-inline void CSession::Start(const CDateTime& dtStart, const char* pszTask, const char* pszLocn)
+inline void CSession::Start(const CDateTime& dtStart, const tchar* pszTask, const tchar* pszLocn)
 {
 	m_dtStart = dtStart;
 	m_strTask = pszTask;
 	m_strLocn  = pszLocn;
 }
 
-inline void CSession::Finish(const CDateTime& dtFinish, const char* pszTask, const char* pszLocn)
+inline void CSession::Finish(const CDateTime& dtFinish, const tchar* pszTask, const tchar* pszLocn)
 {
 	m_dtFinish = dtFinish;
 	m_strTask  = pszTask;
 	m_strLocn  = pszLocn;
 }
 
-inline void CSession::Task(const char* pszTask)
+inline void CSession::Task(const tchar* pszTask)
 {
 	m_strTask = pszTask;
 }
 
-inline void CSession::Location(const char* pszLocn)
+inline void CSession::Location(const tchar* pszLocn)
 {
 	m_strLocn = pszLocn;
 }

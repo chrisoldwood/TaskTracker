@@ -38,16 +38,16 @@ CTaskTracker App;
 static const uint DAT_FILE_VERSION = 35;
 
 // The data filename.
-static const char* DAT_FILE_NAME = "TaskTrak.dat";
+static const tchar* DAT_FILE_NAME = TXT("TaskTrak.dat");
 
 // The currrent cfg file version.
-static const char* INI_FILE_VER_40 = "4.0";
+static const tchar* INI_FILE_VER_40 = TXT("4.0");
 
 // The previous cfg file versions (none).
-static const char* INI_FILE_VER_35 = "";
+static const tchar* INI_FILE_VER_35 = TXT("");
 
 // The cfg filename.
-static const char* INI_FILE_NAME = "TaskTrak.ini";
+static const tchar* INI_FILE_NAME = TXT("TaskTrak.ini");
 
 /******************************************************************************
 **
@@ -57,12 +57,12 @@ static const char* INI_FILE_NAME = "TaskTrak.ini";
 */
 
 #ifdef _DEBUG
-const char* CTaskTracker::VERSION = "v4.0 [Debug]";
+const tchar* CTaskTracker::VERSION = TXT("v4.0 [Debug]");
 #else
-const char* CTaskTracker::VERSION = "v4.0";
+const tchar* CTaskTracker::VERSION = TXT("v4.0");
 #endif
 
-const char* CTaskTracker::HELPFILE = "TaskTrak.mht";
+const tchar* CTaskTracker::HELPFILE = TXT("TaskTrak.mht");
 
 /******************************************************************************
 ** Method:		Constructor
@@ -80,8 +80,8 @@ CTaskTracker::CTaskTracker()
 	: CApp(m_AppWnd, m_AppCmds)
 	, m_bClockedIn(false)
 	, m_pCurrSession(nullptr)
-	, m_strLastTask("")
-	, m_strLastLocn("")
+	, m_strLastTask(TXT(""))
+	, m_strLastLocn(TXT(""))
 	, m_bModified(false)
 	, m_eDefGrouping(Ungrouped)
 	, m_eDefPeriod(All)
@@ -91,7 +91,7 @@ CTaskTracker::CTaskTracker()
 	, m_eLenFormat(HoursMins)
 	, m_eWeekOrder(MonToSun)
 	, m_bMinToTray(false)
-	, m_strRptDlgFont("ANSI_FIXED_FONT")
+	, m_strRptDlgFont(TXT("ANSI_FIXED_FONT"))
 	, m_bCheckOverlap(true)
 {
 }
@@ -131,7 +131,7 @@ bool CTaskTracker::OnOpen()
 		return false;
 
 	// Set the app title.
-	m_strTitle = "Task Tracker";
+	m_strTitle = TXT("Task Tracker");
 
 	// Create .ini file path.
 	m_IniFile.m_strPath  = CPath::ApplicationDir() / INI_FILE_NAME;
@@ -180,8 +180,8 @@ bool CTaskTracker::OnClose()
 	SaveDefaults();
 
 	// Free up strings.
-	m_strLastTask = "";
-	m_strLastLocn = "";
+	m_strLastTask = TXT("");
+	m_strLastLocn = TXT("");
 
 	return true;
 }
@@ -210,11 +210,11 @@ void CTaskTracker::ClockIn(const CDateTime& dtIn, const CString& strTask, const 
 	m_pCurrSession->Start(dtIn, strTask, strLocn);
 
 	// Add task to list if set.
-	if (strTask != "")
+	if (strTask != TXT(""))
 		m_oTaskList.Add(strTask);
 
 	// Add location to list if set.
-	if (strLocn != "")
+	if (strLocn != TXT(""))
 		m_oLocnList.Add(strLocn);
 
 	// Update state.
@@ -253,11 +253,11 @@ void CTaskTracker::ClockOut(const CDateTime& dtOut, const CString& strTask, cons
 	m_pCurrSession.Reset();
 
 	// Add task to list if set.
-	if (strTask != "")
+	if (strTask != TXT(""))
 		m_oTaskList.Add(strTask);
 	
 	// Add location to list if set.
-	if (strLocn != "")
+	if (strLocn != TXT(""))
 		m_oLocnList.Add(strLocn);
 
 	// Update state.
@@ -310,7 +310,7 @@ ulong CTaskTracker::TotalForPeriod(const CDateTime& dtStart, const CDateTime& dt
 		
 		// Create session based on current time.
 		dtCurrent.Set();
-		CurrSession.Finish(dtCurrent, "", "");
+		CurrSession.Finish(dtCurrent, TXT(""), TXT(""));
 		
 		lTotal += CurrSession.Length();
 	}
@@ -453,7 +453,7 @@ bool CTaskTracker::LoadData()
 		// Open file.
 		AppFile.Open(AppFilePath, GENERIC_READ);
 
-		char	szMagic[2];
+		byte	szMagic[2];
 		uint16	iVersion;
 
 		// Read magic and version number.
@@ -477,7 +477,7 @@ bool CTaskTracker::LoadData()
 	catch(CFileException& rException)
 	{
 		// Notify user.
-		m_AppWnd.AlertMsg(rException.ErrorText());
+		m_AppWnd.AlertMsg(TXT("%s"), rException.ErrorText());
 		return false;
 	}
 
@@ -546,7 +546,7 @@ bool CTaskTracker::SaveData()
 		// Create file.
 		AppFile.Create(AppFilePath);
 
-		char	szMagic[2] = { 'T', 'T' };
+		byte	szMagic[2] = { 'T', 'T' };
 		uint16	iVersion   = DAT_FILE_VERSION;
 
 		// Write magic and version number.
@@ -565,7 +565,7 @@ bool CTaskTracker::SaveData()
 	catch(CFileException& rException)
 	{
 		// Notify user.
-		m_AppWnd.AlertMsg(rException.ErrorText());
+		m_AppWnd.AlertMsg(TXT("%s"), rException.ErrorText());
 		return false;
 	}
 
@@ -663,7 +663,7 @@ void CTaskTracker::ReportData(CReportOptions& oOptions, const CDate& oFromDate,
 	if (oOptions.m_bShowTotal && bOkay)
 	{
 		// Output total.
-		CString strTotal = CString::Fmt("Total Hours: %s", App.MinsToStr(lTotalMins));
+		CString strTotal = CString::Fmt(TXT("Total Hours: %s"), App.MinsToStr(lTotalMins));
 
 		oOptions.m_pDevice->SendText(strTotal);
 	}
@@ -802,7 +802,7 @@ bool CTaskTracker::ReportByWeek(CReportOptions& oOptions, const CDateTime& dtFro
 		CString	strStartDate = dtStart.Date().ToString(CDate::FMT_WIN_SHORT);
 		CString strEndDate   = dtEnd.Date().ToString(CDate::FMT_WIN_SHORT);
 		CString strLen       = App.MinsToStr(lWeekTotal);
-		CString strHeading   = CString::Fmt("Week: %s to %s (Total: %s)", strStartDate, strEndDate, strLen);
+		CString strHeading   = CString::Fmt(TXT("Week: %s to %s (Total: %s)"), strStartDate, strEndDate, strLen);
 
 		if (!oOptions.m_pDevice->SendHeading(strHeading))
 			return false;
@@ -913,7 +913,7 @@ bool CTaskTracker::ReportByMonth(CReportOptions& oOptions, const CDateTime& dtFr
 		CString	strStartDate = dtStart.Date().ToString(CDate::FMT_WIN_SHORT);
 		CString strEndDate   = dtEnd.Date().ToString(CDate::FMT_WIN_SHORT);
 		CString strLen       = App.MinsToStr(lMonthTotal);
-		CString strHeading   = CString::Fmt("Month: %s to %s (Total: %s)", strStartDate, strEndDate, strLen);
+		CString strHeading   = CString::Fmt(TXT("Month: %s to %s (Total: %s)"), strStartDate, strEndDate, strLen);
 
 		if (!oOptions.m_pDevice->SendHeading(strHeading))
 			return false;
@@ -1005,7 +1005,7 @@ bool CTaskTracker::ReportByTask(CReportOptions& oOptions, const CDateTime& dtFro
 		if ( (lSessions > 0) || (oOptions.m_bShowIfEmpty) )
 		{
 			// Output task heading.
-			CString strHeading = CString::Fmt("%s (Total: %s)", *oIter, App.MinsToStr(lTotal));
+			CString strHeading = CString::Fmt(TXT("%s (Total: %s)"), *oIter, App.MinsToStr(lTotal));
 
 			// Heading style depends on whether sessions follow.
 			if (oOptions.m_bShowSessions)
@@ -1040,7 +1040,7 @@ bool CTaskTracker::ReportByTask(CReportOptions& oOptions, const CDateTime& dtFro
 						CString	strStart = pSession->Start().Time().ToString(CDate::FMT_WIN_SHORT);
 						CString	strEnd   = pSession->Finish().Time().ToString(CDate::FMT_WIN_SHORT);
 						CString strLen   = App.MinsToStr(pSession->Length());
-						CString strText  = CString::Fmt("%s %s from %s to %s for %s", strDay, strDate, strStart, strEnd, strLen);
+						CString strText  = CString::Fmt(TXT("%s %s from %s to %s for %s"), strDay, strDate, strStart, strEnd, strLen);
 					
 						if (!oOptions.m_pDevice->SendText(strText))
 							return false;
@@ -1111,7 +1111,7 @@ bool CTaskTracker::ReportDay(CReportOptions& oOptions, const CDate& rDate,
 		CString strDay  = rDate.DayOfWeekStr(false);
 		CString	strDate = rDate.ToString(CDate::FMT_WIN_SHORT);
 		CString strLen  = App.MinsToStr(rlTotalMins);
-		CString strText = CString::Fmt("%s %s (Total: %s)", strDay, strDate, strLen);
+		CString strText = CString::Fmt(TXT("%s %s (Total: %s)"), strDay, strDate, strLen);
 
 		if (!oOptions.m_pDevice->SendText(strText))
 			return false;
@@ -1161,15 +1161,15 @@ bool CTaskTracker::ReportSession(CReportOptions& oOptions, const CSessionPtr& pS
 	ulong	lLen     = pSession->Length();
 
 	// Format core data.
-	CString strText = CString::Fmt("%s to %s for %s", strStart, strEnd, App.MinsToStr(lLen));
+	CString strText = CString::Fmt(TXT("%s to %s for %s"), strStart, strEnd, App.MinsToStr(lLen));
 
 	// Append task, if supplied.
-	if (strTask != "")
-		strText += " on " + strTask;
+	if (strTask != TXT(""))
+		strText += TXT(" on ") + strTask;
 
 	// Append location, if supplied.
-	if (strLocn != "")
-		strText += " at " + strLocn;
+	if (strLocn != TXT(""))
+		strText += TXT(" at ") + strLocn;
 
 	return oOptions.m_pDevice->SendText(strText);
 }
@@ -1189,7 +1189,7 @@ bool CTaskTracker::ReportSession(CReportOptions& oOptions, const CSessionPtr& pS
 void CTaskTracker::LoadDefaults()
 {
 	// Read the file version.
-	CString strVer = m_IniFile.ReadString("Version", "Version", INI_FILE_VER_35);
+	CString strVer = m_IniFile.ReadString(TXT("Version"), TXT("Version"), INI_FILE_VER_35);
 
 	// Fix-up old .ini file settings.
 //	if (strVer != INI_FILE_VER_40)
@@ -1197,25 +1197,25 @@ void CTaskTracker::LoadDefaults()
 //	}
 
 	// Load UI settings.
-	m_eLenFormat    = static_cast<LenFormat>(m_IniFile.ReadInt("Prefs", "LenFormat", m_eLenFormat));
-	m_eWeekOrder    = static_cast<WeekOrder>(m_IniFile.ReadInt("Prefs", "WeekOrder", m_eWeekOrder));
-	m_bMinToTray    = m_IniFile.ReadBool("Prefs", "MinToTray", m_bMinToTray);
-	m_bCheckOverlap = m_IniFile.ReadBool("Prefs", "CheckOverlap", m_bCheckOverlap);
-	m_rcReportDlg   = m_IniFile.ReadRect("Prefs", "ReportDlg", m_rcReportDlg);
-	m_strRptDlgFont = m_IniFile.ReadString("Prefs", "ReportDlgFont", m_strRptDlgFont);
-	m_rcEditDlg     = m_IniFile.ReadRect("Prefs", "EditDlg",   m_rcEditDlg);
+	m_eLenFormat    = static_cast<LenFormat>(m_IniFile.ReadInt(TXT("Prefs"), TXT("LenFormat"), m_eLenFormat));
+	m_eWeekOrder    = static_cast<WeekOrder>(m_IniFile.ReadInt(TXT("Prefs"), TXT("WeekOrder"), m_eWeekOrder));
+	m_bMinToTray    = m_IniFile.ReadBool(TXT("Prefs"), TXT("MinToTray"), m_bMinToTray);
+	m_bCheckOverlap = m_IniFile.ReadBool(TXT("Prefs"), TXT("CheckOverlap"), m_bCheckOverlap);
+	m_rcReportDlg   = m_IniFile.ReadRect(TXT("Prefs"), TXT("ReportDlg"), m_rcReportDlg);
+	m_strRptDlgFont = m_IniFile.ReadString(TXT("Prefs"), TXT("ReportDlgFont"), m_strRptDlgFont);
+	m_rcEditDlg     = m_IniFile.ReadRect(TXT("Prefs"), TXT("EditDlg"),   m_rcEditDlg);
 
 	// Load report settings.
-	m_eDefGrouping     = static_cast<Grouping>(m_IniFile.ReadInt("Prefs", "Grouping", m_eDefGrouping));
-	m_eDefPeriod       = static_cast<Period>(m_IniFile.ReadInt("Prefs", "Period", m_eDefPeriod));
-	m_bDefShowSessions = m_IniFile.ReadBool("Prefs", "ReportSessions", m_bDefShowSessions);
-	m_bDefShowIfEmpty  = m_IniFile.ReadBool("Prefs", "ReportIfEmpty", m_bDefShowIfEmpty);
-	m_bDefShowTotal    = m_IniFile.ReadBool("Prefs", "ReportTotal", m_bDefShowTotal);
-	m_strReportFile    = m_IniFile.ReadString("Prefs", "ReportFile", m_strReportFile);
+	m_eDefGrouping     = static_cast<Grouping>(m_IniFile.ReadInt(TXT("Prefs"), TXT("Grouping"), m_eDefGrouping));
+	m_eDefPeriod       = static_cast<Period>(m_IniFile.ReadInt(TXT("Prefs"), TXT("Period"), m_eDefPeriod));
+	m_bDefShowSessions = m_IniFile.ReadBool(TXT("Prefs"), TXT("ReportSessions"), m_bDefShowSessions);
+	m_bDefShowIfEmpty  = m_IniFile.ReadBool(TXT("Prefs"), TXT("ReportIfEmpty"), m_bDefShowIfEmpty);
+	m_bDefShowTotal    = m_IniFile.ReadBool(TXT("Prefs"), TXT("ReportTotal"), m_bDefShowTotal);
+	m_strReportFile    = m_IniFile.ReadString(TXT("Prefs"), TXT("ReportFile"), m_strReportFile);
 
 	// Load export/import settings.
-	m_strExportFile = m_IniFile.ReadString("Prefs", "ExportFile", m_strExportFile);
-	m_strImportFile = m_IniFile.ReadString("Prefs", "ImportFile", m_strImportFile);
+	m_strExportFile = m_IniFile.ReadString(TXT("Prefs"), TXT("ExportFile"), m_strExportFile);
+	m_strImportFile = m_IniFile.ReadString(TXT("Prefs"), TXT("ImportFile"), m_strImportFile);
 }
 
 /******************************************************************************
@@ -1233,32 +1233,32 @@ void CTaskTracker::LoadDefaults()
 void CTaskTracker::SaveDefaults()
 {
 	// Delete old settings, if old format file.
-	if (m_IniFile.ReadString("Version", "Version", INI_FILE_VER_35) == INI_FILE_VER_35)
-		m_IniFile.DeleteSection("Prefs");
+	if (m_IniFile.ReadString(TXT("Version"), TXT("Version"), INI_FILE_VER_35) == INI_FILE_VER_35)
+		m_IniFile.DeleteSection(TXT("Prefs"));
 
 	// Write the file version.
-	m_IniFile.WriteString("Version", "Version", INI_FILE_VER_40);
+	m_IniFile.WriteString(TXT("Version"), TXT("Version"), INI_FILE_VER_40);
 
 	// Save UI settings.
-	m_IniFile.WriteInt("Prefs", "LenFormat", m_eLenFormat);
-	m_IniFile.WriteInt("Prefs", "WeekOrder", m_eWeekOrder);
-	m_IniFile.WriteBool("Prefs", "MinToTray", m_bMinToTray);
-	m_IniFile.WriteBool("Prefs", "CheckOverlap", m_bCheckOverlap);
-	m_IniFile.WriteRect("Prefs", "ReportDlg", m_rcReportDlg);
-	m_IniFile.WriteString("Prefs", "ReportDlgFont", m_strRptDlgFont);
-	m_IniFile.WriteRect("Prefs", "EditDlg", m_rcEditDlg);
+	m_IniFile.WriteInt(TXT("Prefs"), TXT("LenFormat"), m_eLenFormat);
+	m_IniFile.WriteInt(TXT("Prefs"), TXT("WeekOrder"), m_eWeekOrder);
+	m_IniFile.WriteBool(TXT("Prefs"), TXT("MinToTray"), m_bMinToTray);
+	m_IniFile.WriteBool(TXT("Prefs"), TXT("CheckOverlap"), m_bCheckOverlap);
+	m_IniFile.WriteRect(TXT("Prefs"), TXT("ReportDlg"), m_rcReportDlg);
+	m_IniFile.WriteString(TXT("Prefs"), TXT("ReportDlgFont"), m_strRptDlgFont);
+	m_IniFile.WriteRect(TXT("Prefs"), TXT("EditDlg"), m_rcEditDlg);
 
 	// Save report settings.
-	m_IniFile.WriteInt("Prefs", "Grouping", m_eDefGrouping);
-	m_IniFile.WriteInt("Prefs", "Period", m_eDefPeriod);
-	m_IniFile.WriteBool("Prefs", "ReportSessions", m_bDefShowSessions);
-	m_IniFile.WriteBool("Prefs", "ReportIfEmpty", m_bDefShowIfEmpty);
-	m_IniFile.WriteBool("Prefs", "ReportTotal", m_bDefShowTotal);
-	m_IniFile.WriteString("Prefs", "ReportFile", m_strReportFile);
+	m_IniFile.WriteInt(TXT("Prefs"), TXT("Grouping"), m_eDefGrouping);
+	m_IniFile.WriteInt(TXT("Prefs"), TXT("Period"), m_eDefPeriod);
+	m_IniFile.WriteBool(TXT("Prefs"), TXT("ReportSessions"), m_bDefShowSessions);
+	m_IniFile.WriteBool(TXT("Prefs"), TXT("ReportIfEmpty"), m_bDefShowIfEmpty);
+	m_IniFile.WriteBool(TXT("Prefs"), TXT("ReportTotal"), m_bDefShowTotal);
+	m_IniFile.WriteString(TXT("Prefs"), TXT("ReportFile"), m_strReportFile);
 
 	// Save export/import settings.
-	m_IniFile.WriteString("Prefs", "ExportFile", m_strExportFile);
-	m_IniFile.WriteString("Prefs", "ImportFile", m_strImportFile);
+	m_IniFile.WriteString(TXT("Prefs"), TXT("ExportFile"), m_strExportFile);
+	m_IniFile.WriteString(TXT("Prefs"), TXT("ImportFile"), m_strImportFile);
 }
 
 /******************************************************************************
@@ -1426,11 +1426,11 @@ CString CTaskTracker::MinsToStr(ulong lMins)
 	switch (m_eLenFormat)
 	{
 		case HoursMins:
-			str.Format("%d h %02d m", (lMins / 60), (lMins % 60));
+			str.Format(TXT("%d h %02d m"), (lMins / 60), (lMins % 60));
 			break;
 
 		case HoursOnly:
-			str.Format("%.2f h", (double)lMins / 60.0);
+			str.Format(TXT("%.2f h"), (double)lMins / 60.0);
 			break;
 
 		default:
@@ -1461,8 +1461,8 @@ void CTaskTracker::DeleteAllData()
 	m_oLocnList.RemoveAll();
 
 	// Reset last used items.
-	m_strLastTask = "";
-	m_strLastLocn = "";
+	m_strLastTask = TXT("");
+	m_strLastLocn = TXT("");
 
 	// Update state.
 	m_bModified = true;
@@ -1480,7 +1480,7 @@ void CTaskTracker::DeleteAllData()
 *******************************************************************************
 */
 
-static const char* DayMonthYearFormat()
+static const tchar* DayMonthYearFormat()
 {
 	static CString s_strFormat;
 
@@ -1493,7 +1493,7 @@ static const char* DayMonthYearFormat()
 		ASSERT((eOrder >= 0) && (eOrder <=2));
 
 		// CDate::DateOrder formats:           MONTH_DAY_YEAR    DAY_MONTH_YEAR    YEAR_MONTH_DAY
-		static const char* s_pszFormats[3] = { "MM'%s'dd'%s'yyyy", "dd'%s'MM'%s'yyyy", "yyyy'%s'MM'%s'dd" };
+		static const tchar* s_pszFormats[3] = { TXT("MM'%s'dd'%s'yyyy"), TXT("dd'%s'MM'%s'yyyy"), TXT("yyyy'%s'MM'%s'dd") };
 
 		s_strFormat.Format(s_pszFormats[eOrder], strSep, strSep);
 	}
@@ -1513,13 +1513,13 @@ static const char* DayMonthYearFormat()
 *******************************************************************************
 */
 
-const char* CTaskTracker::DatePickerFormat()
+const tchar* CTaskTracker::DatePickerFormat()
 {
 	static CString s_strFormat;
 
 	// Format on first request.
 	if (s_strFormat.Empty())
-		s_strFormat.Format("ddd' '%s", DayMonthYearFormat());
+		s_strFormat.Format(TXT("ddd' '%s"), DayMonthYearFormat());
 
 	return s_strFormat;
 }
@@ -1536,7 +1536,7 @@ const char* CTaskTracker::DatePickerFormat()
 *******************************************************************************
 */
 
-const char* CTaskTracker::TimePickerFormat()
+const tchar* CTaskTracker::TimePickerFormat()
 {
 	static CString s_strFormat;
 
@@ -1545,7 +1545,7 @@ const char* CTaskTracker::TimePickerFormat()
 	{
 		CString strSep = CTime::FieldSeparator();
 
-		s_strFormat.Format("HH'%s'mm", strSep);
+		s_strFormat.Format(TXT("HH'%s'mm"), strSep);
 	}
 
 	return s_strFormat;
@@ -1563,13 +1563,13 @@ const char* CTaskTracker::TimePickerFormat()
 *******************************************************************************
 */
 
-const char* CTaskTracker::DateTimePickerFormat()
+const tchar* CTaskTracker::DateTimePickerFormat()
 {
 	static CString s_strFormat;
 
 	// Format on first request.
 	if (s_strFormat.Empty())
-		s_strFormat.Format("ddd' '%s' '%s", DayMonthYearFormat(), TimePickerFormat());
+		s_strFormat.Format(TXT("ddd' '%s' '%s"), DayMonthYearFormat(), TimePickerFormat());
 
 	return s_strFormat;
 }

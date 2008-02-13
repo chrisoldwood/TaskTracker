@@ -88,10 +88,10 @@ bool CPrintReport::Init()
 
 	// Get font metrics.
 	m_rPrinterDC.Select(m_HeadingFont);
-	m_HeadingSize = m_rPrinterDC.TextExtents("Ly");
+	m_HeadingSize = m_rPrinterDC.TextExtents(TXT("Ly"));
 	
 	m_rPrinterDC.Select(m_NormalFont);
-	m_NormalSize = m_rPrinterDC.TextExtents("Ly");
+	m_NormalSize = m_rPrinterDC.TextExtents(TXT("Ly"));
 	
 	// Get line height.
 	if (m_HeadingSize.cy > m_NormalSize.cy)
@@ -100,16 +100,16 @@ bool CPrintReport::Init()
 		m_iLineHeight = m_NormalSize.cy;
 	
 	// Start the document.
-	if (!m_rPrinterDC.Start("TaskTracker Report"))
+	if (!m_rPrinterDC.Start(TXT("TaskTracker Report")))
 	{
-		App.m_AppWnd.AlertMsg("Failed to start the document");
+		App.m_AppWnd.AlertMsg(TXT("Failed to start the document"));
 		return false;
 	}
 	
 	// Start the first page.
 	if (!m_rPrinterDC.StartPage())
 	{
-		App.m_AppWnd.AlertMsg("Failed to start a new page");
+		App.m_AppWnd.AlertMsg(TXT("Failed to start a new page"));
 		return false;
 	}
 	
@@ -161,14 +161,14 @@ bool CPrintReport::SendLineBreak()
 		// Finish the current page.
 		if (!m_rPrinterDC.EndPage())
 		{
-			App.m_AppWnd.AlertMsg("Failed to send the last page");
+			App.m_AppWnd.AlertMsg(TXT("Failed to send the last page"));
 			return false;
 		}
 			
 		// Start a new page.
 		if (!m_rPrinterDC.StartPage())
 		{
-			App.m_AppWnd.AlertMsg("Failed to start a new page");
+			App.m_AppWnd.AlertMsg(TXT("Failed to start a new page"));
 			return false;
 		}
 		
@@ -191,7 +191,7 @@ bool CPrintReport::SendLineBreak()
 *******************************************************************************
 */
 
-bool CPrintReport::SendHeading(const char* pszText)
+bool CPrintReport::SendHeading(const tchar* pszText)
 {
 	// Select the font
 	m_rPrinterDC.Select(m_HeadingFont);
@@ -214,7 +214,7 @@ bool CPrintReport::SendHeading(const char* pszText)
 *******************************************************************************
 */
 
-bool CPrintReport::SendText(const char* pszText)
+bool CPrintReport::SendText(const tchar* pszText)
 {
 	// Select the font.
 	m_rPrinterDC.Select(m_NormalFont);

@@ -84,7 +84,7 @@ void CPruneTasksDlg::OnInitDialog()
 	// Nothing to delete?
 	if (m_lbTasks.Count() == 0)
 	{
-		NotifyMsg("There are no tasks that can be deleted.");
+		NotifyMsg(TXT("There are no tasks that can be deleted."));
 		EndDialog();
 	}
 }

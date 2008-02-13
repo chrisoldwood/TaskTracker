@@ -66,7 +66,7 @@ void CTaskCombo::OnCreate(const CRect&)
 		Add(*oIter);
 	
 	// Select last task, if still valid.
-	if (App.m_strLastTask != "")
+	if (App.m_strLastTask != TXT(""))
 	{
 		int iItem = FindExact(App.m_strLastTask);
 

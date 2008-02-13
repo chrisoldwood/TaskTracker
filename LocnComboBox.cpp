@@ -66,7 +66,7 @@ void CLocnCombo::OnCreate(const CRect&)
 		Add(*oIter);
 	
 	// Select last location, if still valid.
-	if (App.m_strLastLocn != "")
+	if (App.m_strLastLocn != TXT(""))
 	{
 		int iItem = FindExact(App.m_strLastLocn);
 

@@ -73,12 +73,12 @@ void CClpWndReportDlg::OnInitDialog()
 	}
 	
 	// Fill period list.
-	m_cbPeriod.Add("All");
-	m_cbPeriod.Add("This Week");
-	m_cbPeriod.Add("This Month");
-	m_cbPeriod.Add("Last Week");
-	m_cbPeriod.Add("Last Month");
-	m_cbPeriod.Add("Custom...");
+	m_cbPeriod.Add(TXT("All"));
+	m_cbPeriod.Add(TXT("This Week"));
+	m_cbPeriod.Add(TXT("This Month"));
+	m_cbPeriod.Add(TXT("Last Week"));
+	m_cbPeriod.Add(TXT("Last Month"));
+	m_cbPeriod.Add(TXT("Custom..."));
 	
 	// Select default.
 	m_cbPeriod.CurSel(App.m_eDefPeriod);
@@ -123,7 +123,7 @@ bool CClpWndReportDlg::OnOk()
 		// Check from date is before to date.
 		if (m_FromDate > m_ToDate)
 		{
-			AlertMsg("'From' date must be before 'To' date.");
+			AlertMsg(TXT("'From' date must be before 'To' date."));
 			return false;
 		}
 	}

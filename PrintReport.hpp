@@ -42,8 +42,8 @@ public:
 	// Methods.
 	//
 	virtual bool SendLineBreak();
-	virtual bool SendHeading(const char* pszText);
-	virtual bool SendText(const char* pszText);
+	virtual bool SendHeading(const tchar* pszText);
+	virtual bool SendText(const tchar* pszText);
 
 protected:
 	//

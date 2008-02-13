@@ -43,7 +43,7 @@ CSession::CSession()
 */
 
 CSession::CSession(const CDateTime& dtStart, const CDateTime& dtFinish,
-					const char* pszTask, const char* pszLocn)
+					const tchar* pszTask, const tchar* pszLocn)
 	: m_dtStart(dtStart)
 	, m_dtFinish(dtFinish)
 {

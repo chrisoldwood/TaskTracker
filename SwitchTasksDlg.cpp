@@ -51,9 +51,9 @@ void CSwitchTasksDlg::OnInitDialog()
 
 	// Initialise tasks.
 	m_strPrevTask = App.m_pCurrSession->Task();
-	m_strNextTask = "";
+	m_strNextTask = TXT("");
 
-	if (m_strPrevTask != "")
+	if (m_strPrevTask != TXT(""))
 		m_cbPrevTask.Select(m_strPrevTask);
 }
 

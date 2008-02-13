@@ -17,10 +17,10 @@
 ** Column definitions.
 */
 
-const char*	CSessionListView::apszLabels[NUM_COLUMNS] =
-{ "Day", "Date", "In", "Out", "Length", "Task", "Location" };
+const tchar*	CSessionListView::apszLabels[NUM_COLUMNS] =
+{ TXT("Day"), TXT("Date"), TXT("In"), TXT("Out"), TXT("Length"), TXT("Task"), TXT("Location") };
 
-const int	CSessionListView::aiWidths[NUM_COLUMNS] = 
+const uint CSessionListView::aiWidths[NUM_COLUMNS] = 
 {    40,     75,   50,    50,       65,    100,         80 };
 
 /******************************************************************************
@@ -102,9 +102,9 @@ void CSessionListView::OnCreate(const CRect&)
 *******************************************************************************
 */
 
-void CSessionListView::AddSession(int nItem, const CSessionPtr& pSession)
+void CSessionListView::AddSession(size_t nItem, const CSessionPtr& pSession)
 {
-	int i = InsertItem(nItem, "");
+	size_t i = InsertItem(nItem, TXT(""));
 
 	RefreshSession(i, pSession.Get());
 
@@ -123,7 +123,7 @@ void CSessionListView::AddSession(int nItem, const CSessionPtr& pSession)
 *******************************************************************************
 */
 
-void CSessionListView::RemoveSession(int nItem)
+void CSessionListView::RemoveSession(size_t nItem)
 {
 	DeleteItem(nItem);
 
@@ -165,7 +165,7 @@ void CSessionListView::RefreshSessions()
 *******************************************************************************
 */
 
-void CSessionListView::RefreshSession(int nItem, const CSession* pSession)
+void CSessionListView::RefreshSession(size_t nItem, const CSession* pSession)
 {
 	ASSERT(pSession != nullptr);
 

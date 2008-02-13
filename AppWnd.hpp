@@ -81,7 +81,7 @@ protected:
 	static const uint WM_USER_TRAY_NOTIFY = WM_USER;
 
 	// Window class name.
-	static const char* CLASS_NAME;
+	static const tchar* CLASS_NAME;
 
 	//
 	// Window creation template methods.

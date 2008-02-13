@@ -37,8 +37,8 @@ public:
 	//
 	// Methods.
 	//
-	void Add(const char* pszLocn);
-	void Remove(const char* pszLocn);
+	void Add(const tchar* pszLocn);
+	void Remove(const tchar* pszLocn);
 	void RemoveAll();
 
 private:

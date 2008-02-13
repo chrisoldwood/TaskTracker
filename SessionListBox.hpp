@@ -39,8 +39,8 @@ public:
 	//
 	// Methods.
 	//
-	void AddSession(int nItem, const CSessionPtr& pSession);
-	void RemoveSession(int nItem);
+	void AddSession(size_t nItem, const CSessionPtr& pSession);
+	void RemoveSession(size_t nItem);
 	void RefreshSessions();
 
 	CSessionPtr SelSession();
@@ -61,8 +61,8 @@ protected:
 	};
 
 	// Column data.
-	static const char*	apszLabels[];
-	static const int	aiWidths[];
+	static const tchar*	apszLabels[];
+	static const uint	aiWidths[];
 
 	//
 	// Message processors.
@@ -72,7 +72,7 @@ protected:
 	//
 	// Internal methods.
 	//
-	void RefreshSession(int nItem, const CSession* pSession);
+	void RefreshSession(size_t nItem, const CSession* pSession);
 };
 
 /******************************************************************************

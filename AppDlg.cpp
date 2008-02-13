@@ -197,10 +197,10 @@ void CAppDlg::Update()
 	else
 	{
 		// Blank out fields.
-		m_txtSessionDate.Text("");
-		m_txtSessionTime.Text("");
-		m_txtSessionLen.Text("");
-		m_txtSessionTask.Text("");
+		m_txtSessionDate.Text(TXT(""));
+		m_txtSessionTime.Text(TXT(""));
+		m_txtSessionLen.Text(TXT(""));
+		m_txtSessionTask.Text(TXT(""));
 	}
 
 	// Update totals.

@@ -22,7 +22,7 @@
 */
 
 // Window class name.
-const char* CAppWnd::CLASS_NAME = "TaskTrackerAppWnd";
+const tchar* CAppWnd::CLASS_NAME = TXT("TaskTrackerAppWnd");
 
 /******************************************************************************
 ** Method:		Default constructor.
@@ -289,7 +289,7 @@ bool CAppWnd::ProcessMsg(MSG& rMsg)
 	if ( (rMsg.message == WM_MOUSEMOVE)
 	  && ((rMsg.hwnd == m_AppDlg.Handle() || (::GetParent(rMsg.hwnd) == m_AppDlg.Handle()))) )
 	{
-		m_StatusBar.Hint("");
+		m_StatusBar.Hint(TXT(""));
 	}
 
 	return CDlgFrame::ProcessMsg(rMsg);
@@ -402,13 +402,13 @@ void CAppWnd::UpdateTrayIconTip()
 			CString strTask = App.m_pCurrSession->Task();
 
 			if (strTask.Length() > 15)
-				strTask = strTask.Left(12) + "...";
+				strTask = strTask.Left(12) + TXT("...");
 			
 			// Build the tooltip.
-			strTip += "\n";
-			strTip += "Time: "  + App.m_pCurrSession->Start().Time().ToString(CDate::FMT_WIN_SHORT) + "\n";
-			strTip += "Task: "  + strTask + "\n";
-			strTip += "Len:   " + App.MinsToStr(oSession.Length());
+			strTip += TXT("\n");
+			strTip += TXT("Time: ")  + App.m_pCurrSession->Start().Time().ToString(CDate::FMT_WIN_SHORT) + TXT("\n");
+			strTip += TXT("Task: ")  + strTask + TXT("\n");
+			strTip += TXT("Len:   ") + App.MinsToStr(oSession.Length());
 		}
 
 		m_oTrayIcon.ModifyToolTip(strTip);

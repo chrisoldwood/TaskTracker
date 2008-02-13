@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <WCL/FileException.hpp>
 #include "TaskTracker.hpp"
+#include <Core/AnsiWide.hpp>
 
 /******************************************************************************
 ** Method:		Constructor.
@@ -69,7 +70,7 @@ bool CFileReport::Init()
 	catch(CFileException& rException)
 	{
 		// Notify user.
-		App.m_AppWnd.AlertMsg(rException.ErrorText());
+		App.m_AppWnd.AlertMsg(TXT("%s"), rException.ErrorText());
 		return false;
 	}
 
@@ -109,7 +110,7 @@ bool CFileReport::Term()
 bool CFileReport::SendLineBreak()
 {
 	// Write CR/LF.
-	m_File.Write("\r\n", 2);
+	m_File.Write(TXT("\r\n"), 2);
 	
 	return true;
 }
@@ -126,19 +127,19 @@ bool CFileReport::SendLineBreak()
 *******************************************************************************
 */
 
-bool CFileReport::SendHeading(const char* pszText)
+bool CFileReport::SendHeading(const tchar* pszText)
 {
-	int iLen = strlen(pszText);
+	size_t nChars = tstrlen(pszText);
 	
 	// Write string.
-	m_File.Write(pszText, iLen);
+	m_File.Write(T2A(pszText), nChars);
 	
 	// Add CR/LF to string.
 	if (!SendLineBreak())
 		return false;
 	
 	// Underline string.
-	for(int i = 0; i < iLen; i++)
+	for (size_t i = 0; i < nChars; i++)
 		m_File.Write("=", 1);
 	
 	// Add CR/LF to underline.
@@ -160,10 +161,10 @@ bool CFileReport::SendHeading(const char* pszText)
 *******************************************************************************
 */
 
-bool CFileReport::SendText(const char* pszText)
+bool CFileReport::SendText(const tchar* pszText)
 {
 	// Write string.
-	m_File.Write(pszText, strlen(pszText));
+	m_File.Write(T2A(pszText), tstrlen(pszText));
 	
 	// Add CR/LF to string.
 	if (!SendLineBreak())
