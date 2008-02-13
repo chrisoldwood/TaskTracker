@@ -5,8 +5,10 @@ This Release
 
 - Change to use %APPDATA%\TaskTracker folder, but allow an override on the CLI.
 
+- Don't write default .ini file entries when starting another instance.
 
-Next Release
+
+Later Release
 =============
 
 - Save in %AppData% folder.
@@ -24,3 +26,19 @@ Next Release
 - Change report dialogs to use a common one.
 
 - Fix up serializtion of time_t when moving to VC++ 8.0.
+
+- Make CViewReportDlg::OnInitDialog() Unicode safe.
+
+- Add default order for Session list view.
+
+- Save column widths for Session list view.
+
+- Make boxes bigger for task and location.
+
+- Fix tooltip length for XP.
+
+- Show more of task and location in main dialog.
+
+- Show session length on clock out.
+
+- Add option to split an existing task.
