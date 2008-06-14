@@ -1,0 +1,60 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TaskTracker", "TaskTracker\TaskTracker.vcproj", "{70182C65-5012-4764-BE51-9F53DEB29004}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Core", "Lib\Core\Core.vcproj", "{790BC113-52FB-4565-8968-79B8B011C520}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Wcl", "Lib\WCL\Wcl.vcproj", "{9B0335B6-93BE-4604-8497-27431874D758}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(DPCodeReviewSolutionGUID) = preSolution
+		DPCodeReviewSolutionGUID = {00000000-0000-0000-0000-000000000000}
+	EndGlobalSection
+	GlobalSection(SourceCodeControl) = preSolution
+		SccNumberOfProjects = 4
+		SccLocalPath0 = .
+		CanCheckoutShared = true
+		SolutionUniqueID = {B4DAC0C7-D4D5-4BA0-ACDC-35E3A0CA2242}
+		SccProjectUniqueName1 = TaskTracker\\TaskTracker.vcproj
+		SccProjectName1 = \u0022$/Win32/TaskTracker\u0022,\u0020EPAAAAAA
+		SccLocalPath1 = TaskTracker
+		CanCheckoutShared = true
+		SccProjectUniqueName2 = Lib\\Core\\Core.vcproj
+		SccProjectName2 = \u0022$/Win32/Lib/Core\u0022,\u0020QWDAAAAA
+		SccLocalPath2 = Lib\\Core
+		CanCheckoutShared = true
+		SccProjectUniqueName3 = Lib\\WCL\\Wcl.vcproj
+		SccProjectName3 = \u0022$/Win32/Lib/WCL\u0022,\u0020HPAAAAAA
+		SccLocalPath3 = Lib\\WCL
+		CanCheckoutShared = true
+	EndGlobalSection
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectDependencies) = postSolution
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{70182C65-5012-4764-BE51-9F53DEB29004}.Debug.ActiveCfg = Debug|Win32
+		{70182C65-5012-4764-BE51-9F53DEB29004}.Debug.Build.0 = Debug|Win32
+		{70182C65-5012-4764-BE51-9F53DEB29004}.Release.ActiveCfg = Release|Win32
+		{70182C65-5012-4764-BE51-9F53DEB29004}.Release.Build.0 = Release|Win32
+		{790BC113-52FB-4565-8968-79B8B011C520}.Debug.ActiveCfg = Debug|Win32
+		{790BC113-52FB-4565-8968-79B8B011C520}.Debug.Build.0 = Debug|Win32
+		{790BC113-52FB-4565-8968-79B8B011C520}.Release.ActiveCfg = Release|Win32
+		{790BC113-52FB-4565-8968-79B8B011C520}.Release.Build.0 = Release|Win32
+		{9B0335B6-93BE-4604-8497-27431874D758}.Debug.ActiveCfg = Debug|Win32
+		{9B0335B6-93BE-4604-8497-27431874D758}.Debug.Build.0 = Debug|Win32
+		{9B0335B6-93BE-4604-8497-27431874D758}.Release.ActiveCfg = Release|Win32
+		{9B0335B6-93BE-4604-8497-27431874D758}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
