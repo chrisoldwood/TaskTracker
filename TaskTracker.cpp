@@ -477,7 +477,7 @@ bool CTaskTracker::LoadData()
 	catch(CFileException& rException)
 	{
 		// Notify user.
-		m_AppWnd.AlertMsg(TXT("%s"), rException.ErrorText());
+		m_AppWnd.AlertMsg(TXT("%s"), rException.What());
 		return false;
 	}
 
@@ -565,7 +565,7 @@ bool CTaskTracker::SaveData()
 	catch(CFileException& rException)
 	{
 		// Notify user.
-		m_AppWnd.AlertMsg(TXT("%s"), rException.ErrorText());
+		m_AppWnd.AlertMsg(TXT("%s"), rException.What());
 		return false;
 	}
 

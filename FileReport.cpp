@@ -70,7 +70,7 @@ bool CFileReport::Init()
 	catch(CFileException& rException)
 	{
 		// Notify user.
-		App.m_AppWnd.AlertMsg(TXT("%s"), rException.ErrorText());
+		App.m_AppWnd.AlertMsg(TXT("%s"), rException.What());
 		return false;
 	}
 
