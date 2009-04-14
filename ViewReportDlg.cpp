@@ -65,8 +65,8 @@ void CViewReportDlg::OnInitDialog()
 
 	// Find the length of the text.
 	// NB: This is not right for UNICODE.
-	ulong lLen = m_rTxtStream.Seek(0, FILE_END);
-	m_rTxtStream.Seek(0, FILE_BEGIN);
+	size_t lLen = static_cast<size_t>(m_rTxtStream.Seek(0, WCL::IStreamBase::END));
+	m_rTxtStream.Seek(0, WCL::IStreamBase::BEGIN);
 
 	// Allocate a buffer big enough.
 	strReport.BufferSize(lLen);
