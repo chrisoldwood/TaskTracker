@@ -42,3 +42,15 @@ Later Release
 - Show session length on clock out.
 
 - Add option to split an existing task.
+
+- Allow Switch Tasks to be more flexible, date/time + show length.
+
+- Fix bug where doesn't save settings on WM_ENDSESSION.
+
+- Session length when clocked in before midnight, after midnight shows 0 h 0 m.
+
+- After midnight, totals for Today shows 0 h 0 m even when clocked in before midnight.
+
+- Display as X h Y m or X:Y
+
+- Show todays total hours on tooltip when not checked-in.
