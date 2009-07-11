@@ -183,7 +183,7 @@ void CAppDlg::Update()
 	// Update current session, if one.
 	if (App.m_bClockedIn)
 	{
-		ASSERT(App.m_pCurrSession.Get() != nullptr);
+		ASSERT(App.m_pCurrSession.get() != nullptr);
 
 		// Create a session from clock-in time to now.
 		CSession oSession(App.m_pCurrSession->Start(), m_dtCurrent);

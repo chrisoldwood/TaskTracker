@@ -47,7 +47,7 @@ CSwitchTasksDlg::CSwitchTasksDlg() : CDialog(IDD_SWITCH_TASKS)
 void CSwitchTasksDlg::OnInitDialog()
 {
 	ASSERT(App.m_bClockedIn);
-	ASSERT(App.m_pCurrSession.Get() != nullptr);
+	ASSERT(App.m_pCurrSession.get() != nullptr);
 
 	// Initialise tasks.
 	m_strPrevTask = App.m_pCurrSession->Task();

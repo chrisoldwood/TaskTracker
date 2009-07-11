@@ -178,7 +178,7 @@ void CEditSessionDlg::OnModify()
 	// Get selected session.
 	CSessionPtr pSession = m_lvSessions.SelSession();
 
-	ASSERT(pSession.Get() != nullptr);
+	ASSERT(pSession.get() != nullptr);
 	
 	// Initialise dialog.
 	Dlg.m_pSession      = pSession;
@@ -262,7 +262,7 @@ void CEditSessionDlg::OnDelete()
 	int         iIdx     = m_lvSessions.Selection();
 	CSessionPtr pSession = m_lvSessions.SelSession();
 
-	ASSERT(pSession.Get() != nullptr);
+	ASSERT(pSession.get() != nullptr);
 
 	// Remove from collection and view.
 	App.m_oSessionList.Remove(iIdx);

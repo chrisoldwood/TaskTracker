@@ -250,7 +250,7 @@ void CTaskTracker::ClockOut(const CDateTime& dtOut, const CString& strTask, cons
 	m_oSessionList.Add(m_pCurrSession);
 	
 	// Reset current session.
-	m_pCurrSession.Reset();
+	m_pCurrSession.reset();
 
 	// Add task to list if set.
 	if (strTask != TXT(""))
@@ -477,7 +477,7 @@ bool CTaskTracker::LoadData()
 	catch(CFileException& rException)
 	{
 		// Notify user.
-		m_AppWnd.AlertMsg(TXT("%s"), rException.What());
+		m_AppWnd.AlertMsg(TXT("%s"), rException.twhat());
 		return false;
 	}
 
@@ -565,7 +565,7 @@ bool CTaskTracker::SaveData()
 	catch(CFileException& rException)
 	{
 		// Notify user.
-		m_AppWnd.AlertMsg(TXT("%s"), rException.What());
+		m_AppWnd.AlertMsg(TXT("%s"), rException.twhat());
 		return false;
 	}
 
@@ -620,7 +620,7 @@ void CTaskTracker::WriteData(CFile& rFile)
 void CTaskTracker::ReportData(CReportOptions& oOptions, const CDate& oFromDate,
 								const CDate& oToDate) const
 {
-	ASSERT(oOptions.m_pDevice.Get() != nullptr);
+	ASSERT(oOptions.m_pDevice.get() != nullptr);
 	ASSERT(oFromDate <= oToDate);
 
 	ulong lSessions  = 0;

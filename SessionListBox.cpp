@@ -106,9 +106,9 @@ void CSessionListView::AddSession(size_t nItem, const CSessionPtr& pSession)
 {
 	size_t i = InsertItem(nItem, TXT(""));
 
-	RefreshSession(i, pSession.Get());
+	RefreshSession(i, pSession.get());
 
-	ItemPtr(i, pSession.Get());
+	ItemPtr(i, pSession.get());
 }
 
 /******************************************************************************

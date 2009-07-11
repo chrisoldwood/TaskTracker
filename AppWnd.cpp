@@ -393,7 +393,7 @@ void CAppWnd::UpdateTrayIconTip()
 		// If clocked in, append details.
 		if (App.m_bClockedIn)
 		{
-			ASSERT(App.m_pCurrSession.Get() != nullptr);
+			ASSERT(App.m_pCurrSession.get() != nullptr);
 
 			// Create a session from clock-in time to now.
 			CSession oSession(App.m_pCurrSession->Start(), CDateTime::Current());

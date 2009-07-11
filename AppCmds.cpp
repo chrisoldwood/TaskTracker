@@ -182,7 +182,7 @@ void CAppCmds::OnFileExport()
 	catch(CFileException& rException)
 	{
 		// Notify user.
-		App.m_AppWnd.AlertMsg(TXT("%s"), rException.What());
+		App.m_AppWnd.AlertMsg(TXT("%s"), rException.twhat());
 	}
 }
 
@@ -365,7 +365,7 @@ void CAppCmds::OnFileImport()
 	catch(CFileException& rException)
 	{
 		// Notify user.
-		App.m_AppWnd.AlertMsg(TXT("%s"), rException.What());
+		App.m_AppWnd.AlertMsg(TXT("%s"), rException.twhat());
 	}
 
 	// Update UI.

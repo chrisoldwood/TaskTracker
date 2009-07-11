@@ -89,7 +89,7 @@ inline CIsSessionInRange::CIsSessionInRange(const CDateTime& dtStart, const CDat
 
 inline bool CIsSessionInRange::operator()(const CSessionPtr& pSession)
 {
-	ASSERT(pSession.Get() != nullptr);
+	ASSERT(pSession.get() != nullptr);
 
 	return ( (pSession->Start() >= m_dtStart) && (pSession->Start() < m_dtEnd) );
 }

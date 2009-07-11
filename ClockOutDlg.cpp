@@ -55,7 +55,7 @@ CClockOutDlg::CClockOutDlg() : CDialog(IDD_CLOCK_OUT)
 void CClockOutDlg::OnInitDialog()
 {
 	ASSERT(App.m_bClockedIn);
-	ASSERT(App.m_pCurrSession.Get() != nullptr);
+	ASSERT(App.m_pCurrSession.get() != nullptr);
 
 	// Get the time now.
 	CTime tNow;

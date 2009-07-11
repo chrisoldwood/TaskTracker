@@ -77,7 +77,7 @@ bool CTextReport::Init()
 bool CTextReport::Term()
 {
 	// Write terminator.
-	m_rStream.Write(TXT("\0"), Core::NumBytes<tchar>(1));
+	m_rStream.Write(TXT("\0"), Core::numBytes<tchar>(1));
 
 	return true;
 }
@@ -97,7 +97,7 @@ bool CTextReport::Term()
 bool CTextReport::SendLineBreak()
 {
 	// Write CR/LF.
-	m_rStream.Write(TXT("\r\n"), Core::NumBytes<tchar>(2));
+	m_rStream.Write(TXT("\r\n"), Core::numBytes<tchar>(2));
 	
 	return true;
 }
@@ -119,14 +119,14 @@ bool CTextReport::SendHeading(const tchar* pszText)
 	size_t nChars = tstrlen(pszText);
 	
 	// Write string.
-	m_rStream.Write(pszText, Core::NumBytes<tchar>(nChars));
+	m_rStream.Write(pszText, Core::numBytes<tchar>(nChars));
 	
 	// Add CR/LF to string.
 	SendLineBreak();
 	
 	// Underline string.
 	for(size_t i = 0; i < nChars; i++)
-		m_rStream.Write(TXT("="), Core::NumBytes<tchar>(1));
+		m_rStream.Write(TXT("="), Core::numBytes<tchar>(1));
 	
 	// Add CR/LF to underline.
 	SendLineBreak();
@@ -151,7 +151,7 @@ bool CTextReport::SendText(const tchar* pszText)
 	size_t nChars = tstrlen(pszText);
 
 	// Write string.
-	m_rStream.Write(pszText, Core::NumBytes<tchar>(nChars));
+	m_rStream.Write(pszText, Core::numBytes<tchar>(nChars));
 	
 	// Add CR/LF to string.
 	SendLineBreak();

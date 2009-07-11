@@ -67,7 +67,7 @@ void CPruneLocnsDlg::OnInitDialog()
         }
 
         // Location in use by current session?
-        if ( (App.m_pCurrSession.Get()       != nullptr)
+        if ( (App.m_pCurrSession.get()       != nullptr)
 		  && (App.m_pCurrSession->Location() == (*oLocnIter)) )
 		{
         	bInUse = true;
