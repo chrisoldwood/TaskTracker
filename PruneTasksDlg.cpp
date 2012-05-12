@@ -103,10 +103,10 @@ void CPruneTasksDlg::OnInitDialog()
 
 bool CPruneTasksDlg::OnOk()
 {
-	int iNumTasks = m_lbTasks.Count();
+	size_t iNumTasks = m_lbTasks.Count();
 
 	// For all tasks.
-	for (int i = 0; i < iNumTasks; i++)
+	for (size_t i = 0; i < iNumTasks; i++)
 	{
 		// Add to list if selected.
 		if (m_lbTasks.IsSel(i))

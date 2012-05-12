@@ -55,8 +55,8 @@ void CModifySessionDlg::OnInitDialog()
 	m_dtpOutDateTime.SetDateTime(m_dtOutDateTime);
 	m_dtpOutDateTime.Format(App.DateTimePickerFormat());
 
-	int nTaskIdx = -1;
-	int nLocnIdx = -1;
+	size_t nTaskIdx = Core::npos;
+	size_t nLocnIdx = Core::npos;
 
 	// Initialise task.
 	if (m_strTask != TXT(""))

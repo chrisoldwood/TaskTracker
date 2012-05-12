@@ -57,7 +57,7 @@ CSessionList::~CSessionList()
 *******************************************************************************
 */
 
-uint CSessionList::Add(CSessionPtr& pNewSession)
+size_t CSessionList::Add(CSessionPtr& pNewSession)
 {
 	// Template shorthands.
 	typedef iterator CIter;
@@ -94,7 +94,7 @@ uint CSessionList::Add(CSessionPtr& pNewSession)
 *******************************************************************************
 */
 
-void CSessionList::Remove(int nIndex)
+void CSessionList::Remove(size_t nIndex)
 {
 	erase(begin()+nIndex);
 }

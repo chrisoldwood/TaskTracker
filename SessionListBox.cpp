@@ -146,9 +146,9 @@ void CSessionListView::RemoveSession(size_t nItem)
 
 void CSessionListView::RefreshSessions()
 {
-	int nCount = ItemCount();
+	size_t nCount = ItemCount();
 
-	for (int i = 0; i < nCount; ++i)
+	for (size_t i = 0; i < nCount; ++i)
 		RefreshSession(i, static_cast<const CSession*>(ItemPtr(i)));
 }
 
@@ -206,7 +206,7 @@ void CSessionListView::RefreshSession(size_t nItem, const CSession* pSession)
 CSessionPtr CSessionListView::SelSession()
 {
 	CSessionPtr pSession;
-	int         nIndex = Selection();
+	size_t      nIndex = Selection();
 
 	// Is a selected session?
 	if (nIndex != LB_ERR)

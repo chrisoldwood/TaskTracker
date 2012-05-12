@@ -171,7 +171,7 @@ bool CClpWndReportDlg::OnOk()
 void CClpWndReportDlg::OnPeriodChange()
 {
 	// Get current selection.
-	int i = m_cbPeriod.CurSel();
+	size_t i = m_cbPeriod.CurSel();
 	ASSERT(i != CB_ERR);
 
 	// Convert selelction to date range.

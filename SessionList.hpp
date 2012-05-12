@@ -40,8 +40,8 @@ public:
 	//
 	// Methods.
 	//
-	uint Add(CSessionPtr& pSession);
-	void Remove(int nIndex);
+	size_t Add(CSessionPtr& pSession);
+	void Remove(size_t nIndex);
 
 private:
 	//

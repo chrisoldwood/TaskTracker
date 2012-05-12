@@ -146,20 +146,20 @@ void CAppCmds::OnFileExport()
 			CSessionPtr pSession = *oIter;
 			CString     strTask  = pSession->Task();
 			CString     strLocn  = pSession->Location();
-			int         nPos;
+			size_t      nPos;
 
 			// Strip special CSV characters from task.
-			while ((nPos = strTask.Find('\"')) != -1)
+			while ((nPos = strTask.Find('\"')) != Core::npos)
 				strTask.Delete(nPos);
 
-			while ((nPos = strTask.Find(',')) != -1)
+			while ((nPos = strTask.Find(',')) != Core::npos)
 				strTask.Delete(nPos);
 
 			// Strip special CSV characters from location.
-			while ((nPos = strLocn.Find('\"')) != -1)
+			while ((nPos = strLocn.Find('\"')) != Core::npos)
 				strLocn.Delete(nPos);
 
-			while ((nPos = strLocn.Find(',')) != -1)
+			while ((nPos = strLocn.Find(',')) != Core::npos)
 				strLocn.Delete(nPos);
 
 			// Format as Start,End,Task,Location
@@ -227,7 +227,7 @@ void CAppCmds::OnFileImport()
 			CString strLine = oFile.ReadLine(ANSI_TEXT);
 
 			// Count the number of fields.
-			int nFields = strLine.Count(',') + 1;
+			int nFields = static_cast<int>(strLine.Count(',')) + 1;
 
 			// Expecting "Start,End,Task,Location".
 			if (nFields != 4)
@@ -241,11 +241,11 @@ void CAppCmds::OnFileImport()
 			}
 
 			// Find field separators.
-			int nStartDateTime = -1;
-			int	nEndDateTime   = strLine.Find(',', nStartDateTime + 1);
-			int nTask          = strLine.Find(',', nEndDateTime   + 1);
-			int nLocation      = strLine.Find(',', nTask          + 1);
-			int nEOS           = strLine.Length();
+			size_t nStartDateTime = Core::npos;
+			size_t nEndDateTime   = strLine.Find(',', nStartDateTime + 1);
+			size_t nTask          = strLine.Find(',', nEndDateTime   + 1);
+			size_t nLocation      = strLine.Find(',', nTask          + 1);
+			size_t nEOS           = strLine.Length();
 
 			// Extract basic fields.
 			CString strStartDateTime = strLine.Mid(nStartDateTime + 1, nEndDateTime - nStartDateTime - 1);
@@ -253,19 +253,19 @@ void CAppCmds::OnFileImport()
 			CString strTask          = strLine.Mid(nTask          + 1, nLocation    - nTask          - 1);
 			CString strLocation      = strLine.Mid(nLocation      + 1, nEOS         - nLocation      - 1);
 
-			int nPos = -1;
+			size_t nPos = Core::npos;
 
 			// Trim quotes, if present.
-			while ((nPos = strStartDateTime.Find('\"')) != -1)
+			while ((nPos = strStartDateTime.Find('\"')) != Core::npos)
 				strStartDateTime.Delete(nPos);
 
-			while ((nPos = strEndDateTime.Find('\"')) != -1)
+			while ((nPos = strEndDateTime.Find('\"')) != Core::npos)
 				strEndDateTime.Delete(nPos);
 
-			while ((nPos = strTask.Find('\"')) != -1)
+			while ((nPos = strTask.Find('\"')) != Core::npos)
 				strTask.Delete(nPos);
 
-			while ((nPos = strLocation.Find('\"')) != -1)
+			while ((nPos = strLocation.Find('\"')) != Core::npos)
 				strLocation.Delete(nPos);
 
 			CDateTime dtStart, dtEnd;

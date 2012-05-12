@@ -104,10 +104,10 @@ void CPruneLocnsDlg::OnInitDialog()
 
 bool CPruneLocnsDlg::OnOk()
 {
-	int iNumLocns = m_lbLocns.Count();
+	size_t iNumLocns = m_lbLocns.Count();
 
 	// For all locations.
-	for (int i = 0; i < iNumLocns; i++)
+	for (size_t i = 0; i < iNumLocns; i++)
 	{
 		// Add to list if selected.
 		if (m_lbLocns.IsSel(i))

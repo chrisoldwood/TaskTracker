@@ -142,7 +142,7 @@ void CEditSessionDlg::OnAdd()
 		App.m_strLastLocn = Dlg.m_strLocn;
 
 		// Add to sessionlist and view.
-		uint nPos = App.m_oSessionList.Add(pNewSession);
+		size_t nPos = App.m_oSessionList.Add(pNewSession);
 
 		m_lvSessions.AddSession(nPos, pNewSession);
 		m_lvSessions.Select(nPos);
@@ -191,7 +191,7 @@ void CEditSessionDlg::OnModify()
 	if (Dlg.RunModal(*this) == IDOK)
 	{
 		// Get current selection.
-		int iIdx = m_lvSessions.Selection();
+		size_t iIdx = m_lvSessions.Selection();
 
 		// Remove session from list and view.
 		App.m_oSessionList.Remove(iIdx);
@@ -210,7 +210,7 @@ void CEditSessionDlg::OnModify()
 			App.m_oLocnList.Add(Dlg.m_strLocn);
 	
 		// Re-add to sessionlist and view.
-		uint nPos = App.m_oSessionList.Add(pSession);
+		size_t nPos = App.m_oSessionList.Add(pSession);
 
 		m_lvSessions.AddSession(nPos, pSession);
 		m_lvSessions.Select(nPos);
@@ -259,7 +259,7 @@ void CEditSessionDlg::OnDelete()
 	ASSERT(m_lvSessions.Selection() != LB_ERR);
 
 	// Get current selection.
-	int         iIdx     = m_lvSessions.Selection();
+	size_t      iIdx     = m_lvSessions.Selection();
 	CSessionPtr pSession = m_lvSessions.SelSession();
 
 	ASSERT(pSession.get() != nullptr);
@@ -271,7 +271,7 @@ void CEditSessionDlg::OnDelete()
 	ASSERT(App.m_oSessionList.size() == (size_t)m_lvSessions.ItemCount());
 
 	// Change listbox selection.
-	int iNumItems = App.m_oSessionList.size();
+	size_t iNumItems = App.m_oSessionList.size();
 	
     if (iNumItems > 0)
     {
