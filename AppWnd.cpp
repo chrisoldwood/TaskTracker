@@ -36,8 +36,9 @@ const tchar* CAppWnd::CLASS_NAME = TXT("TaskTrackerAppWnd");
 *******************************************************************************
 */
 
-CAppWnd::CAppWnd()
+CAppWnd::CAppWnd(WCL::IMsgThread& thread, WCL::ICmdController& controller)
 	: CDlgFrame(IDR_APPICON, m_AppDlg, true)
+	, m_ToolBar(thread, controller)
 	, m_StatusBar(false)
 {
 }

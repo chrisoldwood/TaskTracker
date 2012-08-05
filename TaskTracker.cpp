@@ -78,6 +78,8 @@ const tchar* CTaskTracker::HELPFILE = TXT("TaskTrak.mht");
 
 CTaskTracker::CTaskTracker()
 	: CApp(m_AppWnd, m_AppCmds)
+	, m_AppWnd(m_MainThread, m_AppCmds)
+	, m_AppCmds()
 	, m_bClockedIn(false)
 	, m_pCurrSession(nullptr)
 	, m_strLastTask(TXT(""))
@@ -139,9 +141,6 @@ bool CTaskTracker::OnOpen()
 	// Load settings.
 	LoadDefaults();
 	
-	// Load the toolbar bitmap.
-	m_rCmdControl.CmdBitmap().LoadRsc(IDR_APPTOOLBAR);
-
 	// Create the main window.
 	if (!m_AppWnd.Create())
 		return false;
@@ -156,7 +155,7 @@ bool CTaskTracker::OnOpen()
 	LoadData();
 
 	// Update UI.
-	m_AppCmds.UpdateUI();
+	m_AppCmds.InitialiseUI();
 	m_AppWnd.m_AppDlg.Update();
 
 	return true;
