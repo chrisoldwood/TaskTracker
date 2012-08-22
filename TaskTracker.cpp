@@ -79,7 +79,7 @@ const tchar* CTaskTracker::HELPFILE = TXT("TaskTrak.mht");
 CTaskTracker::CTaskTracker()
 	: CApp(m_AppWnd, m_AppCmds)
 	, m_AppWnd(m_MainThread, m_AppCmds)
-	, m_AppCmds()
+	, m_AppCmds(m_AppWnd)
 	, m_bClockedIn(false)
 	, m_pCurrSession(nullptr)
 	, m_strLastTask(TXT(""))
