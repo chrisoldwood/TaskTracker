@@ -1,452 +1,619 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.10"
+	Version="9.00"
 	Name="TaskTracker"
 	ProjectGUID="{70182C65-5012-4764-BE51-9F53DEB29004}"
-	Keyword="Win32Proj">
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
+	>
 	<Platforms>
 		<Platform
-			Name="Win32"/>
+			Name="Win32"
+		/>
 	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="Debug"
 			IntermediateDirectory="Debug"
 			ConfigurationType="1"
-			CharacterSet="1">
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/EHa"
 				Optimization="0"
 				AdditionalIncludeDirectories="../Lib"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
-				MinimalRebuild="TRUE"
-				ExceptionHandling="FALSE"
+				MinimalRebuild="true"
+				ExceptionHandling="0"
 				BasicRuntimeChecks="3"
-				SmallerTypeCheck="TRUE"
+				SmallerTypeCheck="true"
 				RuntimeLibrary="1"
-				TreatWChar_tAsBuiltInType="TRUE"
-				ForceConformanceInForLoopScope="TRUE"
-				RuntimeTypeInfo="TRUE"
-				UsePrecompiledHeader="3"
+				TreatWChar_tAsBuiltInType="true"
+				ForceConformanceInForLoopScope="true"
+				RuntimeTypeInfo="true"
+				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="Common.hpp"
 				WarningLevel="4"
-				WarnAsError="TRUE"
-				DebugInformationFormat="3"/>
+				WarnAsError="true"
+				DebugInformationFormat="3"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				GenerateDebugInformation="TRUE"
-				SubSystem="2"
-				TargetMachine="1"/>
-			<Tool
-				Name="VCMIDLTool"/>
-			<Tool
-				Name="VCPostBuildEventTool"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG"
-				AdditionalIncludeDirectories="../Lib"/>
+				AdditionalIncludeDirectories="../Lib"
+			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
-				Name="VCXMLDataGeneratorTool"/>
+				Name="VCLinkerTool"
+				GenerateDebugInformation="true"
+				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="1"
+			/>
 			<Tool
-				Name="VCWebDeploymentTool"/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
+				Name="VCManifestTool"
+			/>
 			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="Release"
 			IntermediateDirectory="Release"
 			ConfigurationType="1"
-			CharacterSet="1">
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/EHa"
 				AdditionalIncludeDirectories="../Lib"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
-				StringPooling="TRUE"
-				ExceptionHandling="FALSE"
+				StringPooling="true"
+				ExceptionHandling="0"
 				RuntimeLibrary="0"
-				TreatWChar_tAsBuiltInType="TRUE"
-				ForceConformanceInForLoopScope="TRUE"
-				RuntimeTypeInfo="TRUE"
-				UsePrecompiledHeader="3"
+				TreatWChar_tAsBuiltInType="true"
+				ForceConformanceInForLoopScope="true"
+				RuntimeTypeInfo="true"
+				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="Common.hpp"
 				WarningLevel="4"
-				WarnAsError="TRUE"
-				DebugInformationFormat="3"/>
+				WarnAsError="true"
+				DebugInformationFormat="3"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				GenerateDebugInformation="TRUE"
-				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				TargetMachine="1"/>
-			<Tool
-				Name="VCMIDLTool"/>
-			<Tool
-				Name="VCPostBuildEventTool"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG"
-				AdditionalIncludeDirectories="../Lib"/>
+				AdditionalIncludeDirectories="../Lib"
+			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
-				Name="VCXMLDataGeneratorTool"/>
+				Name="VCLinkerTool"
+				GenerateDebugInformation="true"
+				SubSystem="2"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="1"
+			/>
 			<Tool
-				Name="VCWebDeploymentTool"/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
+				Name="VCManifestTool"
+			/>
 			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 	</Configurations>
 	<References>
 		<ProjectReference
 			ReferencedProjectIdentifier="{790BC113-52FB-4565-8968-79B8B011C520}"
-			Name="Core"/>
+		/>
 		<ProjectReference
 			ReferencedProjectIdentifier="{9B0335B6-93BE-4604-8497-27431874D758}"
-			Name="Wcl"/>
+		/>
 	</References>
 	<Files>
 		<Filter
 			Name="Source Files"
-			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
+			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
+			>
 			<File
-				RelativePath="AboutDlg.cpp">
+				RelativePath="AboutDlg.cpp"
+				>
 			</File>
 			<File
-				RelativePath="AddSessionDlg.cpp">
+				RelativePath="AddSessionDlg.cpp"
+				>
 			</File>
 			<File
-				RelativePath="AppCmds.cpp">
+				RelativePath="AppCmds.cpp"
+				>
 			</File>
 			<File
-				RelativePath="AppDlg.cpp">
+				RelativePath="AppDlg.cpp"
+				>
 			</File>
 			<File
-				RelativePath="AppToolBar.cpp">
+				RelativePath="AppToolBar.cpp"
+				>
 			</File>
 			<File
-				RelativePath="AppWnd.cpp">
+				RelativePath="AppWnd.cpp"
+				>
 			</File>
 			<File
-				RelativePath="ClockInDlg.cpp">
+				RelativePath="ClockInDlg.cpp"
+				>
 			</File>
 			<File
-				RelativePath="ClockOutDlg.cpp">
+				RelativePath="ClockOutDlg.cpp"
+				>
 			</File>
 			<File
-				RelativePath="ClpWndReportDlg.cpp">
+				RelativePath="ClpWndReportDlg.cpp"
+				>
 			</File>
 			<File
-				RelativePath="EditSessionDlg.cpp">
+				RelativePath="EditSessionDlg.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\ExportDlg.cpp">
+				RelativePath=".\ExportDlg.cpp"
+				>
 			</File>
 			<File
-				RelativePath="FileReport.cpp">
+				RelativePath="FileReport.cpp"
+				>
 			</File>
 			<File
-				RelativePath="FileReportDlg.cpp">
+				RelativePath="FileReportDlg.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\ImportDlg.cpp">
+				RelativePath=".\ImportDlg.cpp"
+				>
 			</File>
 			<File
-				RelativePath="LocnComboBox.cpp">
+				RelativePath="LocnComboBox.cpp"
+				>
 			</File>
 			<File
-				RelativePath="LocnList.cpp">
+				RelativePath="LocnList.cpp"
+				>
 			</File>
 			<File
-				RelativePath="ModifySessionDlg.cpp">
+				RelativePath="ModifySessionDlg.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\OptionsDlg.cpp">
+				RelativePath=".\OptionsDlg.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\pch.cpp">
+				RelativePath=".\pch.cpp"
+				>
 				<FileConfiguration
-					Name="Debug|Win32">
+					Name="Debug|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"/>
+						UsePrecompiledHeader="1"
+					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32">
+					Name="Release|Win32"
+					>
 					<Tool
 						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"/>
+						UsePrecompiledHeader="1"
+					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="PrintReport.cpp">
+				RelativePath="PrintReport.cpp"
+				>
 			</File>
 			<File
-				RelativePath="PrintReportDlg.cpp">
+				RelativePath="PrintReportDlg.cpp"
+				>
 			</File>
 			<File
-				RelativePath="PruneLocnsDlg.cpp">
+				RelativePath="PruneLocnsDlg.cpp"
+				>
 			</File>
 			<File
-				RelativePath="PruneSessionsDlg.cpp">
+				RelativePath="PruneSessionsDlg.cpp"
+				>
 			</File>
 			<File
-				RelativePath="PruneTasksDlg.cpp">
+				RelativePath="PruneTasksDlg.cpp"
+				>
 			</File>
 			<File
-				RelativePath=".\RenameDlg.cpp">
+				RelativePath=".\RenameDlg.cpp"
+				>
 			</File>
 			<File
-				RelativePath="Session.cpp">
+				RelativePath="Session.cpp"
+				>
 			</File>
 			<File
-				RelativePath="SessionList.cpp">
+				RelativePath="SessionList.cpp"
+				>
 			</File>
 			<File
-				RelativePath="SessionListBox.cpp">
+				RelativePath="SessionListBox.cpp"
+				>
 			</File>
 			<File
-				RelativePath="SwitchTasksDlg.cpp">
+				RelativePath="SwitchTasksDlg.cpp"
+				>
 			</File>
 			<File
-				RelativePath="TaskComboBox.cpp">
+				RelativePath="TaskComboBox.cpp"
+				>
 			</File>
 			<File
-				RelativePath="TaskList.cpp">
+				RelativePath="TaskList.cpp"
+				>
 			</File>
 			<File
-				RelativePath="TaskTracker.cpp">
+				RelativePath="TaskTracker.cpp"
+				>
 			</File>
 			<File
-				RelativePath="TextReport.cpp">
+				RelativePath="TextReport.cpp"
+				>
 			</File>
 			<File
-				RelativePath="ViewReportDlg.cpp">
+				RelativePath="ViewReportDlg.cpp"
+				>
 			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl">
+			Filter="h;hpp;hxx;hm;inl"
+			>
 			<File
-				RelativePath="AboutDlg.hpp">
+				RelativePath="AboutDlg.hpp"
+				>
 			</File>
 			<File
-				RelativePath="AddSessionDlg.hpp">
+				RelativePath="AddSessionDlg.hpp"
+				>
 			</File>
 			<File
-				RelativePath="AppCmds.hpp">
+				RelativePath="AppCmds.hpp"
+				>
 			</File>
 			<File
-				RelativePath="AppDlg.hpp">
+				RelativePath="AppDlg.hpp"
+				>
 			</File>
 			<File
-				RelativePath="AppToolBar.hpp">
+				RelativePath="AppToolBar.hpp"
+				>
 			</File>
 			<File
-				RelativePath=".\AppTypes.hpp">
+				RelativePath=".\AppTypes.hpp"
+				>
 			</File>
 			<File
-				RelativePath="AppWnd.hpp">
+				RelativePath="AppWnd.hpp"
+				>
 			</File>
 			<File
-				RelativePath="ClockInDlg.hpp">
+				RelativePath="ClockInDlg.hpp"
+				>
 			</File>
 			<File
-				RelativePath="ClockOutDlg.hpp">
+				RelativePath="ClockOutDlg.hpp"
+				>
 			</File>
 			<File
-				RelativePath="ClpWndReportDlg.hpp">
+				RelativePath="ClpWndReportDlg.hpp"
+				>
 			</File>
 			<File
-				RelativePath=".\Common.hpp">
+				RelativePath=".\Common.hpp"
+				>
 			</File>
 			<File
-				RelativePath="EditSessionDlg.hpp">
+				RelativePath="EditSessionDlg.hpp"
+				>
 			</File>
 			<File
-				RelativePath=".\ExportDlg.hpp">
+				RelativePath=".\ExportDlg.hpp"
+				>
 			</File>
 			<File
-				RelativePath="FileReport.hpp">
+				RelativePath="FileReport.hpp"
+				>
 			</File>
 			<File
-				RelativePath="FileReportDlg.hpp">
+				RelativePath="FileReportDlg.hpp"
+				>
 			</File>
 			<File
-				RelativePath=".\ImportDlg.hpp">
+				RelativePath=".\ImportDlg.hpp"
+				>
 			</File>
 			<File
-				RelativePath="LocnComboBox.hpp">
+				RelativePath="LocnComboBox.hpp"
+				>
 			</File>
 			<File
-				RelativePath="LocnList.hpp">
+				RelativePath="LocnList.hpp"
+				>
 			</File>
 			<File
-				RelativePath="ModifySessionDlg.hpp">
+				RelativePath="ModifySessionDlg.hpp"
+				>
 			</File>
 			<File
-				RelativePath=".\OptionsDlg.hpp">
+				RelativePath=".\OptionsDlg.hpp"
+				>
 			</File>
 			<File
-				RelativePath="PrintReport.hpp">
+				RelativePath="PrintReport.hpp"
+				>
 			</File>
 			<File
-				RelativePath="PrintReportDlg.hpp">
+				RelativePath="PrintReportDlg.hpp"
+				>
 			</File>
 			<File
-				RelativePath="PruneLocnsDlg.hpp">
+				RelativePath="PruneLocnsDlg.hpp"
+				>
 			</File>
 			<File
-				RelativePath="PruneSessionsDlg.hpp">
+				RelativePath="PruneSessionsDlg.hpp"
+				>
 			</File>
 			<File
-				RelativePath="PruneTasksDlg.hpp">
+				RelativePath="PruneTasksDlg.hpp"
+				>
 			</File>
 			<File
-				RelativePath=".\RenameDlg.hpp">
+				RelativePath=".\RenameDlg.hpp"
+				>
 			</File>
 			<File
-				RelativePath="Report.hpp">
+				RelativePath="Report.hpp"
+				>
 			</File>
 			<File
-				RelativePath=".\ReportOptions.hpp">
+				RelativePath=".\ReportOptions.hpp"
+				>
 			</File>
 			<File
-				RelativePath="Session.hpp">
+				RelativePath="Session.hpp"
+				>
 			</File>
 			<File
-				RelativePath="SessionList.hpp">
+				RelativePath="SessionList.hpp"
+				>
 			</File>
 			<File
-				RelativePath="SessionListBox.hpp">
+				RelativePath="SessionListBox.hpp"
+				>
 			</File>
 			<File
-				RelativePath="SwitchTasksDlg.hpp">
+				RelativePath="SwitchTasksDlg.hpp"
+				>
 			</File>
 			<File
-				RelativePath="TaskComboBox.hpp">
+				RelativePath="TaskComboBox.hpp"
+				>
 			</File>
 			<File
-				RelativePath="TaskList.hpp">
+				RelativePath="TaskList.hpp"
+				>
 			</File>
 			<File
-				RelativePath="TaskTracker.hpp">
+				RelativePath="TaskTracker.hpp"
+				>
 			</File>
 			<File
-				RelativePath="TextReport.hpp">
+				RelativePath="TextReport.hpp"
+				>
 			</File>
 			<File
-				RelativePath="ViewReportDlg.hpp">
+				RelativePath="ViewReportDlg.hpp"
+				>
 			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
-			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
+			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
+			>
 			<File
-				RelativePath="Resource.h">
+				RelativePath="Resource.h"
+				>
 			</File>
 			<File
-				RelativePath="TaskTracker.ico">
+				RelativePath="TaskTracker.ico"
+				>
 			</File>
 			<File
-				RelativePath="TaskTracker.rc">
+				RelativePath="TaskTracker.rc"
+				>
 			</File>
 			<File
-				RelativePath="TaskTracker.rcv">
+				RelativePath="TaskTracker.rcv"
+				>
 			</File>
 			<File
-				RelativePath="ToolBar.bmp">
+				RelativePath="ToolBar.bmp"
+				>
 			</File>
 		</Filter>
 		<Filter
 			Name="HelpFile"
-			Filter="">
+			>
 			<File
-				RelativePath=".\helpfile\ClockInDialog.GIF">
+				RelativePath=".\helpfile\ClockInDialog.GIF"
+				>
 			</File>
 			<File
-				RelativePath=".\helpfile\ClockOutDialog.GIF">
+				RelativePath=".\helpfile\ClockOutDialog.GIF"
+				>
 			</File>
 			<File
-				RelativePath=".\helpfile\EditSessionsDialog.GIF">
+				RelativePath=".\helpfile\EditSessionsDialog.GIF"
+				>
 			</File>
 			<File
-				RelativePath=".\HelpFile\ExportDialog.GIF">
+				RelativePath=".\HelpFile\ExportDialog.GIF"
+				>
 			</File>
 			<File
-				RelativePath=".\HelpFile\ImportDialog.GIF">
+				RelativePath=".\HelpFile\ImportDialog.GIF"
+				>
 			</File>
 			<File
-				RelativePath=".\HelpFile\MainView.GIF">
+				RelativePath=".\HelpFile\MainView.GIF"
+				>
 			</File>
 			<File
-				RelativePath=".\helpfile\ModifySessionDialog.GIF">
+				RelativePath=".\helpfile\ModifySessionDialog.GIF"
+				>
 			</File>
 			<File
-				RelativePath=".\HelpFile\PruneLocationsDialog.GIF">
+				RelativePath=".\HelpFile\PruneLocationsDialog.GIF"
+				>
 			</File>
 			<File
-				RelativePath=".\HelpFile\PruneSessionsDialog.GIF">
+				RelativePath=".\HelpFile\PruneSessionsDialog.GIF"
+				>
 			</File>
 			<File
-				RelativePath=".\HelpFile\PruneTasksDialog.GIF">
+				RelativePath=".\HelpFile\PruneTasksDialog.GIF"
+				>
 			</File>
 			<File
-				RelativePath=".\helpfile\RenameTasksDialog.GIF">
+				RelativePath=".\helpfile\RenameTasksDialog.GIF"
+				>
 			</File>
 			<File
-				RelativePath=".\HelpFile\ReportDialog.GIF">
+				RelativePath=".\HelpFile\ReportDialog.GIF"
+				>
 			</File>
 			<File
-				RelativePath=".\HelpFile\SettingsDialog.GIF">
+				RelativePath=".\HelpFile\SettingsDialog.GIF"
+				>
 			</File>
 			<File
-				RelativePath=".\helpfile\SwitchTasksDialog.GIF">
+				RelativePath=".\helpfile\SwitchTasksDialog.GIF"
+				>
 			</File>
 			<File
-				RelativePath=".\HelpFile\TaskTracker.html">
+				RelativePath=".\HelpFile\TaskTracker.html"
+				>
 			</File>
 		</Filter>
 		<File
-			RelativePath=".\Doxygen.cfg">
+			RelativePath=".\Doxygen.cfg"
+			>
 		</File>
 		<File
-			RelativePath="ReadMe.txt">
+			RelativePath="ReadMe.txt"
+			>
 		</File>
 		<File
-			RelativePath="RelNotes.txt">
+			RelativePath="RelNotes.txt"
+			>
 		</File>
 		<File
-			RelativePath=".\Setup.ini">
+			RelativePath=".\Setup.ini"
+			>
 		</File>
 		<File
-			RelativePath=".\TestData.csv">
+			RelativePath=".\TestData.csv"
+			>
 		</File>
 		<File
-			RelativePath="TODO.Txt">
+			RelativePath="TODO.Txt"
+			>
 		</File>
 	</Files>
 	<Globals>
