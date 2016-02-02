@@ -67,7 +67,7 @@ bool CFileReport::Init()
 	{
 		m_File.Create(m_Path);
 	}
-	catch(CFileException& rException)
+	catch(const CFileException& rException)
 	{
 		// Notify user.
 		App.m_AppWnd.AlertMsg(TXT("%s"), rException.twhat());

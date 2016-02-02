@@ -180,7 +180,7 @@ void CAppCmds::OnFileExport()
 		// Remember settings.
 		App.m_strExportFile = Dlg.m_strFileName;
 	}
-	catch(CFileException& rException)
+	catch(const CFileException& rException)
 	{
 		// Notify user.
 		App.m_AppWnd.AlertMsg(TXT("%s"), rException.twhat());
@@ -363,7 +363,7 @@ void CAppCmds::OnFileImport()
 		// Update state.
 		App.m_bModified = true;
 	}
-	catch(CFileException& rException)
+	catch(const CFileException& rException)
 	{
 		// Notify user.
 		App.m_AppWnd.AlertMsg(TXT("%s"), rException.twhat());
