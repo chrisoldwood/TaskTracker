@@ -569,8 +569,8 @@ void CAppCmds::OnReportWindow()
 		// NB: Empty report is just an EOS.
 		if (TxtStream.Size() > 1)
 		{
-			CViewReportDlg Dlg(TxtStream);
-			Dlg.RunModal(App.m_rMainWnd);
+			CViewReportDlg viewReportDlg(TxtStream);
+			viewReportDlg.RunModal(App.m_rMainWnd);
 		}
 		else
 		{
