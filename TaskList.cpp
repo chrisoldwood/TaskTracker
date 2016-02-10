@@ -61,7 +61,7 @@ CTaskList::~CTaskList()
 
 void CTaskList::Add(const tchar* pszTask)
 {
-	ASSERT(pszTask != NULL);
+	ASSERT(pszTask != nullptr);
 	ASSERT(tstrlen(pszTask) > 0);
 
 	// Ignore, if string already in list.
@@ -85,7 +85,7 @@ void CTaskList::Add(const tchar* pszTask)
 
 void CTaskList::Remove(const tchar* pszTask)
 {
-	ASSERT(pszTask != NULL);
+	ASSERT(pszTask != nullptr);
 	ASSERT(std::find(begin(), end(), pszTask) != end());
 
 	remove(pszTask);

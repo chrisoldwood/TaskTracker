@@ -857,7 +857,7 @@ void CAppCmds::OnHelpContents()
 
 	CPath strHelpFile(CPath::ApplicationDir(), CTaskTracker::HELPFILE);
 
-	::ShellExecute(NULL, NULL, strHelpFile, NULL, NULL, SW_SHOW);
+	::ShellExecute(nullptr, nullptr, strHelpFile, nullptr, nullptr, SW_SHOW);
 }
 
 /******************************************************************************

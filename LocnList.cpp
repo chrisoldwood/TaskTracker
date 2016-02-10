@@ -61,7 +61,7 @@ CLocnList::~CLocnList()
 
 void CLocnList::Add(const tchar* pszLocn)
 {
-	ASSERT(pszLocn != NULL);
+	ASSERT(pszLocn != nullptr);
 	ASSERT(tstrlen(pszLocn) > 0);
 
 	// Ignore, if string already in list.
@@ -85,7 +85,7 @@ void CLocnList::Add(const tchar* pszLocn)
 
 void CLocnList::Remove(const tchar* pszLocn)
 {
-	ASSERT(pszLocn != NULL);
+	ASSERT(pszLocn != nullptr);
 	ASSERT(std::find(begin(), end(), pszLocn) != end());
 
 	remove(pszLocn);
