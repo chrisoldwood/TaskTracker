@@ -121,7 +121,7 @@ void CAppCmds::OnFileExport()
 
 	// Warn user if file exists.
 	if ( (Dlg.m_strFileName.Exists())
-	  && (App.QueryMsg(TXT("The file already exists:\n\n%s\n\nDo you want to overwrite it?"), Dlg.m_strFileName) != IDYES) )
+	  && (App.QueryMsg(TXT("The file already exists:\n\n%s\n\nDo you want to overwrite it?"), Dlg.m_strFileName.c_str()) != IDYES) )
 		return;
 
 	CBusyCursor oBusyCursor;
@@ -165,9 +165,9 @@ void CAppCmds::OnFileExport()
 
 			// Format as Start,End,Task,Location
 			strLine.Format(TXT("\"%s\",\"%s\",\"%s\",\"%s\""), 
-							pSession->Start().ToString(CDate::FMT_ISO, CDate::FMT_ISO),
-							pSession->Finish().ToString(CDate::FMT_ISO, CDate::FMT_ISO),
-							strTask, strLocn);
+							pSession->Start().ToString(CDate::FMT_ISO, CDate::FMT_ISO).c_str(),
+							pSession->Finish().ToString(CDate::FMT_ISO, CDate::FMT_ISO).c_str(),
+							strTask.c_str(), strLocn.c_str());
 
 			oFile.WriteLine(strLine, ANSI_TEXT);
 
@@ -237,7 +237,7 @@ void CAppCmds::OnFileImport()
 				App.m_AppWnd.AlertMsg(TXT("Invalid number of fields in line: %d\n\n")
 									  TXT("Found %d fields. Expected 4 [Start, End, Task, Location]\n\n")
 									  TXT("%s"),
-									  nLine, nFields, strLine);
+									  nLine, nFields, strLine.c_str());
 				break;
 			}
 
@@ -275,7 +275,7 @@ void CAppCmds::OnFileImport()
 			if (!dtStart.FromString(strStartDateTime))
 			{
 				// Notify user.
-				App.m_AppWnd.AlertMsg(TXT("Invalid 'Start' date/time format on line: %d\n\n%s"), nLine, strLine);
+				App.m_AppWnd.AlertMsg(TXT("Invalid 'Start' date/time format on line: %d\n\n%s"), nLine, strLine.c_str());
 				break;
 			}
 
@@ -283,7 +283,7 @@ void CAppCmds::OnFileImport()
 			if (!dtEnd.FromString(strEndDateTime))
 			{
 				// Notify user.
-				App.m_AppWnd.AlertMsg(TXT("Invalid 'End' date/time format on line: %d\n\n%s"), nLine, strLine);
+				App.m_AppWnd.AlertMsg(TXT("Invalid 'End' date/time format on line: %d\n\n%s"), nLine, strLine.c_str());
 				break;
 			}
 
@@ -291,7 +291,7 @@ void CAppCmds::OnFileImport()
 			if (dtEnd < dtStart)
 			{
 				// Notify user.
-				App.m_AppWnd.AlertMsg(TXT("'End' date/time precedes 'Start' date/time on line: %d\n\n%s"), nLine, strLine);
+				App.m_AppWnd.AlertMsg(TXT("'End' date/time precedes 'Start' date/time on line: %d\n\n%s"), nLine, strLine.c_str());
 				break;
 			}
 

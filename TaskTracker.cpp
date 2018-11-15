@@ -662,7 +662,7 @@ void CTaskTracker::ReportData(CReportOptions& oOptions, const CDate& oFromDate,
 	if (oOptions.m_bShowTotal && bOkay)
 	{
 		// Output total.
-		CString strTotal = CString::Fmt(TXT("Total Hours: %s"), App.MinsToStr(lTotalMins));
+		CString strTotal = CString::Fmt(TXT("Total Hours: %s"), App.MinsToStr(lTotalMins).c_str());
 
 		oOptions.m_pDevice->SendText(strTotal);
 	}
@@ -801,7 +801,7 @@ bool CTaskTracker::ReportByWeek(CReportOptions& oOptions, const CDateTime& dtFro
 		CString	strStartDate = dtStart.Date().ToString(CDate::FMT_WIN_SHORT);
 		CString strEndDate   = dtEnd.Date().ToString(CDate::FMT_WIN_SHORT);
 		CString strLen       = App.MinsToStr(lWeekTotal);
-		CString strHeading   = CString::Fmt(TXT("Week: %s to %s (Total: %s)"), strStartDate, strEndDate, strLen);
+		CString strHeading   = CString::Fmt(TXT("Week: %s to %s (Total: %s)"), strStartDate.c_str(), strEndDate.c_str(), strLen.c_str());
 
 		if (!oOptions.m_pDevice->SendHeading(strHeading))
 			return false;
@@ -912,7 +912,7 @@ bool CTaskTracker::ReportByMonth(CReportOptions& oOptions, const CDateTime& dtFr
 		CString	strStartDate = dtStart.Date().ToString(CDate::FMT_WIN_SHORT);
 		CString strEndDate   = dtEnd.Date().ToString(CDate::FMT_WIN_SHORT);
 		CString strLen       = App.MinsToStr(lMonthTotal);
-		CString strHeading   = CString::Fmt(TXT("Month: %s to %s (Total: %s)"), strStartDate, strEndDate, strLen);
+		CString strHeading   = CString::Fmt(TXT("Month: %s to %s (Total: %s)"), strStartDate.c_str(), strEndDate.c_str(), strLen.c_str());
 
 		if (!oOptions.m_pDevice->SendHeading(strHeading))
 			return false;
@@ -1004,7 +1004,7 @@ bool CTaskTracker::ReportByTask(CReportOptions& oOptions, const CDateTime& dtFro
 		if ( (lSessions > 0) || (oOptions.m_bShowIfEmpty) )
 		{
 			// Output task heading.
-			CString strHeading = CString::Fmt(TXT("%s (Total: %s)"), *oIter, App.MinsToStr(lTotal));
+			CString strHeading = CString::Fmt(TXT("%s (Total: %s)"), (*oIter).c_str(), App.MinsToStr(lTotal).c_str());
 
 			// Heading style depends on whether sessions follow.
 			if (oOptions.m_bShowSessions)
@@ -1039,7 +1039,7 @@ bool CTaskTracker::ReportByTask(CReportOptions& oOptions, const CDateTime& dtFro
 						CString	strStart = pSession->Start().Time().ToString(CDate::FMT_WIN_SHORT);
 						CString	strEnd   = pSession->Finish().Time().ToString(CDate::FMT_WIN_SHORT);
 						CString strLen   = App.MinsToStr(pSession->Length());
-						CString strText  = CString::Fmt(TXT("%s %s from %s to %s for %s"), strDay, strDate, strStart, strEnd, strLen);
+						CString strText  = CString::Fmt(TXT("%s %s from %s to %s for %s"), strDay.c_str(), strDate.c_str(), strStart.c_str(), strEnd.c_str(), strLen.c_str());
 					
 						if (!oOptions.m_pDevice->SendText(strText))
 							return false;
@@ -1110,7 +1110,7 @@ bool CTaskTracker::ReportDay(CReportOptions& oOptions, const CDate& rDate,
 		CString strDay  = rDate.DayOfWeekStr(false);
 		CString	strDate = rDate.ToString(CDate::FMT_WIN_SHORT);
 		CString strLen  = App.MinsToStr(rlTotalMins);
-		CString strText = CString::Fmt(TXT("%s %s (Total: %s)"), strDay, strDate, strLen);
+		CString strText = CString::Fmt(TXT("%s %s (Total: %s)"), strDay.c_str(), strDate.c_str(), strLen.c_str());
 
 		if (!oOptions.m_pDevice->SendText(strText))
 			return false;
@@ -1160,7 +1160,7 @@ bool CTaskTracker::ReportSession(CReportOptions& oOptions, const CSessionPtr& pS
 	ulong	lLen     = pSession->Length();
 
 	// Format core data.
-	CString strText = CString::Fmt(TXT("%s to %s for %s"), strStart, strEnd, App.MinsToStr(lLen));
+	CString strText = CString::Fmt(TXT("%s to %s for %s"), strStart.c_str(), strEnd.c_str(), App.MinsToStr(lLen).c_str());
 
 	// Append task, if supplied.
 	if (strTask != TXT(""))
@@ -1494,7 +1494,7 @@ static const tchar* DayMonthYearFormat()
 		// CDate::DateOrder formats:           MONTH_DAY_YEAR    DAY_MONTH_YEAR    YEAR_MONTH_DAY
 		static const tchar* s_pszFormats[3] = { TXT("MM'%s'dd'%s'yyyy"), TXT("dd'%s'MM'%s'yyyy"), TXT("yyyy'%s'MM'%s'dd") };
 
-		s_strFormat.Format(s_pszFormats[eOrder], strSep, strSep);
+		s_strFormat.Format(s_pszFormats[eOrder], strSep.c_str(), strSep.c_str());
 	}
 
 	return s_strFormat;
@@ -1544,7 +1544,7 @@ const tchar* CTaskTracker::TimePickerFormat()
 	{
 		CString strSep = CTime::FieldSeparator();
 
-		s_strFormat.Format(TXT("HH'%s'mm"), strSep);
+		s_strFormat.Format(TXT("HH'%s'mm"), strSep.c_str());
 	}
 
 	return s_strFormat;

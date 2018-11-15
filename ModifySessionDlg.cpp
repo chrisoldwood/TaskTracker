@@ -125,10 +125,10 @@ bool CModifySessionDlg::OnOk()
 				CString strStart   = pSession->Start().Time().ToString(CTime::FMT_WIN_SHORT);
 				CString strFinish  = pSession->Finish().Time().ToString(CTime::FMT_WIN_SHORT);
 				CString strTask    = pSession->Task();
-				CString strSession = CString::Fmt(TXT("%s  %s - %s  %s"), strDate, strStart, strFinish, strTask);
+				CString strSession = CString::Fmt(TXT("%s  %s - %s  %s"), strDate.c_str(), strStart.c_str(), strFinish.c_str(), strTask.c_str());
 
 				// Query user for action.
-				if (QueryMsg(TXT("This session overlaps another:-\n\n%s\n\nDo you want to continue?"), strSession) != IDYES)
+				if (QueryMsg(TXT("This session overlaps another:-\n\n%s\n\nDo you want to continue?"), strSession.c_str()) != IDYES)
 					return false;
 				else
 					break;
